@@ -53,6 +53,7 @@ public class AuthenticationService {
     user.setPosition(request.getPosition());
     user.setPassword(passwordEncoder.encode(request.getPassword()));
     user.setRole(request.getRole());
+    user.setPermissions(request.getPermissions());
     repository.save(user);
     return "Successfully";
   }

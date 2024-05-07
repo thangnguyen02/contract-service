@@ -1,7 +1,9 @@
 package com.fpt.servicecontract.auth.model;
 
+import com.fpt.servicecontract.auth.repository.UserRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +20,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class User implements UserDetails {
+
 
     @Id
     @UuidGenerator
@@ -38,10 +41,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Permission> permissions;
 
+//  DELETE FROM `fpt_company`.`user_permissions` WHERE (`user_id` = '7802448b-ef4a-49a4-a358-d67ed7c510ba')
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

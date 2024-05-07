@@ -11,6 +11,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Set;
+
 @SpringBootApplication
 @RequiredArgsConstructor
 public class ServiceContractApplication {
@@ -34,6 +36,16 @@ public class ServiceContractApplication {
 			adminUser.setPassword(passwordEncoder.encode("admin"));
 			adminUser.setRole(Role.ADMIN);
 			userRepository.save(adminUser);
+			User user = new User();
+			user.setName("user");
+			user.setEmail("user@gmail.com");
+			user.setDepartment("IT");
+			user.setPosition("Dev");
+			user.setPhone("123456789");
+			user.setPermissions(Set.of(Permission.MANAGE_CONTRACT, Permission.CREATE_CONTRACT));
+			user.setPassword(passwordEncoder.encode("user"));
+			user.setRole(Role.USER);
+			userRepository.save(user);
 		}
 	}
 }

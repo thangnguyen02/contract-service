@@ -1,6 +1,9 @@
 package com.fpt.servicecontract.config;
 
 
+import com.fpt.servicecontract.auth.model.Permission;
+import com.fpt.servicecontract.auth.model.User;
+import com.fpt.servicecontract.auth.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -23,7 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtService jwtService;
     @Autowired
     private UserDetailsService userDetailsService;
-
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -47,11 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                System.out.println(userDetails.getAuthorities());
-
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
-                        null,
+                        userDetails.getUsername(),
                         userDetails.getAuthorities()
                 );
                 authToken.setDetails(

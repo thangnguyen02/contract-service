@@ -1,9 +1,12 @@
 package com.fpt.servicecontract.auth.dto;
 
 
+import com.fpt.servicecontract.auth.model.Permission;
 import com.fpt.servicecontract.auth.model.Role;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,5 +19,6 @@ public class RegisterRequest {
   private String phone;
   private String position;
   private String department;
+  private Set<Permission> permissions;
 
 }
