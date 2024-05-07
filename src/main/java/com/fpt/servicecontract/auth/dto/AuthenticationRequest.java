@@ -1,8 +1,5 @@
 package com.fpt.servicecontract.auth.dto;
 
-
-
-
 public class AuthenticationRequest {
 
   private String email;

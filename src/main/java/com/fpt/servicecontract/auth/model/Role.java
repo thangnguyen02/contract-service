@@ -3,22 +3,24 @@ package com.fpt.servicecontract.auth.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import com.fpt.servicecontract.auth.repository.UserRepository;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Getter
 public enum Role {
-  USER,
-  ADMIN;
-  public List<SimpleGrantedAuthority> getAuthorities(String email) {
-    List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
-    simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
-    simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE" + "_CREATE_CONTRACT"));
+    USER("USER"),
+    ADMIN("ADMIN");
 
-    if(email.equals("tudda@gmail.com")){
-      log.info("role user hehe");
-      simpleGrantedAuthorities.add(new SimpleGrantedAuthority("PER_CRUD"));
+    private final String role;
+
+    Role(String role) {
+        this.role = role;
     }
-    return simpleGrantedAuthorities;
-  }
 }

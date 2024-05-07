@@ -1,5 +1,6 @@
-package com.fpt.servicecontract.contract.Controller;
+package com.fpt.servicecontract.contract.controller;
 
+import com.fpt.servicecontract.auth.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,8 +20,9 @@ public class ContractController {
     return "test";
   }
   @GetMapping("/tests")
-  @PreAuthorize("hasAuthority('PER_CRUD')")
+  @PreAuthorize("hasAuthority('XX')")
   public String tests() {
+
     return "ascasc";
   }
 }
