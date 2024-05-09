@@ -4,6 +4,7 @@ package com.fpt.servicecontract.auth.service;
 import com.fpt.servicecontract.auth.dto.AuthenticationRequest;
 import com.fpt.servicecontract.auth.dto.AuthenticationResponse;
 import com.fpt.servicecontract.auth.dto.RegisterRequest;
+import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
@@ -54,6 +55,14 @@ public class AuthenticationService {
     user.setPassword(passwordEncoder.encode(request.getPassword()));
     user.setRole(request.getRole());
     user.setPermissions(request.getPermissions());
+    repository.save(user);
+    return "Successfully";
+  }
+
+  public String delete(String id) {
+    var user = repository.findById(id).orElseThrow();
+
+    user.setStatus(UserStatus.ACTIVE.getUserStatus());
     repository.save(user);
     return "Successfully";
   }

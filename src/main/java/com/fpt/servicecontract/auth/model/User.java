@@ -38,6 +38,8 @@ public class User implements UserDetails {
 
     private String department;
 
+    private String status;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
