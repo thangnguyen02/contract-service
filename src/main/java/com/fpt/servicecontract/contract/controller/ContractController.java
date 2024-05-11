@@ -18,7 +18,7 @@ public class ContractController {
 
     @GetMapping("/test-send-mail")
     public String sendMail() {
-        mailService.sendNewMail("tentufancr7@gmail.com", "Subject right here", "Body right there!");
+        mailService.sendNewMail("tentufancr7@gmail.com", "SEP490", "FPT");
         return "PERMISSION_MANAGE_CONTRACT";
     }
     @GetMapping("/test-role")
