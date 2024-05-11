@@ -1,9 +1,7 @@
 package com.fpt.servicecontract.config;
 
 
-import com.fpt.servicecontract.auth.model.Item;
 import com.fpt.servicecontract.auth.repository.UserRepository;
-import com.fpt.servicecontract.ultils.ExportReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,8 +43,4 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public ExportReport<Item> ExportItem() {
-        return new ExportReport<Item>();
-    }
 }

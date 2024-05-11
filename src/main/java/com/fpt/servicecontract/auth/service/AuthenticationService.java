@@ -59,12 +59,4 @@ public class AuthenticationService {
     return "Successfully";
   }
 
-  public String delete(String id) {
-    var user = repository.findById(id).orElseThrow();
-
-    user.setStatus(UserStatus.ACTIVE.getUserStatus());
-    repository.save(user);
-    return "Successfully";
-  }
-
 }
