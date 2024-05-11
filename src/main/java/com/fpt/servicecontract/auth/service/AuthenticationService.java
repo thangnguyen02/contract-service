@@ -11,6 +11,7 @@ import com.fpt.servicecontract.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -35,6 +36,10 @@ public class AuthenticationService {
 
     var user = repository.findByEmail(request.getEmail())
         .orElseThrow();
+
+    if(user.getStatus() != UserStatus.ACTIVE) {
+      throw new AuthenticationServiceException("Account is not active");
+    }
 
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
