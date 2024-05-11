@@ -1,9 +1,7 @@
 package com.fpt.servicecontract.auth.model;
 
-import com.fpt.servicecontract.auth.repository.UserRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,6 +35,9 @@ public class User implements UserDetails {
     private String position;
 
     private String department;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @Enumerated(EnumType.STRING)
     private Role role;

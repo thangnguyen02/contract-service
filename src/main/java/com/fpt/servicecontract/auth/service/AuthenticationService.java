@@ -4,6 +4,7 @@ package com.fpt.servicecontract.auth.service;
 import com.fpt.servicecontract.auth.dto.AuthenticationRequest;
 import com.fpt.servicecontract.auth.dto.AuthenticationResponse;
 import com.fpt.servicecontract.auth.dto.RegisterRequest;
+import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;

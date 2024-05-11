@@ -22,6 +22,7 @@ public class AuthenticationController {
 
   private final AuthenticationService service;
 
+
   @PostMapping("/login")
   public ResponseEntity<AuthenticationResponse> login(
       @RequestBody AuthenticationRequest request
