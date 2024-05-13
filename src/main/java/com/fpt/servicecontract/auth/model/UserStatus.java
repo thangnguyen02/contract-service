@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public enum UserStatus {
     ACTIVE("ACTIVE"),
-    INACTIVE("INACTIVE");
+    INACTIVE("INACTIVE"),
+    PROCESSING("PROCESSING");
+
 
     private final String userStatus;
 
