@@ -1,5 +1,7 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -26,22 +29,19 @@ import java.io.FileInputStream;
 public class PdfController {
     private final PdfUtils pdfUtils;
 
+    private final Cloudinary cloudinary;
+
     @GetMapping("/generate")
     @PreAuthorize("hasAnyRole('USER')")
     public void generatePdf(HttpServletResponse response, @RequestParam String title, @RequestParam String content) throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        // Create Thymeleaf context
         Context context = new Context();
         context.setVariable("title", title);
         context.setVariable("content", content);
-
-        // Render HTML using Thymeleaf
         String html = pdfUtils.templateEngine().process("templates/test.html", context);
-        html = pdfUtils.replaceSpecialCharacters(html);
-        // Generate PDF using Flying Saucer PDF
-        File file =pdfUtils.generatePdf(html,"test");
+        File file = pdfUtils.generatePdf(html, "file_hihi");
         // push to cloudinary
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
         FileInputStream fis = new FileInputStream(file);
         byte[] buffer = new byte[1024];
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

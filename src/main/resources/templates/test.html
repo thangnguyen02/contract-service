@@ -1,13 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
     <title>Title</title>
+
+    <style th:inline="text">
+        @font-face {
+            font-family: 'DejaVuSans';
+            src: url('fonts/DejaVuSans.ttf') format('truetype');
+        }
+        body {
+            font-family: 'DejaVuSans', sans-serif;
+        }
+        .contract {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .party {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+    </style>
 </head>
+
 <body>
-<div>DuongTu</div>
-<div  th:utext="${title}" style="color:red;font-style:italic;">
-    ...
+<div class="contract">
+    <h1>HỢP ĐỒNG LAO ĐỘNG</h1>
+    <p>Đây là hợp đồng lao động (sau đây gọi là "Hợp đồng") được ký kết vào ngày <span
+            th:text="12-5-2024"></span>, giữa:</p>
+    <div class="party">
+        <p>BÊN A: Công ty ABC</p>
+        <p>Địa chỉ: 123 Đường ABC, Thành phố XYZ</p>
+        <p>Đại diện: <span th:text="FPT"></span></p>
+    </div>
+    <div class="party">
+        <p>BÊN B: <span th:text="${title}"></span></p>
+        <p>Địa chỉ: <span th:text="FPT"></span></p>
+    </div>
+    <p>1. Công việc:</p>
+    <p><span th:text="dev"></span></p>
+    <p>2. Thời gian làm việc:</p>
+    <p><span th:text="8h-17h"></span></p>
+    <p>3. Mức lương:</p>
+    <p><span th:text="1đ"></span></p>
+    <p>4. Quyền lợi:</p>
+    <p><span th:text="X"></span></p>
+    <p>5. Thời hạn:</p>
+    <p><span th:text="X"></span></p>
 </div>
 </body>
 </html>
