@@ -1,19 +1,15 @@
 package com.fpt.servicecontract.auth.model;
 
-import com.fpt.servicecontract.auth.repository.UserRepository;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -39,11 +35,31 @@ public class User implements UserDetails {
     private String department;
 
     @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Permission> permissions;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime updatedDate;
+
+    private String userCode;
+
+    private String identificationNumber;
+
+    private Date dob;
+
+    private boolean gender;
+
+    private String address;
+
+    private String avatar;
+
 
 //  DELETE FROM `fpt_company`.`user_permissions` WHERE (`user_id` = '7802448b-ef4a-49a4-a358-d67ed7c510ba')
 

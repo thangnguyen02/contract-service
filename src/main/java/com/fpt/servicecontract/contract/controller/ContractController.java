@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContractController {
 
     private final MailService mailService;
+
     @GetMapping("/test-send-mail")
     public String sendMail() {
         mailService.sendNewMail("tentufancr7@gmail.com", "SEP490", "FPT");
@@ -31,6 +32,8 @@ public class ContractController {
     public String tests() {
         return "PERMISSION_MANAGE_CONTRACT";
     }
+
+
 
 
 }
