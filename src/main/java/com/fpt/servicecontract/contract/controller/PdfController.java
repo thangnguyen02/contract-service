@@ -32,7 +32,7 @@ public class PdfController {
     private final Cloudinary cloudinary;
 
     @GetMapping("/generate")
-    @PreAuthorize("hasAnyRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public void generatePdf(HttpServletResponse response, @RequestParam String title, @RequestParam String content) throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Context context = new Context();

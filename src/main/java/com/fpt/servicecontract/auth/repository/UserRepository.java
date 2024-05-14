@@ -19,20 +19,24 @@ import java.util.Set;
 public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByEmail(String email);
+
     Optional<User> findById(String id);
+
     Optional<User> findByEmailAndStatus(String email, String status);
 
-    @Query(value = "SELECT u.name, u.email, u.address, " +
-            "u.identification_number, u.status, u.department, u.phone, u.position   FROM users u where " +
-            "(lower(u.name) like lower(:name) or :name is null)" +
-            "and (lower(u.email) like lower(:email) or :email is null)" +
-            "and (lower(u.address) like lower(:address) or :address is null)" +
-            "and (lower(u.identification_number) like lower(:identificationNumber) or :identificationNumber is null)" +
-            "and (lower(u.status) like lower(:status) or :status is null)" +
-            "and (lower(u.department) like lower(:department) or :department is null)" +
-            "and (lower(u.phone) like lower(:phoneNumber) or :department is null)" +
-            "and (lower(u.position) like lower(:position) or :department is null)" +
-            "and (lower(u.role) like lower(:role) or :department is null)"
+    @Query(value = """
+            SELECT u.name, u.email, u.address,
+                u.identification_number, u.status, u.department, u.phone, u.position   FROM users u where 
+                (lower(u.name) like lower(:name) or :name is null)
+                and (lower(u.email) like lower(:email) or :email is null)
+                and (lower(u.address) like lower(:address) or :address is null)
+                and (lower(u.identification_number) like lower(:identificationNumber) or :identificationNumber is null)
+                and (lower(u.status) like lower(:status) or :status is null)
+                and (lower(u.department) like lower(:department) or :department is null)
+                and (lower(u.phone) like lower(:phoneNumber) or :department is null)
+                and (lower(u.position) like lower(:position) or :department is null)
+                and (lower(u.role) like lower(:role) or :department is null)
+            """
             , nativeQuery = true)
     Page<UserInterface> search(@Param("name") String name,
                                @Param("email") String email,
