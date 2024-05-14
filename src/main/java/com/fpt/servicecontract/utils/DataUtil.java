@@ -9,7 +9,7 @@ import java.util.Map;
 public class DataUtil {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("MMddhhmmss");
-    private static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     public static boolean isNullObject(Object obj1) {
         if (obj1 == null) {
@@ -21,7 +21,7 @@ public class DataUtil {
         } else if (obj1 instanceof Map) {
             return isMapNullOrEmpty(obj1);
         } else {
-            return obj1 instanceof Object[] ? isArrayNullOrEmpty(obj1) : false;
+            return obj1 instanceof Object[] && isArrayNullOrEmpty(obj1);
         }
     }
 

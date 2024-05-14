@@ -43,7 +43,6 @@ public class UserController {
 
     @GetMapping("/search")
     public ResponseEntity<Page<UserInterface>> getAll(@ModelAttribute SearchUserRequest  userRequest, Pageable pageable) {
-        System.out.println(userRequest.getName());
         return ResponseEntity.ok(service.search(userRequest, pageable));
     }
 }

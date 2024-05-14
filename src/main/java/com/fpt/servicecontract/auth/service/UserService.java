@@ -52,8 +52,7 @@ public class UserService {
     }
 
     public Page<UserInterface> search(SearchUserRequest searchUserRequest, Pageable pageable) {
-        var test =  searchUserRequest.getName();
-        Page<UserInterface> user = userRepository.search(
+        return userRepository.search(
                 QueryUtils.appendPercent(searchUserRequest.getName()),
                 QueryUtils.appendPercent(searchUserRequest.getEmail()),
                 QueryUtils.appendPercent(searchUserRequest.getAddress()),
@@ -64,7 +63,6 @@ public class UserService {
                 QueryUtils.appendPercent(searchUserRequest.getPosition()),
                 Role.USER,
                 pageable);
-        return user;
     }
 
 }

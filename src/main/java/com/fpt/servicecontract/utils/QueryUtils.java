@@ -24,7 +24,7 @@ public class QueryUtils {
         if (DataUtil.isNullObject(input)) {
             return null;
         }
-        return input.stream().map(t -> t.trim()).collect(Collectors.toList());
+        return input.stream().map(String::trim).collect(Collectors.toList());
     }
 
     public static String getGson(Object obj) {
@@ -32,7 +32,7 @@ public class QueryUtils {
         return gson.toJson(obj);
     }
 
-    public static String formatKeyworkLike(String input){
+    public static String formatKeywordLike(String input){
         if (DataUtil.isNullObject(input) || input.isEmpty()) return null;
         return "%"+input.toLowerCase()+"%";
     }
