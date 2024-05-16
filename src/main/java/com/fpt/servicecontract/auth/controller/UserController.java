@@ -1,9 +1,11 @@
 package com.fpt.servicecontract.auth.controller;
 
+import com.fpt.servicecontract.auth.dto.RegisterRequest;
 import com.fpt.servicecontract.auth.dto.SearchUserRequest;
 import com.fpt.servicecontract.auth.dto.UpdateUserRequest;
 import com.fpt.servicecontract.auth.dto.UserDto;
 import com.fpt.servicecontract.auth.dto.UserInterface;
+import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.service.UserService;
 import jakarta.transaction.Transactional;
@@ -31,7 +33,17 @@ public class UserController {
     {
         return ResponseEntity.ok(service.delete(id));
     }
-
+    @PostMapping("/register-for-user")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> register(
+        @RequestBody RegisterRequest request
+    ) {
+        if (Role.ADMIN.equals(request.getRole())) {
+            log.warn("Admin is not created");
+            return ResponseEntity.ofNullable("Failed to created as role ADMIN");
+        }
+        return ResponseEntity.ok(service.register(request));
+    }
     @PutMapping("/{id}")
 
     @Transactional(rollbackOn = Exception.class)

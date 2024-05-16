@@ -49,19 +49,4 @@ public class AuthenticationService {
     authenticationResponse.setRefreshToken(refreshToken);
     return authenticationResponse;
   }
-
-  public String register(RegisterRequest request) {
-    var user = new User();
-    user.setName(request.getName());
-    user.setEmail(request.getEmail());
-    user.setPhone(request.getPhone());
-    user.setDepartment(request.getDepartment());
-    user.setPosition(request.getPosition());
-    user.setPassword(passwordEncoder.encode(request.getPassword()));
-    user.setRole(request.getRole());
-    user.setPermissions(request.getPermissions());
-    repository.save(user);
-    return "Successfully";
-  }
-
 }
