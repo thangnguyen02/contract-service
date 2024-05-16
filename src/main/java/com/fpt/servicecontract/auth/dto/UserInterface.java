@@ -8,6 +8,7 @@ public interface UserInterface {
     String getName();
     UserStatus getStatus();
     String getPosition();
+    String getAddress();
     String getDepartment();
     String getIdentificationNumber();
     String getId();
