@@ -30,15 +30,4 @@ public class AuthenticationController {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
-  @PostMapping("/register-for-user")
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  public ResponseEntity<String> register(
-      @RequestBody RegisterRequest request
-  ) {
-    if (Role.ADMIN.equals(request.getRole())) {
-      log.warn("Admin is not created");
-      return ResponseEntity.ofNullable("Failed to created as role ADMIN");
-    }
-    return ResponseEntity.ok(service.register(request));
-  }
 }

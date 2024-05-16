@@ -1,14 +1,17 @@
 package com.fpt.servicecontract.auth.controller;
 
+import com.fpt.servicecontract.auth.dto.RegisterRequest;
 import com.fpt.servicecontract.auth.dto.SearchUserRequest;
 import com.fpt.servicecontract.auth.dto.UpdateUserRequest;
 import com.fpt.servicecontract.auth.dto.UserDto;
 import com.fpt.servicecontract.auth.dto.UserInterface;
+import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +34,18 @@ public class UserController {
     {
         return ResponseEntity.ok(service.delete(id));
     }
-
+    @PostMapping("/register-for-user")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<User> register(
+        @RequestBody RegisterRequest request
+    ) throws AuthenticationException {
+        if (Role.ADMIN.equals(request.getRole())) {
+            log.warn("Admin is not created");
+            throw new AuthenticationException();
+        }
+        return ResponseEntity.ok(service.register(request));
+    }
     @PutMapping("/{id}")
-
     @Transactional(rollbackOn = Exception.class)
     @PreAuthorize("hasAuthority('PERMISSION_UPDATE_USER')")
     public ResponseEntity<UserDto> update(@PathVariable("id")String id, @RequestBody UpdateUserRequest user)

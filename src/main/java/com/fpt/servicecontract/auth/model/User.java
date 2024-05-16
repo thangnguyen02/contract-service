@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class User implements UserDetails {
     private String email;
 
     private String phone;
-
+    @JsonIgnore
     private String password;
 
     private String position;
@@ -64,6 +65,7 @@ public class User implements UserDetails {
 //  DELETE FROM `fpt_company`.`user_permissions` WHERE (`user_id` = '7802448b-ef4a-49a4-a358-d67ed7c510ba')
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
         simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.getRole()));
@@ -74,31 +76,32 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
-
+    @JsonIgnore
     @Override
     public String getUsername() {
         return email;
     }
-
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;
