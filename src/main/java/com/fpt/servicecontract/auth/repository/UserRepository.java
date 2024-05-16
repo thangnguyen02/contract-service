@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmailAndStatus(String email, String status);
 
     @Query(value = """
-            SELECT u.name, u.email, u.address,
+            SELECT u.id, u.name, u.email, u.address,
                 u.identification_number, u.status, u.department, u.phone, u.position   FROM users u where 
                 (lower(u.name) like lower(:name) or :name is null)
                 and (lower(u.email) like lower(:email) or :email is null)
