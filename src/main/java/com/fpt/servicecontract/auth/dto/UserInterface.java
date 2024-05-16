@@ -10,4 +10,5 @@ public interface UserInterface {
     String getPosition();
     String getDepartment();
     String getIdentificationNumber();
+    String getPermissions();
 }
