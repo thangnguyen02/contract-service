@@ -11,6 +11,7 @@ import com.fpt.servicecontract.auth.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AuthenticationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -35,17 +36,16 @@ public class UserController {
     }
     @PostMapping("/register-for-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> register(
+    public ResponseEntity<User> register(
         @RequestBody RegisterRequest request
-    ) {
+    ) throws AuthenticationException {
         if (Role.ADMIN.equals(request.getRole())) {
             log.warn("Admin is not created");
-            return ResponseEntity.ofNullable("Failed to created as role ADMIN");
+            throw new AuthenticationException();
         }
         return ResponseEntity.ok(service.register(request));
     }
     @PutMapping("/{id}")
-
     @Transactional(rollbackOn = Exception.class)
     @PreAuthorize("hasAuthority('PERMISSION_UPDATE_USER')")
     public ResponseEntity<UserDto> update(@PathVariable("id")String id, @RequestBody UpdateUserRequest user)

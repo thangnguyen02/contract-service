@@ -47,6 +47,7 @@ public class AuthenticationService {
     AuthenticationResponse authenticationResponse = new AuthenticationResponse();
     authenticationResponse.setAccessToken(jwtToken);
     authenticationResponse.setRefreshToken(refreshToken);
+    authenticationResponse.setUser(user);
     return authenticationResponse;
   }
 }

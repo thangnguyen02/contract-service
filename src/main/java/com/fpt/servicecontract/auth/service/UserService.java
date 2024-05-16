@@ -34,7 +34,7 @@ public class UserService {
         userRepository.save(user);
         return "Successfully";
     }
-    public String register(RegisterRequest request) {
+    public User register(RegisterRequest request) {
         var user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -45,7 +45,7 @@ public class UserService {
         user.setRole(request.getRole());
         user.setPermissions(request.getPermissions());
         userRepository.save(user);
-        return "Successfully";
+        return user;
     }
     @Transactional(rollbackOn = Exception.class)
     public UserDto update(String id, UpdateUserRequest userRequest) {
