@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmailAndStatus(String email, String status);
 
     @Query(value = """
-        SELECT u.name, u.email, u.address,
+        SELECT u.id,u.name, u.email, u.address,
                                   u.identification_number, u.status, u.department, u.phone, u.position,
                                   CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions
                            FROM users u
