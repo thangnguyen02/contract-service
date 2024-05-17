@@ -24,14 +24,19 @@ public class User implements UserDetails {
   @UuidGenerator
   private String id;
 
-  private String name;
-  @Column(unique = true)
+  @Column(unique=true)
+  private String userCode;
 
+  @Column(unique=true)
+  private String identificationNumber;
+
+  @Column(unique = true)
   private String email;
-  @Column(unique = true)
 
+  @Column(unique = true)
   private String phone;
 
+  private String name;
   @JsonIgnore
   private String password;
 
@@ -52,12 +57,6 @@ public class User implements UserDetails {
   private LocalDateTime createdDate;
 
   private LocalDateTime updatedDate;
-
-  @Column(unique=true)
-  private String userCode;
-
-  @Column(unique=true)
-  private String identificationNumber;
 
   private Date dob;
 
