@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,93 +20,101 @@ import java.util.*;
 public class User implements UserDetails {
 
 
-    @Id
-    @UuidGenerator
-    private String id;
+  @Id
+  @UuidGenerator
+  private String id;
 
-    private String name;
+  private String name;
+  @Column(unique = true)
 
-    private String email;
+  private String email;
+  @Column(unique = true)
 
-    private String phone;
-    @JsonIgnore
-    private String password;
+  private String phone;
 
-    private String position;
+  @JsonIgnore
+  private String password;
 
-    private String department;
+  private String position;
 
-    @Enumerated(EnumType.STRING)
-    private UserStatus status;
+  private String department;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+  @Enumerated(EnumType.STRING)
+  private UserStatus status;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private Set<Permission> permissions;
+  @Enumerated(EnumType.STRING)
+  private Role role;
 
-    private LocalDateTime createdDate;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @Enumerated(EnumType.STRING)
+  private Set<Permission> permissions;
 
-    private LocalDateTime updatedDate;
+  private LocalDateTime createdDate;
 
-    private String userCode;
+  private LocalDateTime updatedDate;
 
-    private String identificationNumber;
+  @Column(unique=true)
+  private String userCode;
 
-    private Date dob;
+  @Column(unique=true)
+  private String identificationNumber;
 
-    private boolean gender;
+  private Date dob;
 
-    private String address;
+  private boolean gender;
 
-    private String avatar;
+  private String address;
 
+  private String avatar;
 
 //  DELETE FROM `fpt_company`.`user_permissions` WHERE (`user_id` = '7802448b-ef4a-49a4-a358-d67ed7c510ba')
 
-    @Override
-    @JsonIgnore
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
-        simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.getRole()));
-        this.getPermissions().forEach(f -> {
-            simpleGrantedAuthorities.add(new SimpleGrantedAuthority(String.valueOf(f.getPermission())));
-        });
-        return simpleGrantedAuthorities;
-    }
+  @Override
+  @JsonIgnore
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
+    simpleGrantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + this.getRole()));
+    this.getPermissions().forEach(f -> {
+      simpleGrantedAuthorities.add(new SimpleGrantedAuthority(String.valueOf(f.getPermission())));
+    });
+    return simpleGrantedAuthorities;
+  }
 
-    @Override
-    @JsonIgnore
-    public String getPassword() {
-        return password;
-    }
+  @Override
+  @JsonIgnore
+  public String getPassword() {
+    return password;
+  }
 
-    @JsonIgnore
-    @Override
-    public String getUsername() {
-        return email;
-    }
-    @JsonIgnore
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-    @JsonIgnore
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-    @JsonIgnore
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-    @JsonIgnore
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+  @JsonIgnore
+  @Override
+  public String getUsername() {
+    return email;
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @JsonIgnore
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
 
 
 }
