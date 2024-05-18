@@ -29,7 +29,6 @@ public class UserController {
     private final UserService service;
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('PERMISSION_DELETE_USER')")
     public ResponseEntity<String> delete(@PathVariable("id")String id)
     {
         return ResponseEntity.ok(service.delete(id));
@@ -47,7 +46,6 @@ public class UserController {
     }
     @PutMapping("/{id}")
     @Transactional(rollbackOn = Exception.class)
-    @PreAuthorize("hasAuthority('PERMISSION_UPDATE_USER')")
     public ResponseEntity<UserDto> update(@PathVariable("id")String id, @RequestBody UpdateUserRequest user)
     {
         return ResponseEntity.ok(service.update(id, user));

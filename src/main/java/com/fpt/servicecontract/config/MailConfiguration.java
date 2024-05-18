@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,7 +10,8 @@ import java.util.Properties;
 
 @Configuration
 public class MailConfiguration {
-
+    @Value("${spring.mail.password}")
+    private String passEmail;
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -17,7 +19,7 @@ public class MailConfiguration {
         mailSender.setPort(587);
 
         mailSender.setUsername("contractsoftsep490@gmail.com");
-        mailSender.setPassword("scyp bpee xwog sqvl");
+        mailSender.setPassword(passEmail);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
