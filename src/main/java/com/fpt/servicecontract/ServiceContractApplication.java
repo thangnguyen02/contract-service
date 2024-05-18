@@ -46,7 +46,7 @@ public class ServiceContractApplication {
 			user.setPhone("123456789");
 			user.setPermissions(Set.of(Permission.SALE, Permission.OFFICE_STAFF));
 			user.setPassword(passwordEncoder.encode("user"));
-			adminUser.setStatus(UserStatus.ACTIVE);
+			user.setStatus(UserStatus.ACTIVE);
 			user.setRole(Role.USER);
 			userRepository.save(user);
 		}

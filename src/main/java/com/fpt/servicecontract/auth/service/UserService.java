@@ -36,6 +36,7 @@ public class UserService {
     }
     public User register(RegisterRequest request) {
         var user = new User();
+        user.setStatus(UserStatus.ACTIVE);
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
