@@ -13,4 +13,5 @@ public interface UserInterface {
     String getIdentificationNumber();
     String getId();
     String getPermissions();
+    String getAvatar();
 }

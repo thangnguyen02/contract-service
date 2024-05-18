@@ -9,6 +9,7 @@ import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.auth.repository.UserRepository;
+import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.utils.DataUtil;
 import com.fpt.servicecontract.utils.QueryUtils;
 import jakarta.transaction.Transactional;
@@ -17,7 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -25,6 +28,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
 
     @Transactional(rollbackOn = Exception.class)
     public String delete(String id) {
@@ -49,7 +53,7 @@ public class UserService {
         return user;
     }
     @Transactional(rollbackOn = Exception.class)
-    public UserDto update(String id, UpdateUserRequest userRequest) {
+    public UserDto update(String id, UpdateUserRequest userRequest, MultipartFile file) throws IOException {
         var user = userRepository.findById(id).orElseThrow();
 
         user.setName(userRequest.getName());
@@ -58,6 +62,9 @@ public class UserService {
         user.setDepartment(user.getDepartment());
         user.setRole(userRequest.getRole());
         user.setPosition(userRequest.getPosition());
+        if(file != null) {
+            user.setAvatar(cloudinaryService.uploadImage(file));
+            }
         user.setPermissions(userRequest.getPermissions());
         userRepository.save(user);
         return UserDto.builder()

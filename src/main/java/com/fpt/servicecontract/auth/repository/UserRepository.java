@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = """
         SELECT u.id,u.name, u.email, u.address,
-                                  u.identification_number, u.status, u.department, u.phone, u.position,
+                                  u.identification_number, u.status, u.department, u.phone, u.position, u.avatar,
                                   CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions
                            FROM users u
                            JOIN user_permissions up ON u.id = up.user_id where
@@ -38,7 +38,7 @@ public interface UserRepository extends JpaRepository<User, String> {
                                            and (lower(u.department) like lower(:department) or :department is null)
                                            and (lower(u.phone) like lower(:phoneNumber) or :department is null)
                                            and (lower(u.position) like lower(:position) or :department is null)
-                                           and (lower(u.role) like lower(:role) or :department is null)
+                                           and (lower(u.role) like lower(:role) or :role is null)
                            GROUP BY u.id, u.name, u.email, u.address,
                                     u.identification_number, u.status, u.department, u.phone, u.position
                            
