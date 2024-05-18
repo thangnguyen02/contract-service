@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 public enum Role {
     USER("USER"),
-    MANAGER("MANAGER"),
     ADMIN("ADMIN");
 
     private final String role;

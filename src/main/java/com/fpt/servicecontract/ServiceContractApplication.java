@@ -44,7 +44,7 @@ public class ServiceContractApplication {
 			user.setDepartment("IT");
 			user.setPosition("Dev");
 			user.setPhone("123456789");
-			user.setPermissions(Set.of(Permission.MANAGE_CONTRACT, Permission.CREATE_CONTRACT));
+			user.setPermissions(Set.of(Permission.SALE, Permission.OFFICE_STAFF));
 			user.setPassword(passwordEncoder.encode("user"));
 			adminUser.setStatus(UserStatus.ACTIVE);
 			user.setRole(Role.USER);
