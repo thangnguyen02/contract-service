@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +48,7 @@ public class PdfController {
 
   @GetMapping("/generate")
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
-  public String generatePdfandPushCloud(HttpServletResponse response, @RequestParam String title,
+  public String generatePdfandPushCloud(@RequestParam String title,
       @RequestParam String content) throws Exception {
     Context context = new Context();
     context.setVariable("title", title);
@@ -57,28 +58,7 @@ public class PdfController {
     String html = pdfUtils.templateEngine().process("templates/test.html", context);
     File file = pdfUtils.generatePdf(html, "file_hihi");
     // push to cloudinary
-    return cloudinaryService.uploadPdf(file);
-
-//      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        FileInputStream fis = new FileInputStream(file);
-//        byte[] buffer = new byte[1024];
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        int len;
-//        while ((len = fis.read(buffer)) != -1) {
-//            baos.write(buffer, 0, len);
-//        }
-//        fis.close();
-//        response.setContentType("application/pdf");
-//        response.setHeader("Content-Disposition", "attachment; filename=\"generated-pdf.pdf\"");
-//
-//        // Write PDF to response
-//        response.getOutputStream().write(baos.toByteArray());
-//        response.getOutputStream().flush();
+    return cloudinaryService.uploadFile(file);
   }
 
-  @PostMapping(value = "/download", produces = MediaType.APPLICATION_PDF_VALUE)
-  public @ResponseBody byte[] downloadFile(@RequestBody String url) throws IOException {
-    InputStream in = new URL(url).openStream();
-    return IOUtils.toByteArray(in);
-  }
 }
