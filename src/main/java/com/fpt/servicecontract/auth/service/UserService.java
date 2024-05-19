@@ -83,7 +83,7 @@ public class UserService {
                 QueryUtils.appendPercent(searchUserRequest.getDepartment()),
                 QueryUtils.appendPercent(searchUserRequest.getPhoneNumber()),
                 QueryUtils.appendPercent(searchUserRequest.getPosition()),
-                Role.USER,
+                Role.USER.getRole(),
                 pageable);
     }
 

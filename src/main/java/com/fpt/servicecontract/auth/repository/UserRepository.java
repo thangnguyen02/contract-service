@@ -52,6 +52,6 @@ public interface UserRepository extends JpaRepository<User, String> {
                                @Param("department") String department,
                                @Param("phoneNumber") String phoneNumber,
                                @Param("position") String position,
-                               @Param("role") Role role,
+                               @Param("role") String role,
                                Pageable pageable);
 }
