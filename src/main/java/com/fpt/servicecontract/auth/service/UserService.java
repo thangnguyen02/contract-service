@@ -53,8 +53,9 @@ public class UserService {
         return user;
     }
     @Transactional(rollbackOn = Exception.class)
-    public UserDto update(String id, UpdateUserRequest userRequest, MultipartFile file) throws IOException {
+    public UserDto update(String id, UpdateUserRequest userRequest, MultipartFile file) throws Exception {
         var user = userRepository.findById(id).orElseThrow();
+
 
         user.setName(userRequest.getName());
         user.setPassword(userRequest.getPassword());

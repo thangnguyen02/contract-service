@@ -56,8 +56,8 @@ public class UserController {
     {
         try {
             return ResponseEntity.ok(service.update(id, user, file));
-        } catch (IOException e) {
-            throw new RuntimeException("Data invalid");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
