@@ -6,9 +6,11 @@ import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import net.sourceforge.tess4j.Tesseract;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -50,5 +52,12 @@ public class ServiceContractApplication {
 			user.setRole(Role.USER);
 			userRepository.save(user);
 		}
+	}
+
+	@Bean
+	Tesseract getTesseract(){
+		Tesseract tesseract = new Tesseract();
+		tesseract.setDatapath("./tessdata");
+		return tesseract;
 	}
 }
