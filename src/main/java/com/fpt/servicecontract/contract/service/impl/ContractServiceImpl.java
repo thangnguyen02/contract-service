@@ -13,7 +13,7 @@ import java.util.List;
 public class ContractServiceImpl implements ContractService {
 
     @Override
-    public String createOldContract(String content, List<MultipartFile> images) throws  IOException {
-        return null;
+    public String createOldContract(String content, List<MultipartFile> images) {
+        return "ok";
     }
 }

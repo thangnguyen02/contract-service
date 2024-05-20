@@ -50,7 +50,7 @@ public class ContractController {
 
   @PostMapping("/create-old-contract")
   public ResponseEntity<String> uploadImages(@RequestParam("content") String content,
-                                             @RequestParam("images") List<MultipartFile> images) throws IOException {
+                                             @RequestParam("images") List<MultipartFile> images)   {
     return ResponseEntity.ok(contractService.createOldContract(content, images));
   }
 }
