@@ -10,6 +10,8 @@ import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
+import com.fpt.servicecontract.utils.BaseResponse;
+import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.DataUtil;
 import com.fpt.servicecontract.utils.QueryUtils;
 import jakarta.transaction.Transactional;
@@ -40,7 +42,7 @@ public class UserService {
         userRepository.save(user);
         return "Successfully";
     }
-    public User register(RegisterRequest request) throws Exception {
+    public BaseResponse register(RegisterRequest request) throws Exception {
 
         var user = new User();
         user.setStatus(UserStatus.ACTIVE);
@@ -54,10 +56,11 @@ public class UserService {
         user.setPermissions(request.getPermissions());
         try{
             userRepository.save(user);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user);
         } catch (Exception e) {
-            throw new Exception("Error while saving user");
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Create failed", true, null);
         }
-        return user;
+
     }
     @Transactional(rollbackOn = Exception.class)
     public UserDto update(String id, UpdateUserRequest userRequest, MultipartFile file) throws Exception {
