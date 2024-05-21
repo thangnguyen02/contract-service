@@ -1,17 +1,16 @@
 package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.config.MailService;
+import com.fpt.servicecontract.contract.dto.ContractDto;
+import com.fpt.servicecontract.contract.dto.SearchContractRequest;
 import com.fpt.servicecontract.contract.service.ContractService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -52,5 +51,20 @@ public class ContractController {
   public ResponseEntity<String> uploadImages(@RequestParam("content") String content,
                                              @RequestParam("images") List<MultipartFile> images)   {
     return ResponseEntity.ok(contractService.createOldContract(content, images));
+  }
+
+  @PostMapping("/search")
+  public ResponseEntity<Page<ContractDto>> search(@RequestBody SearchContractRequest request) {
+    return ResponseEntity.ok(contractService.searchContract(request));
+  }
+
+  @PostMapping("/create")
+  public ResponseEntity<ContractDto> createContract(@RequestBody ContractDto contractDto) {
+    return null;
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<ContractDto> updateContract(@PathVariable String id, @RequestBody ContractDto contractDto) {
+    return null;
   }
 }

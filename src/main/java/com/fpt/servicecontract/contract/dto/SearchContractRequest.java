@@ -1,36 +1,29 @@
-package com.fpt.servicecontract.contract.model;
+package com.fpt.servicecontract.contract.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table
-@Getter
-@Setter
-public class Contract {
-
-    @Id
-    @UuidGenerator
-    private String id;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class SearchContractRequest {
     private String contractName;
-
     private String contractNumber;
     LocalDateTime contractDate;
     LocalDateTime contractStartDate;
     LocalDateTime contractEndDate;
     private String contractTypeId;
     private String statusId;
-    private String partyAId;
-    private String partyBId;
+    private String partyAName;
+    private String partyBName;
     private String createdBy;
     private String description;
     private String content;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+    private int page;
+    private int size;
 }

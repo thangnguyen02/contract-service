@@ -20,8 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +40,8 @@ public class UserService {
         userRepository.save(user);
         return "Successfully";
     }
-    public User register(RegisterRequest request) {
+    public User register(RegisterRequest request) throws Exception {
+
         var user = new User();
         user.setStatus(UserStatus.ACTIVE);
         user.setName(request.getName());
@@ -49,13 +52,16 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
         user.setPermissions(request.getPermissions());
-        userRepository.save(user);
+        try{
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new Exception("Error while saving user");
+        }
         return user;
     }
     @Transactional(rollbackOn = Exception.class)
     public UserDto update(String id, UpdateUserRequest userRequest, MultipartFile file) throws Exception {
         var user = userRepository.findById(id).orElseThrow();
-
 
         user.setName(userRequest.getName());
         user.setPassword(userRequest.getPassword());

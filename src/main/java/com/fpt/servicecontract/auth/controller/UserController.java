@@ -39,13 +39,14 @@ public class UserController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<User> register(
         @RequestBody RegisterRequest request
-    ) throws AuthenticationException {
+    ) throws Exception {
         if (Role.ADMIN.equals(request.getRole())) {
             log.warn("Admin is not created");
             throw new AuthenticationException();
         }
         return ResponseEntity.ok(service.register(request));
     }
+
     @PutMapping("/{id}")
     @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<UserDto> update(
