@@ -21,9 +21,9 @@ public class Contract {
     private String contractName;
 
     private String contractNumber;
-    LocalDateTime contractDate;
-    LocalDateTime contractStartDate;
-    LocalDateTime contractEndDate;
+    private LocalDateTime contractDate;
+    private LocalDateTime contractStartDate;
+    private LocalDateTime contractEndDate;
     private String contractTypeId;
     private String statusId;
     private String partyAId;
