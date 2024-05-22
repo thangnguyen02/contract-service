@@ -6,12 +6,17 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
+
 @Entity
 @Table
 @Getter
 @Setter
 public class ContractStatus {
-    @Id
-    @UuidGenerator
-    private String id;
+
+  @Id
+  @UuidGenerator
+  private String id;
+  private String contractId;
+  private String status;
+  private String partyId; //
 }

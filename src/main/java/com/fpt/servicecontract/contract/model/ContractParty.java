@@ -1,16 +1,12 @@
 package com.fpt.servicecontract.contract.model;
 
-import com.fpt.servicecontract.auth.model.Permission;
-import com.fpt.servicecontract.auth.model.Role;
-import com.fpt.servicecontract.auth.model.UserStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Set;
 
 @Entity
 @Table
@@ -24,6 +20,8 @@ public class ContractParty {
     private String name;
 
     private String phone;
+
+    private String email;
 
     private String position;
 
