@@ -62,4 +62,9 @@ public class UserController {
     public ResponseEntity<Page<UserInterface>> getAll(@ModelAttribute SearchUserRequest  userRequest, Pageable pageable) {
         return ResponseEntity.ok(service.search(userRequest, pageable));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse> findById(@PathVariable("id")String id) {
+        return ResponseEntity.ok(service.getUserById(id));
+    }
 }

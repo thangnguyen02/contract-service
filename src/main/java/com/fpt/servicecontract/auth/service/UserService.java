@@ -42,6 +42,8 @@ public class UserService {
         userRepository.save(user);
         return "Successfully";
     }
+
+    @Transactional(rollbackOn = Exception.class)
     public BaseResponse register(RegisterRequest request) throws Exception {
 
         var user = new User();
@@ -97,4 +99,11 @@ public class UserService {
                 pageable);
     }
 
+    public BaseResponse getUserById(String id) {
+        var user = userRepository.findById(id);
+        if(user.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "User not found", true, null);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Get Successful", true, user);
+    }
 }
