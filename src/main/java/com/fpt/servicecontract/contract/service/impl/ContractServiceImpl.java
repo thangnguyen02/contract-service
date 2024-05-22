@@ -45,9 +45,12 @@ public class ContractServiceImpl implements ContractService {
         );
 
         List<ContractDto> contractDtos = contracts.toList().stream().map(item -> ContractDto.builder()
-
+                .content(item.getContent())
+                .contractName(item.getContractName())
                 .build()).toList();
-        return null;
+
+        Page<ContractDto> page = new PageImpl<>(contractDtos, pageable, contracts.getTotalElements());
+        return page;
     }
 
     @Override

@@ -17,4 +17,5 @@ public interface ContractInterface {
      String getContent();
      LocalDateTime getCreatedDate();
      LocalDateTime getUpdatedDate();
+     String getId();
 }
