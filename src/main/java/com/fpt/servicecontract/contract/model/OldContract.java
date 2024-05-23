@@ -24,13 +24,12 @@ public class OldContract {
   private String id;
   private String contractName; // required
 
-  @ManyToOne
-  @JoinColumn(name = "created_by", referencedColumnName = "email")
-  private User createdBy;
+  private String createdBy;
 
   @Column(columnDefinition = "NVARCHAR(MAX)")
   private String content;
 
+  private String status;
   private String file;
   private LocalDateTime createdDate;
   private LocalDateTime contractSignDate;

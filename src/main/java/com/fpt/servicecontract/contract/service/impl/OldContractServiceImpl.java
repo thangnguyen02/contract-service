@@ -42,10 +42,8 @@ public class OldContractServiceImpl implements OldContractService {
     @Override
     public BaseResponse create(String token, CreateUpdateOldContract oldContractDto, MultipartFile[] images) {
         OldContract contract = new OldContract();
-        User createdBy =  new User();
         String email = jwtService.extractUsername(token);
-        createdBy.setEmail(email);
-        contract.setCreatedBy(createdBy);
+        contract.setCreatedBy(email);
         contract.setContractName(contract.getContractName());
         contract.setContractEndDate(contract.getContractEndDate());
         contract.setContractStartDate(contract.getContractStartDate());
@@ -86,6 +84,7 @@ public class OldContractServiceImpl implements OldContractService {
 
     @Override
     public String delete(String contractId) {
+        var oldContract = oldContractRepository.findById(contractId).orElseThrow();
         return "";
     }
 }
