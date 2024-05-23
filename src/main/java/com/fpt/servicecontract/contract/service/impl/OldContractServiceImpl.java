@@ -43,7 +43,7 @@ public class OldContractServiceImpl implements OldContractService {
     public BaseResponse create(String token, CreateUpdateOldContract oldContractDto, MultipartFile[] images) {
         OldContract contract = new OldContract();
         User createdBy =  new User();
-        String email = jwtService.extractUsername(token);
+        String email = jwtService.extractUsername(token.substring(7));
         createdBy.setEmail(email);
         contract.setCreatedBy(createdBy);
         contract.setContractName(contract.getContractName());
