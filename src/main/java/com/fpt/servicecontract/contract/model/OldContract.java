@@ -28,7 +28,8 @@ public class OldContract {
 
   private String content;
 
-  private String status;
+  private Boolean isDeleted = false;
+
   private String file;
   private LocalDateTime createdDate;
   private LocalDateTime contractSignDate;

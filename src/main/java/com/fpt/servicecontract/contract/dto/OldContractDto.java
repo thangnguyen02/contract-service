@@ -17,7 +17,7 @@ public class OldContractDto {
     private String contractName;
     private String createdBy;
     private String content;
-    private File file;
+    private String file;
     private LocalDateTime contractSignDate;
     private LocalDateTime contractStartDate;
     private LocalDateTime contractEndDate;
