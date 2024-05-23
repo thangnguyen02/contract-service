@@ -4,24 +4,29 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <title>Title</title>
+    <title>Contract Images</title>
 
-    <style th:inline="text">
+    <style>
         @font-face {
             font-family: 'DejaVuSans';
             src: url('fonts/DejaVuSans.ttf') format('truetype');
         }
+
         body {
             font-family: 'DejaVuSans', sans-serif;
+        }
+
+        .contract-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
 <body>
-<div class="contract">
-        <div th:each="image : ${images}">
-            <img th:src="${image}" alt="Image" />
-        </div>
+<div th:each="image : ${images}">
+    <img th:src="${image}" alt="Contract Image" class="contract-image"/>
 </div>
 </body>
 </html>

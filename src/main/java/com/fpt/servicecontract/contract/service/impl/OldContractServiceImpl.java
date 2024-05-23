@@ -72,7 +72,6 @@ public class OldContractServiceImpl implements OldContractService {
         contract.setContractEndDate(contract.getContractEndDate());
         contract.setContractStartDate(contract.getContractStartDate());
         contract.setContractSignDate(contract.getContractSignDate());
-
         try {
             Context context = new Context();
             List<String> imageList = new ArrayList<>();
