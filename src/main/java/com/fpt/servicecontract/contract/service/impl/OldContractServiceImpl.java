@@ -1,8 +1,6 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.config.JwtService;
-import com.fpt.servicecontract.contract.controller.PdfController;
 import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
 import com.fpt.servicecontract.contract.dto.OldContractDto;
 import com.fpt.servicecontract.contract.model.OldContract;
@@ -12,9 +10,11 @@ import com.fpt.servicecontract.contract.service.OldContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,8 +35,30 @@ public class OldContractServiceImpl implements OldContractService {
     private final JwtService jwtService;
 
     @Override
-    public Page<OldContract> getContracts(Pageable pageable) {
-        return oldContractRepository.findAll(pageable);
+    public BaseResponse getContracts(int page, int size) {
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+
+        Page<OldContract> oldContracts = oldContractRepository.findAll(pageable);
+
+        if (oldContracts.getTotalElements() == 0) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Not have any contract present", false, null);
+        }
+
+        List<OldContractDto> oldContractDtos = oldContracts.get().map(
+                item -> OldContractDto.builder()
+                        .id(item.getId())
+                        .contractName(item.getContractName())
+                        .createdBy(item.getCreatedBy())
+                        .content(item.getContent())
+                        .file(item.getFile())
+                        .contractSignDate(item.getContractSignDate())
+                        .contractEndDate(item.getContractEndDate())
+                        .contractStartDate(item.getContractStartDate())
+                        .build()
+        ).toList();
+
+        Page<OldContractDto> pageObject = new PageImpl<>(oldContractDtos, pageable, oldContracts.getTotalElements());
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, pageObject);
     }
 
     @Override
@@ -65,7 +87,7 @@ public class OldContractServiceImpl implements OldContractService {
             contract.setFile(cloudinaryService.uploadPdf(file));
 
         } catch (IOException e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Upload Contract Failed", false, null);
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Upload Contract Failed", true, null);
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Cann't create file from images", false, e);
         }
@@ -83,8 +105,15 @@ public class OldContractServiceImpl implements OldContractService {
     }
 
     @Override
-    public String delete(String contractId) {
-        var oldContract = oldContractRepository.findById(contractId).orElseThrow();
-        return "";
+    @Transactional(rollbackOn = Exception.class)
+    public BaseResponse delete(String contractId) {
+        var oldContract = oldContractRepository.findById(contractId);
+        if (oldContract.isPresent()) {
+            OldContract oldCon = oldContract.get();
+            oldCon.setIsDeleted(true);
+            oldContractRepository.save(oldCon);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successful", true, oldCon.getId());
+        }
+        return new BaseResponse(Constants.ResponseCode.FAILURE, "Delete Failed", false, null);
     }
 }

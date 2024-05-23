@@ -29,7 +29,8 @@ public class OldContract {
   @Column(columnDefinition = "NVARCHAR(MAX)")
   private String content;
 
-  private String status;
+  private Boolean isDeleted = false;
+
   private String file;
   private LocalDateTime createdDate;
   private LocalDateTime contractSignDate;

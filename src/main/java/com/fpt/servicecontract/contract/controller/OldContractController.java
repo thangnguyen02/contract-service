@@ -10,9 +10,8 @@ import com.fpt.servicecontract.contract.service.OldContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,10 +23,10 @@ public class OldContractController {
     private final MailService mailService;
     private final OldContractService oldContractService;
 
-    @PostMapping("/search")
-    public ResponseEntity<Page<OldContract>> search(@RequestBody SearchOldContractRequest request) {
-        Pageable pageable = Pageable.ofSize(request.getSize()).withPage(request.getPage());
-        return ResponseEntity.ok(oldContractService.getContracts(pageable));
+    @GetMapping()
+    public BaseResponse getAll(@RequestParam("page") int page, @RequestParam("size") int size) {
+
+        return oldContractService.getContracts(page, size);
     }
 
     @PostMapping()
@@ -38,5 +37,13 @@ public class OldContractController {
             )
     {
           return oldContractService.create(bearerToken, contractDto, images);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public BaseResponse delete(
+            @PathVariable("id") String id
+    ) {
+        return oldContractService.delete(id);
     }
 }
