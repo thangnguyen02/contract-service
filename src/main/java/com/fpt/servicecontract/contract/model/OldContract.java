@@ -1,8 +1,7 @@
 package com.fpt.servicecontract.contract.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fpt.servicecontract.auth.model.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,8 +23,14 @@ public class OldContract {
   @UuidGenerator
   private String id;
   private String contractName; // required
-  private String createdBy;
+
+  @ManyToOne
+  @JoinColumn(name = "created_by", referencedColumnName = "email")
+  private User createdBy;
+
+  @Column(columnDefinition = "NVARCHAR(MAX)")
   private String content;
+
   private String file;
   private LocalDateTime createdDate;
   private LocalDateTime contractSignDate;

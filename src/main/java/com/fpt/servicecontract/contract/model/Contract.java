@@ -1,9 +1,7 @@
 package com.fpt.servicecontract.contract.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fpt.servicecontract.auth.model.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
@@ -26,7 +24,10 @@ public class Contract {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String term;
     private String file;
-    private String createdBy; // uuid user
+
+    @ManyToOne
+    @JoinColumn(name = "created_by", referencedColumnName = "id")
+    private User createdBy;
     private LocalDateTime contractSignDate;
     private LocalDateTime contractStartDate;
     private LocalDateTime contractEndDate;
