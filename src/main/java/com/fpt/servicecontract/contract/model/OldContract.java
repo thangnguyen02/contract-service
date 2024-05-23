@@ -26,7 +26,6 @@ public class OldContract {
 
   private String createdBy;
 
-  @Column(columnDefinition = "NVARCHAR(MAX)")
   private String content;
 
   private String status;

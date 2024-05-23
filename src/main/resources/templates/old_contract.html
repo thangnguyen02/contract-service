@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Title</title>
+
+    <style th:inline="text">
+        @font-face {
+            font-family: 'DejaVuSans';
+            src: url('fonts/DejaVuSans.ttf') format('truetype');
+        }
+        body {
+            font-family: 'DejaVuSans', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+<div class="contract">
+        <div th:each="image : ${images}">
+            <img th:src="${image}" alt="Image" />
+        </div>
+</div>
+</body>
+</html>
