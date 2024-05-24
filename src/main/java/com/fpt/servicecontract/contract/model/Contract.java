@@ -21,13 +21,10 @@ public class Contract {
     private String partyAId; //required
     private String partyBId;//required
     private String description;
-    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String term;
     private String file;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by", referencedColumnName = "id")
-    private User createdBy;
+    private String createdBy;
     private LocalDateTime contractSignDate;
     private LocalDateTime contractStartDate;
     private LocalDateTime contractEndDate;

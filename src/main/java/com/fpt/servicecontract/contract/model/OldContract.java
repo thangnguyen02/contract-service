@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Entity
-@Table
+@Table()
 @Getter
 @Setter
 public class OldContract {
@@ -26,7 +24,6 @@ public class OldContract {
 
   private String createdBy;
 
-  @Column(columnDefinition = "NVARCHAR(MAX)")
   private String content;
 
   private Boolean isDeleted = false;
