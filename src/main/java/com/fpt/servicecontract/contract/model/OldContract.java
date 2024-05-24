@@ -1,6 +1,5 @@
 package com.fpt.servicecontract.contract.model;
 
-import com.fpt.servicecontract.auth.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,13 +22,10 @@ public class OldContract {
   @UuidGenerator
   private String id;
   private String contractName; // required
-
   private String createdBy;
-
+  @Column(name="content", columnDefinition="LONGTEXT")
   private String content;
-
   private Boolean isDeleted = false;
-
   private String file;
   private LocalDateTime createdDate;
   private LocalDateTime contractSignDate;

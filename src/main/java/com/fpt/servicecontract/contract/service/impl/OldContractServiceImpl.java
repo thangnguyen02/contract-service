@@ -68,10 +68,11 @@ public class OldContractServiceImpl implements OldContractService {
         OldContract contract = new OldContract();
         String email = jwtService.extractUsername(token.substring(7));
         contract.setCreatedBy(email);
-        contract.setContractName(contract.getContractName());
-        contract.setContractEndDate(contract.getContractEndDate());
-        contract.setContractStartDate(contract.getContractStartDate());
-        contract.setContractSignDate(contract.getContractSignDate());
+        contract.setContractName(oldContractDto.getContractName());
+        contract.setContractEndDate(oldContractDto.getContractEndDate());
+        contract.setContractStartDate(oldContractDto.getContractStartDate());
+        contract.setContractSignDate(oldContractDto.getContractSignDate());
+        contract.setContent(oldContractDto.getContent());
         try {
             Context context = new Context();
             List<String> imageList = new ArrayList<>();

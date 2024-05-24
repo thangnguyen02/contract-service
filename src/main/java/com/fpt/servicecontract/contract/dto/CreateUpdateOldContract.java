@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class CreateUpdateOldContract {
+    private String contractName;
     private String content;
     private LocalDateTime contractSignDate;
     private LocalDateTime contractStartDate;
