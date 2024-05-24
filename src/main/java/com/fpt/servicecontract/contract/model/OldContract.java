@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table()
+@Table
 @Getter
 @Setter
 public class OldContract {
@@ -29,4 +29,5 @@ public class OldContract {
   private LocalDateTime contractSignDate;
   private LocalDateTime contractStartDate;
   private LocalDateTime contractEndDate;
+  private String updatedBy;
 }

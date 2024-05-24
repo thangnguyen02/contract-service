@@ -23,7 +23,7 @@ public class Contract {
     private String description;
     private String term;
     private String file;
-
+    @Column(name="content", columnDefinition="LONGTEXT")
     private String createdBy;
     private LocalDateTime contractSignDate;
     private LocalDateTime contractStartDate;

@@ -23,6 +23,7 @@ import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -73,6 +74,7 @@ public class OldContractServiceImpl implements OldContractService {
         contract.setContractStartDate(oldContractDto.getContractStartDate());
         contract.setContractSignDate(oldContractDto.getContractSignDate());
         contract.setContent(oldContractDto.getContent());
+        contract.setCreatedDate(LocalDateTime.now());
         try {
             Context context = new Context();
             List<String> imageList = new ArrayList<>();
@@ -98,6 +100,7 @@ public class OldContractServiceImpl implements OldContractService {
                     .id(contract.getId())
                     .contractName(contract.getContractName())
                     .createdBy(email)
+                    .file(contract.getFile())
                     .build());
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Create Failed", false, null);
