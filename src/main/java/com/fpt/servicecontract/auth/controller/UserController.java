@@ -3,17 +3,13 @@ package com.fpt.servicecontract.auth.controller;
 import com.fpt.servicecontract.auth.dto.RegisterRequest;
 import com.fpt.servicecontract.auth.dto.SearchUserRequest;
 import com.fpt.servicecontract.auth.dto.UpdateUserRequest;
-import com.fpt.servicecontract.auth.dto.UserDto;
-import com.fpt.servicecontract.auth.dto.UserInterface;
 import com.fpt.servicecontract.auth.model.Role;
-import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.service.UserService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.auth.AuthenticationException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +25,10 @@ public class UserController {
     private final UserService service;
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id")String id)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public BaseResponse delete(@PathVariable("id")String id)
     {
-        return ResponseEntity.ok(service.delete(id));
+        return service.delete(id);
     }
     @PostMapping("/register-for-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -45,26 +42,22 @@ public class UserController {
 
     @PutMapping("/{id}")
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<UserDto> update(
+    public BaseResponse update(
             @PathVariable("id") String id,
             @ModelAttribute UpdateUserRequest user,
             @RequestParam(value = "file", required = false) MultipartFile file
             )
     {
-        try {
-            return ResponseEntity.ok(service.update(id, user, file));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            return service.update(id, user, file);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<UserInterface>> getAll(@ModelAttribute SearchUserRequest  userRequest, Pageable pageable) {
-        return ResponseEntity.ok(service.search(userRequest, pageable));
+    public BaseResponse getAll(@ModelAttribute SearchUserRequest  userRequest, Pageable pageable) {
+        return service.search(userRequest, pageable);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse> findById(@PathVariable("id")String id) {
-        return ResponseEntity.ok(service.getUserById(id));
+    public BaseResponse findById(@PathVariable("id")String id) {
+        return service.getUserById(id);
     }
 }

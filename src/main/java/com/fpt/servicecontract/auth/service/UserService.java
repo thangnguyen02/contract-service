@@ -35,12 +35,14 @@ public class UserService {
     private final CloudinaryService cloudinaryService;
 
     @Transactional(rollbackOn = Exception.class)
-    public String delete(String id) {
-        var user = userRepository.findById(id).orElseThrow();
-
-        user.setStatus(UserStatus.INACTIVE);
-        userRepository.save(user);
-        return "Successfully";
+    public BaseResponse delete(String id) {
+        var user = userRepository.findById(id);
+        if(user.isPresent()) {
+            user.get().setStatus(UserStatus.INACTIVE);
+            userRepository.save(user.get());
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successful", true, user);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Unsuccessful", true, user);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -65,7 +67,7 @@ public class UserService {
 
     }
     @Transactional(rollbackOn = Exception.class)
-    public UserDto update(String id, UpdateUserRequest userRequest, MultipartFile file) throws Exception {
+    public BaseResponse update(String id, UpdateUserRequest userRequest, MultipartFile file) {
         var user = userRepository.findById(id).orElseThrow();
 
         user.setName(userRequest.getName());
@@ -75,18 +77,30 @@ public class UserService {
         user.setRole(userRequest.getRole());
         user.setPosition(userRequest.getPosition());
         if(file != null) {
-            user.setAvatar(cloudinaryService.uploadImage(file));
+            try {
+                user.setAvatar(cloudinaryService.uploadImage(file));
+            } catch (IOException e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, "Upload file false", true, null);
             }
+        }
         user.setPermissions(userRequest.getPermissions());
-        userRepository.save(user);
-        return UserDto.builder()
-                .name(user.getName())
-                .phone(user.getPhone())
-                .build();
+
+
+        try {
+            userRepository.save(user);
+            UserDto userDto = UserDto.builder()
+                    .name(user.getName())
+                    .phone(user.getPhone())
+                    .build();
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Update Successful", true, userDto);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Update failed", true, null);
+        }
+
     }
 
-    public Page<UserInterface> search(SearchUserRequest searchUserRequest, Pageable pageable) {
-        return userRepository.search(
+    public BaseResponse search(SearchUserRequest searchUserRequest, Pageable pageable) {
+        Page<UserInterface> result =  userRepository.search(
                 QueryUtils.appendPercent(searchUserRequest.getName()),
                 QueryUtils.appendPercent(searchUserRequest.getEmail()),
                 QueryUtils.appendPercent(searchUserRequest.getAddress()),
@@ -97,6 +111,10 @@ public class UserService {
                 QueryUtils.appendPercent(searchUserRequest.getPosition()),
                 Role.USER.getRole(),
                 pageable);
+        if(result.getTotalElements() > 0) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, result);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, null);
     }
 
     public BaseResponse getUserById(String id) {
