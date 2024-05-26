@@ -2,7 +2,6 @@ package com.fpt.servicecontract.contract.service;
 
 import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
 import com.fpt.servicecontract.utils.BaseResponse;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface OldContractService {
