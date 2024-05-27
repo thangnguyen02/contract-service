@@ -6,6 +6,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table
 @Getter
@@ -14,4 +17,9 @@ public class ContractStatus {
     @Id
     @UuidGenerator
     private String id;
+    private String sender;//id uuid
+    private String receiver;// id uuid
+    private String contractId;
+    private LocalDateTime sendDate;
+
 }
