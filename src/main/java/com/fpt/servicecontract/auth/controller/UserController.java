@@ -32,10 +32,9 @@ public class UserController {
     }
     @PostMapping("/register-for-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<BaseResponse> register(@RequestBody RegisterRequest request) throws Exception {
+    public ResponseEntity<BaseResponse> register(@RequestBody RegisterRequest request)  {
         if (Role.ADMIN.equals(request.getRole())) {
             log.warn("Admin is not created");
-            throw new AuthenticationException();
         }
         return ResponseEntity.ok(service.register(request));
     }
