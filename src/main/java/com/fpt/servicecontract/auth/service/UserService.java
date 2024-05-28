@@ -10,10 +10,7 @@ import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
-import com.fpt.servicecontract.utils.BaseResponse;
-import com.fpt.servicecontract.utils.Constants;
-import com.fpt.servicecontract.utils.DataUtil;
-import com.fpt.servicecontract.utils.QueryUtils;
+import com.fpt.servicecontract.utils.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -82,7 +79,7 @@ public class UserService {
         user.setAddress(userRequest.getAddress() == null ? user.getAddress() : userRequest.getAddress());
         user.setGender(userRequest.getGender() == null ? user.isGender() : userRequest.getGender());
         user.setPhone(userRequest.getPhone() == null ? user.getPhone() : userRequest.getPhone());
-        user.setDob(userRequest.getDob() == null ? user.getDob() : userRequest.getDob());
+        user.setDob(userRequest.getDob() == null ? user.getDob() : DateUltil.stringToDate(userRequest.getDob(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         if(file != null) {
             try {
                 user.setAvatar(cloudinaryService.uploadImage(file));

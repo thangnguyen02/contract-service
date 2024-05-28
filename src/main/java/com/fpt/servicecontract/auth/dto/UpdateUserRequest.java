@@ -24,5 +24,5 @@ public class UpdateUserRequest {
     private Set<Permission> permissions;
     private Boolean gender;
     private String address;
-    private Date dob;
+    private String dob;
 }
