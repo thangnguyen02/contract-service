@@ -94,7 +94,21 @@ public class UserService {
             userRepository.save(user);
             UserDto userDto = UserDto.builder()
                     .name(user.getName())
+                    .id(user.getId())
+                    .status(user.getStatus())
+                    .department(user.getDepartment())
+                    .identificationNumber(user.getIdentificationNumber())
+                    .position(user.getPosition())
+                    .address(user.getAddress())
+                    .role(user.getRole())
+                    .gender(user.isGender())
+                    .permissions(user.getPermissions())
+                    .createdDate(user.getCreatedDate())
+                    .updatedDate(user.getUpdatedDate())
+                    .dob(user.getDob())
+                    .avatar(user.getAvatar())
                     .phone(user.getPhone())
+                    .userCode(user.getUserCode())
                     .build();
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Update Successful", true, userDto);
         } catch (Exception e) {
