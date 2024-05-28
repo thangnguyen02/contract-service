@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.File;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 public class CreateUpdateOldContract {
     private String contractName;
     private String content;
-    private LocalDateTime contractSignDate;
-    private LocalDateTime contractStartDate;
-    private LocalDateTime contractEndDate;
+    private String contractSignDate;
+    private String contractStartDate;
+    private String contractEndDate;
 }

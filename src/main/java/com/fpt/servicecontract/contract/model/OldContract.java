@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 
 @Entity
@@ -25,9 +25,9 @@ public class OldContract {
   private String content;
   private Boolean isDeleted = false;
   private String file;
-  private LocalDateTime createdDate;
-  private LocalDateTime contractSignDate;
-  private LocalDateTime contractStartDate;
-  private LocalDateTime contractEndDate;
+  private Date createdDate;
+  private Date contractSignDate;
+  private Date contractStartDate;
+  private Date contractEndDate;
   private String updatedBy;
 }

@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table
@@ -25,9 +26,9 @@ public class Contract {
     private String file;
     @Column(name="content", columnDefinition="LONGTEXT")
     private String createdBy;
-    private LocalDateTime contractSignDate;
-    private LocalDateTime contractStartDate;
-    private LocalDateTime contractEndDate;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
+    private Date contractSignDate;
+    private Date contractStartDate;
+    private Date contractEndDate;
+    private Date createdDate;
+    private Date updatedDate;
 }

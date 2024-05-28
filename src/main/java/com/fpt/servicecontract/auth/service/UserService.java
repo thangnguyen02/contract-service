@@ -68,14 +68,21 @@ public class UserService {
     }
     @Transactional(rollbackOn = Exception.class)
     public BaseResponse update(String id, UpdateUserRequest userRequest, MultipartFile file) {
-        var user = userRepository.findById(id).orElseThrow();
+        var userOptional = userRepository.findById(id);
 
-        user.setName(userRequest.getName());
-        user.setPassword(userRequest.getPassword());
-        user.setStatus(userRequest.getStatus());
-        user.setDepartment(user.getDepartment());
-        user.setRole(userRequest.getRole());
-        user.setPosition(userRequest.getPosition());
+        if(userOptional.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "User does not exist", true, null);
+        }
+        var user = userOptional.get();
+        user.setName(userRequest.getName() == null ? user.getName() : userRequest.getName());
+        user.setStatus(userRequest.getStatus() == null ? user.getStatus() : userRequest.getStatus());
+        user.setDepartment(userRequest.getDepartment() == null ? user.getDepartment() : userRequest.getDepartment());
+        user.setRole(userRequest.getRole() == null ? user.getRole() : userRequest.getRole());
+        user.setPosition(userRequest.getPosition() == null ? user.getPosition() : userRequest.getPosition());
+        user.setAddress(userRequest.getAddress() == null ? user.getAddress() : userRequest.getAddress());
+        user.setGender(userRequest.getGender() == null ? user.isGender() : userRequest.getGender());
+        user.setPhone(userRequest.getPhone() == null ? user.getPhone() : userRequest.getPhone());
+        user.setDob(userRequest.getDob() == null ? user.getDob() : userRequest.getDob());
         if(file != null) {
             try {
                 user.setAvatar(cloudinaryService.uploadImage(file));

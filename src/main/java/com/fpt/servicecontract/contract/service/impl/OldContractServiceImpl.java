@@ -9,6 +9,7 @@ import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.contract.service.OldContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
+import com.fpt.servicecontract.utils.DateUltil;
 import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,9 +56,9 @@ public class OldContractServiceImpl implements OldContractService {
                         .createdBy(item.getCreatedBy())
                         .content(item.getContent())
                         .file(item.getFile())
-                        .contractSignDate(item.getContractSignDate())
-                        .contractEndDate(item.getContractEndDate())
-                        .contractStartDate(item.getContractStartDate())
+                        .contractSignDate(item.getContractSignDate().toString())
+                        .contractEndDate(item.getContractEndDate().toString())
+                        .contractStartDate(item.getContractStartDate().toString())
                         .build()
         ).toList();
 
@@ -70,11 +72,11 @@ public class OldContractServiceImpl implements OldContractService {
         String email = jwtService.extractUsername(token.substring(7));
         contract.setCreatedBy(email);
         contract.setContractName(oldContractDto.getContractName());
-        contract.setContractEndDate(oldContractDto.getContractEndDate());
-        contract.setContractStartDate(oldContractDto.getContractStartDate());
-        contract.setContractSignDate(oldContractDto.getContractSignDate());
+        contract.setContractEndDate(DateUltil.stringToDate(oldContractDto.getContractEndDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
+        contract.setContractStartDate(DateUltil.stringToDate(oldContractDto.getContractStartDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
+        contract.setContractSignDate(DateUltil.stringToDate(oldContractDto.getContractSignDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         contract.setContent(oldContractDto.getContent());
-        contract.setCreatedDate(LocalDateTime.now());
+        contract.setCreatedDate(new Date());
         try {
             Context context = new Context();
             List<String> imageList = new ArrayList<>();

@@ -53,9 +53,9 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private Set<Permission> permissions;
 
-  private LocalDateTime createdDate;
+  private Date createdDate;
 
-  private LocalDateTime updatedDate;
+  private Date updatedDate;
 
   private Date dob;
 

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Date;
 import java.util.Set;
 
 @Data
@@ -15,11 +16,13 @@ import java.util.Set;
 @NoArgsConstructor
 public class UpdateUserRequest {
     private String name;
-    private String password;
     private Role role;
     private String phone;
     private String position;
     private String department;
     private UserStatus status;
     private Set<Permission> permissions;
+    private Boolean gender;
+    private String address;
+    private Date dob;
 }
