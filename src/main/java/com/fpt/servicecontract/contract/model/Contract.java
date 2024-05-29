@@ -1,12 +1,10 @@
 package com.fpt.servicecontract.contract.model;
 
-import com.fpt.servicecontract.auth.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
