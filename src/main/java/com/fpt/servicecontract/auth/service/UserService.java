@@ -43,7 +43,7 @@ public class UserService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public BaseResponse register(RegisterRequest request) throws Exception {
+    public BaseResponse register(RegisterRequest request) {
 
         var user = new User();
         user.setStatus(UserStatus.ACTIVE);
@@ -56,10 +56,10 @@ public class UserService {
         user.setRole(request.getRole());
         user.setPermissions(request.getPermissions());
         try{
-            userRepository.save(user);
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user);
+            User user2 = userRepository.save(user);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user2);
         } catch (Exception e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Create failed", true, null);
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
         }
 
     }
