@@ -49,7 +49,7 @@ public class ContractController {
   }
 
   @PostMapping()
-  public ResponseEntity<BaseResponse> createContract(@RequestBody ContractRequest contractRequest) {
+  public ResponseEntity<BaseResponse> createContract(@RequestBody ContractRequest contractRequest) throws Exception {
     return ResponseEntity.ok(contractService.createContract(contractRequest));
   }
 

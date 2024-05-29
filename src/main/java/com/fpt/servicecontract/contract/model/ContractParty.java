@@ -25,9 +25,21 @@ public class ContractParty {
 
     private String name;
 
-    private String phone;
+    private String address;
+
+    private String taxNumber;
+
+    private String presenter;
 
     private String position;
+
+    private String businessNumber;
+
+    private String bankId;
+
+    private String bankName;
+
+    private  String bankAccOwer;
 
     private String identificationNumber;
 
@@ -35,5 +47,5 @@ public class ContractParty {
 
     private boolean gender;
 
-    private String address;
+
 }

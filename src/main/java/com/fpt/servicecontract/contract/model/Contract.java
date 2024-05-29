@@ -28,6 +28,8 @@ public class Contract {
     private String file;
     @Column(columnDefinition="LONGTEXT")
     private String content;
+    private String signA;
+    private String signB;
     private String createdBy;
     private Date contractSignDate;
     private Date contractStartDate;
