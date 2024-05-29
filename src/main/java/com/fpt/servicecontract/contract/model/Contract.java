@@ -19,15 +19,20 @@ public class Contract {
     @Id
     @UuidGenerator
     private String id;
+
     private String contractName;//required
     private String contractNumber; //required
+
+    @Column(columnDefinition="LONGTEXT")
+    private String rule;
+    @Column(columnDefinition="LONGTEXT")
+    private String term;
+
     private String partyAId; //required
     private String partyBId;//required
-    private String description;
-    private String term;
+
     private String file;
-    @Column(columnDefinition="LONGTEXT")
-    private String content;
+
     private String signA;
     private String signB;
     private String createdBy;
