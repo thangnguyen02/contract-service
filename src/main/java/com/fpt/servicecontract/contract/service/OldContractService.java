@@ -5,7 +5,10 @@ import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface OldContractService {
+
     BaseResponse getContracts(int page, int size);
+
     BaseResponse create(String token, CreateUpdateOldContract request, MultipartFile[] images);
+
     BaseResponse delete(String contractId);
 }

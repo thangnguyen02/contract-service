@@ -1,16 +1,20 @@
 package com.fpt.servicecontract.contract.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table
 @Getter
 @Setter
+@Builder
 public class Contract {
     @Id
     @UuidGenerator
@@ -22,11 +26,12 @@ public class Contract {
     private String description;
     private String term;
     private String file;
-    @Column(name="content", columnDefinition="LONGTEXT")
+    @Column(columnDefinition="LONGTEXT")
+    private String content;
     private String createdBy;
     private Date contractSignDate;
     private Date contractStartDate;
     private Date contractEndDate;
-    private Date createdDate;
-    private Date updatedDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }

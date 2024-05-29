@@ -2,8 +2,10 @@ package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.ContractDto;
+import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.SearchContractRequest;
 import com.fpt.servicecontract.contract.service.ContractService;
+import com.fpt.servicecontract.utils.BaseResponse;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,20 +48,9 @@ public class ContractController {
     return "PERMISSION_SALE";
   }
 
-  @PostMapping("/create-old-contract")
-  public ResponseEntity<String> uploadImages(@RequestParam("content") String content,
-                                             @RequestParam("images") List<MultipartFile> images)   {
-    return ResponseEntity.ok(contractService.createOldContract(content, images));
-  }
-
-  @PostMapping("/search")
-  public ResponseEntity<Page<ContractDto>> search(@RequestBody SearchContractRequest request) {
-    return ResponseEntity.ok(contractService.searchContract(request));
-  }
-
-  @PostMapping("/create")
-  public ResponseEntity<ContractDto> createContract(@RequestBody ContractDto contractDto) {
-    return null;
+  @PostMapping()
+  public ResponseEntity<BaseResponse> createContract(@RequestBody ContractRequest contractRequest) {
+    return ResponseEntity.ok(contractService.createContract(contractRequest));
   }
 
   @PutMapping("/{id}")

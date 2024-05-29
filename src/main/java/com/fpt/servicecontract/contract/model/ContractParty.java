@@ -4,6 +4,7 @@ import com.fpt.servicecontract.auth.model.Permission;
 import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.model.UserStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Table
 @Getter
 @Setter
+@Builder
 public class ContractParty {
     @Id
     @UuidGenerator

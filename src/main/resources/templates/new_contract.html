@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contract</title>
+    <style th:inline="text">
+        @font-face {
+            font-family: 'DejaVuSans';
+            src: url('fonts/DejaVuSans.ttf') format('truetype');
+        }
+        body {
+            font-family: 'DejaVuSans', sans-serif;
+            margin: 20px;
+        }
+        h1, h2, h3, p {
+            margin: 10px 0;
+        }
+        .contract-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .contract-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .contract-header h2 {
+            font-size: 20px;
+            margin-top: 0;
+        }
+        .contract-section {
+            margin-bottom: 20px;
+        }
+        .contract-section h3 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .contract-content p {
+            text-indent: 40px;
+        }
+        .signature {
+            margin-top: 40px;
+            clear: both;
+        }
+        .signature div {
+            width: 50%;
+            float: left;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contract-header">
+    <h1 th:text="${contractName}">Contract Name</h1>
+    <h2>Số: <span th:text="${contractNumber}">Contract Number</span></h2>
+</div>
+
+<div class="contract-section">
+    <h3>Mô Tả</h3>
+    <div class="contract-content">
+        <p th:text="${description}">This is a sample contract description.</p>
+    </div>
+</div>
+
+<div class="contract-section">
+    <h3>Điều Khoản Hợp Đồng</h3>
+    <div class="contract-content">
+        <p th:text="${term}">12 months</p>
+    </div>
+</div>
+
+<div class="contract-section">
+    <h3>Nội Dung</h3>
+    <div class="contract-content">
+        <p th:text="${content}">This is the content of the contract.</p>
+    </div>
+</div>
+
+<div class="contract-section">
+    <h3>Bên A</h3>
+    <div class="contract-content">
+        <p>Tên: <span th:text="${partyA.name}">Party A Name</span></p>
+        <p>Điện thoại: <span th:text="${partyA.phone}">123-456-7890</span></p>
+        <p>Chức vụ: <span th:text="${partyA.position}">Manager</span></p>
+        <p>Số định danh: <span th:text="${partyA.identificationNumber}">ID123456789</span></p>
+        <p>Ngày sinh: <span th:text="${#dates.format(partyA.dob, 'dd/MM/yyyy')}">01/01/1980</span></p>
+        <p>Giới tính: <span th:text="${partyA.gender ? 'Nam' : 'Nữ'}">Male</span></p>
+        <p>Địa chỉ: <span th:text="${partyA.address}">123 Party A Street, City, Country</span></p>
+    </div>
+</div>
+
+<div class="contract-section">
+    <h3>Bên B</h3>
+    <div class="contract-content">
+        <p>Tên: <span th:text="${partyB.name}">Party B Name</span></p>
+        <p>Điện thoại: <span th:text="${partyB.phone}">098-765-4321</span></p>
+        <p>Chức vụ: <span th:text="${partyB.position}">Director</span></p>
+        <p>Số định danh: <span th:text="${partyB.identificationNumber}">ID987654321</span></p>
+        <p>Ngày sinh: <span th:text="${#dates.format(partyB.dob, 'dd/MM/yyyy')}">05/05/1985</span></p>
+        <p>Giới tính: <span th:text="${partyB.gender ? 'Nam' : 'Nữ'}">Female</span></p>
+        <p>Địa chỉ: <span th:text="${partyB.address}">456 Party B Avenue, City, Country</span></p>
+    </div>
+</div>
+
+<div class="signature">
+    <div>
+        <p>ĐẠI DIỆN BÊN A</p>
+    </div>
+    <div>
+        <p>ĐẠI DIỆN BÊN B</p>
+    </div>
+</div>
+
+</body>
+</html>
