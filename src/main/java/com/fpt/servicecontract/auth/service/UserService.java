@@ -13,6 +13,7 @@ import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.utils.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +36,7 @@ public class UserService {
     @Transactional(rollbackOn = Exception.class)
     public BaseResponse delete(String id) {
         var user = userRepository.findById(id);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().setStatus(UserStatus.INACTIVE);
             userRepository.save(user.get());
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successful", true, user);
@@ -42,9 +44,7 @@ public class UserService {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Unsuccessful", true, user);
     }
 
-    @Transactional(rollbackOn = Exception.class)
-    public BaseResponse register(RegisterRequest request) {
-
+    public BaseResponse register(RegisterRequest request)   {
         var user = new User();
         user.setStatus(UserStatus.ACTIVE);
         user.setName(request.getName());
@@ -55,14 +55,14 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
         user.setPermissions(request.getPermissions());
-        try{
-            User user2 = userRepository.save(user);
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user2);
-        } catch (Exception e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        try {
+            userRepository.save(user);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user);
+        } catch (DataIntegrityViolationException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Create failed due to an unexpected error", false, e.getMessage());
         }
-
     }
+
     @Transactional(rollbackOn = Exception.class)
     public BaseResponse update(String id, UpdateUserRequest userRequest, MultipartFile file) {
         var userOptional = userRepository.findById(id);
@@ -80,7 +80,7 @@ public class UserService {
         user.setGender(userRequest.getGender() == null ? user.isGender() : userRequest.getGender());
         user.setPhone(userRequest.getPhone() == null ? user.getPhone() : userRequest.getPhone());
         user.setDob(userRequest.getDob() == null ? user.getDob() : DateUltil.stringToDate(userRequest.getDob(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
-        if(file != null) {
+        if (file != null) {
             try {
                 user.setAvatar(cloudinaryService.uploadImage(file));
             } catch (IOException e) {
@@ -118,7 +118,7 @@ public class UserService {
     }
 
     public BaseResponse search(SearchUserRequest searchUserRequest, Pageable pageable) {
-        Page<UserInterface> result =  userRepository.search(
+        Page<UserInterface> result = userRepository.search(
                 QueryUtils.appendPercent(searchUserRequest.getName()),
                 QueryUtils.appendPercent(searchUserRequest.getEmail()),
                 QueryUtils.appendPercent(searchUserRequest.getAddress()),
@@ -129,7 +129,7 @@ public class UserService {
                 QueryUtils.appendPercent(searchUserRequest.getPosition()),
                 Role.USER.getRole(),
                 pageable);
-        if(result.getTotalElements() > 0) {
+        if (result.getTotalElements() > 0) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, result);
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, null);
@@ -137,7 +137,7 @@ public class UserService {
 
     public BaseResponse getUserById(String id) {
         var user = userRepository.findById(id);
-        if(user.isEmpty()) {
+        if (user.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "User not found", true, null);
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Get Successful", true, user);
