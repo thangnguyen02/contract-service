@@ -2,13 +2,10 @@ package com.fpt.servicecontract.utils;
 
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.pdf.BaseFont;
-import java.io.FileInputStream;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -32,6 +29,7 @@ public class PdfUtils {
             renderer.getFontResolver()
                     .addFont(new ClassPathResource("fonts/DejaVuSans.ttf").getPath(),
                             "DejaVuSans", BaseFont.IDENTITY_H, true, null);
+            htmlContent = replaceSpecialCharacters(htmlContent);
             renderer.setDocumentFromString(htmlContent);
             renderer.layout();
             renderer.createPDF(outputStream);

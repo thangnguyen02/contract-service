@@ -1,19 +1,19 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
-import com.fpt.servicecontract.contract.dto.ContractDto;
-import com.fpt.servicecontract.contract.dto.SearchContractRequest;
+import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.service.ContractService;
+import com.fpt.servicecontract.utils.BaseResponse;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -21,49 +21,42 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContractController {
 
-  private final MailService mailService;
-  private final ContractService contractService;
+    private final MailService mailService;
+    private final ContractService contractService;
+    private  final JwtService jwtService;
 
-  @PostMapping("/send-mail")
-  public String sendMail(@RequestParam String[] to,
-      @RequestParam(required = false) String[] cc,
-      @RequestParam String subject,
-      @RequestParam String htmlContent,
-      @RequestParam(required = false) MultipartFile[] attachments) throws MessagingException {
-    mailService.sendNewMail(to, cc, subject, htmlContent ,attachments);
-    return "SEND OK";
-  }
+    @PostMapping("/send-mail")
+    public String sendMail(@RequestParam String[] to,
+                           @RequestParam(required = false) String[] cc,
+                           @RequestParam String subject,
+                           @RequestParam String htmlContent,
+                           @RequestParam(required = false) MultipartFile[] attachments) throws MessagingException {
+        mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+        return "SEND OK";
+    }
 
-  @GetMapping("/test-role")
-  @PreAuthorize("hasRole('ROLE_USER')")
-  public String test() {
-    return "ROLE_USER";
-  }
+    @GetMapping("/test-role")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public String test() {
+        return "ROLE_USER";
+    }
 
-  @GetMapping("/test-permission")
-  @PreAuthorize("hasAuthority('PERMISSION_SALE')")
-  public String tests() {
-    return "PERMISSION_SALE";
-  }
+    @GetMapping("/test-permission")
+    @PreAuthorize("hasAuthority('PERMISSION_SALE')")
+    public String tests() {
+        return "PERMISSION_SALE";
+    }
 
-  @PostMapping("/create-old-contract")
-  public ResponseEntity<String> uploadImages(@RequestParam("content") String content,
-                                             @RequestParam("images") List<MultipartFile> images)   {
-    return ResponseEntity.ok(contractService.createOldContract(content, images));
-  }
+    @GetMapping("/{page}/{size}")
+    public ResponseEntity<BaseResponse> findAll(@PathVariable int page, @PathVariable int size) {
+        Pageable p = PageRequest.of(page, size);
+        return ResponseEntity.ok(contractService.findAll(p));
+    }
 
-  @PostMapping("/search")
-  public ResponseEntity<Page<ContractDto>> search(@RequestBody SearchContractRequest request) {
-    return ResponseEntity.ok(contractService.searchContract(request));
-  }
-
-  @PostMapping("/create")
-  public ResponseEntity<ContractDto> createContract(@RequestBody ContractDto contractDto) {
-    return null;
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<ContractDto> updateContract(@PathVariable String id, @RequestBody ContractDto contractDto) {
-    return null;
-  }
+    @PostMapping()
+    public ResponseEntity<BaseResponse> createContract(@RequestHeader("Authorization") String bearerToken,
+                                                       @RequestBody ContractRequest contractRequest) throws Exception {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(contractService.createContract(contractRequest, email));
+    }
 }

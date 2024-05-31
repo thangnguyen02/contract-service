@@ -13,6 +13,7 @@ import com.fpt.servicecontract.utils.DateUltil;
 import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,6 @@ import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +32,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OldContractServiceImpl implements OldContractService {
 
     private final OldContractRepository oldContractRepository;
@@ -90,6 +91,12 @@ public class OldContractServiceImpl implements OldContractService {
             String html = pdfUtils.templateEngine().process("templates/old_contract.html", context);
             File file = pdfUtils.generatePdf(html, contract.getContractName() + "_" + UUID.randomUUID());
             contract.setFile(cloudinaryService.uploadPdf(file));
+            if (file.exists() && file.isFile()) {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+                }
+            }
         } catch (IOException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Upload Contract Failed", true, null);
         } catch (Exception e) {
