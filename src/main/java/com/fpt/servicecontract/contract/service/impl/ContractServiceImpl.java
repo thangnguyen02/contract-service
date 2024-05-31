@@ -76,8 +76,6 @@ public class ContractServiceImpl implements ContractService {
                 .term(contractRequest.getTerm())
                 .partyAId(contractPartyA.getId())
                 .partyBId(contractPartyB.getId())
-                .createdBy("token")
-                .file("file")
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
                 .build();
