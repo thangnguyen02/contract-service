@@ -100,41 +100,36 @@
 <body>
 <p class="s1" style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: center;">CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
 <h1 style="padding-top: 9pt;padding-left: 15pt;text-indent: 0pt;text-align: center;">Độc lập - Tự do - Hạnh phúc</h1>
-<p style="text-indent: 0pt;text-align: left;"><br/></p>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<br/>
 <p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;">HỢP ĐỒNG</p>
-<p style="padding-top: 2pt;text-indent: 0pt;text-align: left;"><br/></p>
-<p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;">PHẦN MỀM QUẢN LÝ BÁN HÀNG ONLINE VIVA</p>
-<p style="padding-top: 10pt;padding-left: 178pt;text-indent: 0pt;text-align: left;">Số DTC-VIVA20150508/HĐKT</p>
-<ul id="l1">
-    <li data-list-text="-">
-        <p class="s2" style="padding-top: 12pt;padding-left: 45pt;text-indent: -20pt;text-align: left;">Căn cứ vào Bộ Luật dân sự số 91/2015/QH13 ngày 24/11/2015;</p>
-    </li>
-    <li data-list-text="-">
-        <p class="s2" style="padding-top: 7pt;padding-left: 43pt;text-indent: -18pt;line-height: 130%;text-align: left;">Căn cứ Luật Thương mại số 36/2005/QH 11 do Quốc hội nước Cộng hoà xã hội chủ nghĩa Việt Nam ban hành ngày 14 tháng 6 năm 2005.</p>
-    </li>
-    <li data-list-text="-">
-        <p class="s2" style="padding-top: 3pt;padding-left: 43pt;text-indent: -18pt;line-height: 130%;text-align: left;">Căn cứ vào nhu cầu sử dụng dịch vụ của khách hàng khả năng cung cấp dịch vụ của Công ty TNHH Công nghệ ứng dụng &amp; Truyền thông DTC.</p>
-    </li>
-</ul>
-<p style="text-indent: 0pt;text-align: left;"><br/></p>
-<p style="padding-left: 7pt;text-indent: 0pt;text-align: left;">Hôm nay, ngày 08 tháng 05 năm 2015, tại Hà Nội, Chúng tôi gồm:</p>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<p class="s1" style="padding-bottom: 2pt;padding-left: 7pt;text-indent: 0pt;line-height: 109%;text-align: left;">Bên A: CHI NHÁNH HỢP TÁC XÃ ĐẦU TƯ XÂY DỰNG QUẢN LÝ VÀ KHAI THÁC CHỢ HẢI AN TẠI QUẾ VÕ-BẮC NINH.</p>
+<p style="padding-top: 2pt;text-indent: 0pt;text-align: left;"></p>
+<p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;" th:text="${info.contractName}">PHẦN MỀM QUẢN LÝ BÁN HÀNG ONLINE VIVA</p>
+<span>Hợp đồng số: </span><span style="padding-top: 10pt;padding-left: 178pt;text-indent: 0pt;text-align: left;" th:text="${info.contractNumber}"></span>
+<br/>
+<div th:utext="${info.rule}"/>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<br/>
+<span>Hôm nay,</span><span style="padding-left: 7pt;text-indent: 0pt;text-align: left;" th:text="${date}"></span><span>, Chúng tôi gồm:</span>
+<br/>
+<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"></p>
+<br/>
+<span>Bên A: </span><p class="s1" style="padding-bottom: 2pt;padding-left: 7pt;text-indent: 0pt;line-height: 109%;text-align: left;" th:text="${partyA.name}">Bên A: CHI NHÁNH HỢP TÁC XÃ ĐẦU TƯ XÂY DỰNG QUẢN LÝ VÀ KHAI THÁC CHỢ HẢI AN TẠI QUẾ VÕ-BẮC NINH.</p>
 <table style="border-collapse:collapse;margin-left:9.924pt" cellspacing="0">
     <tr style="height:18pt">
         <td style="width:84pt">
             <p class="s3" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Địa chỉ</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Thôn Đỉnh, TT.Phố Mới, Quế Võ, Bắc Ninh</p>
+            <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;" th:text="${partyA.address}">Thôn Đỉnh, TT.Phố Mới, Quế Võ, Bắc Ninh</p>
         </td>
     </tr>
     <tr style="height:22pt">
         <td style="width:84pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Điện thoại</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Email</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 16pt;text-indent: 0pt;text-align: left;">(+0241) 3 633 986</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 16pt;text-indent: 0pt;text-align: left;" th:text="${partyA.email}">(+0241) 3 633 986</p>
         </td>
     </tr>
     <tr style="height:22pt">
@@ -142,7 +137,7 @@
             <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Mã số thuế</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">……….</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyA.taxNumber}">……….</p>
         </td>
     </tr>
     <tr style="height:22pt">
@@ -150,7 +145,7 @@
             <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Đại diện</p>
         </td>
         <td style="width:347pt">
-            <p class="s4" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">Bà Nguyễn Thị Nhi</p>
+            <p class="s4" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyA.presenter}">Bà Nguyễn Thị Nhi</p>
         </td>
     </tr>
     <tr style="height:22pt">
@@ -158,7 +153,7 @@
             <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Chức vụ</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">Giám đốc</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyA.position}">Giám đốc</p>
         </td>
     </tr>
     <tr style="height:43pt">
@@ -166,7 +161,7 @@
             <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">ĐKKD Số</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-top: 1pt;padding-left: 13pt;text-indent: 0pt;line-height: 18pt;text-align: left;">2107C00124 do UBND huyện Quế Võ cấp Đăng ký thay đổi lần thứ nhất ngày 28/11/2014</p>
+            <p class="s3" style="padding-top: 1pt;padding-left: 13pt;text-indent: 0pt;line-height: 18pt;text-align: left;" th:text="${partyA.businessNumber}">2107C00124 do UBND huyện Quế Võ cấp Đăng ký thay đổi lần thứ nhất ngày 28/11/2014</p>
         </td>
     </tr>
     <tr style="height:23pt">
@@ -174,7 +169,7 @@
             <p class="s3" style="padding-top: 4pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tài khoản số</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-top: 4pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">………..</p>
+            <p class="s3" style="padding-top: 4pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyA.bankId}">………..</p>
         </td>
     </tr>
     <tr style="height:22pt">
@@ -182,7 +177,7 @@
             <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tại ngân hàng</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">Ngân hàng TMCP Công thương Việt Nam chi nhánh Bắc Giang.</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyA.bankName}">Ngân hàng TMCP Công thương Việt Nam chi nhánh Bắc Giang.</p>
         </td>
     </tr>
     <tr style="height:18pt">
@@ -190,354 +185,93 @@
             <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Chủ tài khoản</p>
         </td>
         <td style="width:347pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;">HTX Đầu tư xây dựng, quản lý và khai thác chợ Hải An</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;" th:text="${partyA.bankAccOwer}">HTX Đầu tư xây dựng, quản lý và khai thác chợ Hải An</p>
         </td>
     </tr>
 </table>
-<p class="s1" style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">Bên B: CÔNG TY TNHH CÔNG NGHỆ ỨNG DỤNG VÀ TRUYỀN THÔNG DTC</p>
-<p style="text-indent: 0pt;text-align: left;"><br/></p>
-<table style="border-collapse:collapse;margin-left:5.364pt" cellspacing="0">
+<br/>
+<span>Bên B: </span><p class="s1" style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;text-align: left;"  th:text="${partyB.name}">Bên B: CÔNG TY TNHH CÔNG NGHỆ ỨNG DỤNG VÀ TRUYỀN THÔNG DTC</p>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<table style="border-collapse:collapse;margin-left:9.924pt" cellspacing="0">
     <tr style="height:18pt">
-        <td style="width:87pt">
-            <p class="s3" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Trụ sở chính</p>
+        <td style="width:84pt">
+            <p class="s3" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Địa chỉ</p>
         </td>
-        <td style="width:351pt" colspan="3">
-            <p class="s3" style="padding-left: 10pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Số 2, Ngách 6, Ngõ 200, Vĩnh Hưng, Vĩnh Hưng, Hoàng Mai, Hà Nội</p>
-        </td>
-    </tr>
-    <tr style="height:22pt">
-        <td style="width:87pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Văn phòng HN</p>
-        </td>
-        <td style="width:351pt" colspan="3">
-            <p class="s3" style="padding-top: 3pt;padding-left: 10pt;text-indent: 0pt;text-align: left;">Số 14 Pháo Đài Láng, Đống Đa, Hà Nội</p>
+        <td style="width:347pt">
+            <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;" th:text="${partyB.address}">Thôn Đỉnh, TT.Phố Mới, Quế Võ, Bắc Ninh</p>
         </td>
     </tr>
     <tr style="height:22pt">
-        <td style="width:87pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Điện thoại</p>
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;" th:text="${partyB.email}">Email</p>
         </td>
-        <td style="width:144pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">(+84-4) 3 557 3636</p>
-        </td>
-        <td style="width:48pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 19pt;text-indent: 0pt;text-align: left;">Fax:</p>
-        </td>
-        <td style="width:159pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">(+84-4) 3 569 0588</p>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 16pt;text-indent: 0pt;text-align: left;" th:text="${partyB.email}">(+0241) 3 633 986</p>
         </td>
     </tr>
     <tr style="height:22pt">
-        <td style="width:87pt">
+        <td style="width:84pt">
             <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Mã số thuế</p>
         </td>
-        <td style="width:144pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 10pt;text-indent: 0pt;text-align: left;">……</p>
-        </td>
-        <td style="width:48pt">
-            <p style="text-indent: 0pt;text-align: left;"><br/></p>
-        </td>
-        <td style="width:159pt">
-            <p style="text-indent: 0pt;text-align: left;"><br/></p>
-        </td>
-    </tr>
-    <tr style="height:18pt">
-        <td style="width:87pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Đại diện</p>
-        </td>
-        <td style="width:144pt">
-            <p class="s4" style="padding-top: 3pt;padding-left: 10pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Ông Nguyễn Thành Ý</p>
-        </td>
-        <td style="width:48pt">
-            <p style="text-indent: 0pt;text-align: left;"><br/></p>
-        </td>
-        <td style="width:159pt">
-            <p style="text-indent: 0pt;text-align: left;"><br/></p>
-        </td>
-    </tr>
-</table>
-<p style="text-indent: 0pt;text-align: left;"><br/></p>
-<table style="border-collapse:collapse;margin-left:5.364pt" cellspacing="0">
-    <tr style="height:18pt">
-        <td style="width:84pt">
-            <p class="s3" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Chức vụ</p>
-        </td>
-        <td style="width:287pt">
-            <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Giám đốc</p>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyB.taxNumber}">……….</p>
         </td>
     </tr>
     <tr style="height:22pt">
         <td style="width:84pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tài khoản số</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Đại diện</p>
         </td>
-        <td style="width:287pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">…….</p>
+        <td style="width:347pt">
+            <p class="s4" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyB.presenter}">Bà Nguyễn Thị Nhi</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Chức vụ</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyB.position}">Giám đốc</p>
+        </td>
+    </tr>
+    <tr style="height:43pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">ĐKKD Số</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 1pt;padding-left: 13pt;text-indent: 0pt;line-height: 18pt;text-align: left;" th:text="${partyB.businessNumber}">2107C00124 do UBND huyện Quế Võ cấp Đăng ký thay đổi lần thứ nhất ngày 28/11/2014</p>
+        </td>
+    </tr>
+    <tr style="height:23pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 4pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tài khoản số</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 4pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyB.bankId}">………..</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tại ngân hàng</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;" th:text="${partyB.bankName}">Ngân hàng TMCP Công thương Việt Nam chi nhánh Bắc Giang.</p>
         </td>
     </tr>
     <tr style="height:18pt">
         <td style="width:84pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Tại ngân hàng</p>
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Chủ tài khoản</p>
         </td>
-        <td style="width:287pt">
-            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Ngân hàng TMCP Á Châu – PGD Thanh Xuân, Hà Nội.</p>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;" th:text="${partyB.bankAccOwer}">HTX Đầu tư xây dựng, quản lý và khai thác chợ Hải An</p>
         </td>
     </tr>
 </table>
-<p style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">Hai bên thống nhất ký kết hợp đồng với các điều khoản sau đây:</p>
-<p style="text-indent: 0pt;text-align: left;"><br/></p>
-<h1 style="padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 1: NỘI DUNG HỢP ĐỒNG</h1>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<p style="padding-left: 25pt;text-indent: -18pt;line-height: 130%;text-align: left;"><span class="s5">-  </span>DTC cung cấp 01 (một) bản phần mềm <span class="h2">QUẢN LÝ BÁN HÀNG ONLINE VIVA </span>chạy trên mạng Internet cho Quý Công ty.</p>
-<h1 style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 2: CÀI ĐẶT CHƯƠNG TRÌNH SỬA ĐỔI THEO YÊU CẦU</h1>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<ol id="l2">
-    <ol id="l3">
-        <li data-list-text="2.1">
-            <p class="s6" style="padding-left: 31pt;text-indent: -24pt;text-align: left;">Cài đặt chương trình</p>
-            <p style="padding-top: 7pt;padding-left: 7pt;text-indent: 35pt;line-height: 130%;text-align: left;">DTC cung cấp 01 (một) bản phần mềm <span class="h2">QUẢN LÝ BÁN HÀNG ONLINE VIVA </span>cho Quý Công ty theo địa chỉ trên.</p>
-            <p class="s1" style="padding-top: 4pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">Phần mềm <span class="s7">QUẢN LÝ BÁN HÀNG ONLINE VIVA </span>có các chức năng sau:</p>
-            <ol id="l4">
-                <li data-list-text="1.">
-                    <p class="s6" style="padding-top: 8pt;padding-left: 42pt;text-indent: -17pt;text-align: left;">Chức năng 1</p>
-                </li>
-                <li data-list-text="2.">
-                    <p class="s6" style="padding-top: 4pt;padding-left: 42pt;text-indent: -17pt;text-align: left;">Chức năng 2</p>
-                </li>
-                <li data-list-text="3.">
-                    <p class="s6" style="padding-top: 4pt;padding-left: 42pt;text-indent: -17pt;text-align: left;">…</p>
-                    <p style="text-indent: 0pt;text-align: left;"><br/></p>
-                </li>
-            </ol>
-        </li>
-        <li data-list-text="2.2">
-            <p class="s6" style="padding-left: 42pt;text-indent: -35pt;text-align: left;">Tư vấn và Đào tạo</p>
-            <p style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">Tư vấn và đào tạo bao gồm các công việc sau:</p>
-            <ol id="l5">
-                <li data-list-text="1.">
-                    <p style="padding-top: 7pt;padding-left: 42pt;text-indent: -17pt;text-align: left;">Tư vấn về thiết kế hệ thống danh hàng hóa vật tư.</p>
-                </li>
-                <li data-list-text="2.">
-                    <p style="padding-top: 7pt;padding-left: 42pt;text-indent: -17pt;text-align: left;">Hướng dẫn vào số dư đầu kỳ</p>
-                </li>
-                <li data-list-text="3.">
-                    <p style="padding-top: 7pt;padding-left: 43pt;text-indent: -18pt;line-height: 130%;text-align: left;">Đào tạo: DTC hướng dẫn cho các cán bộ của Quý công ty sử dụng phần mềm <span class="h2">QUẢN LÝ BÁN HÀNG ONLINE VIVA </span>với thời gian hướng dẫn và đào tạo chương trình: 03 buổi.</p>
-                    <h1 style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 3: TIÊU CHUẨN ĐỂ NGHIỆM THU CÔNG VIỆC</h1>
-                    <p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-                    <ol id="l6">
-                        <li data-list-text="3.1">
-                            <p style="padding-left: 43pt;text-indent: -21pt;line-height: 130%;text-align: justify;">Công việc do Bên B thực hiện theo Điều 1 được coi là hoàn thành khi Bên B cung cấp bản phần mềm<span class="h2">QUẢN LÝ BÁN HÀNG ONLINE VIVA </span>như qui định trong Điều 1 cho Bên A.</p>
-                        </li>
-                        <li data-list-text="3.2">
-                            <p style="padding-top: 3pt;padding-left: 43pt;text-indent: -21pt;line-height: 130%;text-align: justify;">Công việc do Bên B thực hiện theo Điều 2.1 được coi là hoàn thành khi Bên B cài  đặt bản phần mềm <span class="h2">QUẢN LÝ BÁN HÀNG ONLINE VIVA </span>như quy định trong Điều 1 cho</p>
-                            <p style="padding-top: 11pt;text-indent: 0pt;text-align: left;"><br/></p>
-                            <p style="padding-left: 43pt;text-indent: 0pt;text-align: left;">Bên A.</p>
-                        </li>
-                        <li data-list-text="3.3">
-                            <p style="padding-top: 7pt;padding-left: 43pt;text-indent: -21pt;line-height: 130%;text-align: left;">Công việc do Bên B thực hiện theo Điều 2.2 được coi là hoàn thành khi Bên B đã thực hiện xong việc tư vấn và đào tạo cho Bên A như qui định trong Điều 2.2.</p>
-                        </li>
-                    </ol>
-                </li>
-            </ol>
-        </li>
-    </ol>
-</ol>
-<h1 style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 4: THỜI HẠN THỰC HIỆN HỢP ĐỒNG</h1>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<p style="padding-left: 43pt;text-indent: 0pt;text-align: left;">Hai Bên sẽ bố trí để bắt đầu thực hiện hợp đồng kể từ ngày ký hợp đồng</p>
-<h1 style="padding-top: 12pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 5: BẢO HÀNH VÀ HỖ TRỢ SỬ DỤNG</h1>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<p style="padding-left: 43pt;text-indent: 0pt;text-align: left;">Bên B chịu trách nhiệm bảo hành phần mềm <span class="h2">QUẢN LÝ BÁN HÀNG ONLINE VIVA</span></p>
-<p style="padding-top: 4pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">cung cấp cho Bên A trong thời gian 12 tháng, kể từ ngày ký nghiệm thu chương trình.</p>
-<ol id="l7">
-    <ol id="l8">
-        <li data-list-text="5.1">
-            <p class="s6" style="padding-top: 7pt;padding-left: 34pt;text-indent: -27pt;text-align: left;">Nội dung bảo hành<span class="s2">: </span><span class="p">Bảo hành các lỗi của chương trình</span></p>
-        </li>
-        <li data-list-text="5.2">
-            <p class="s6" style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;line-height: 130%;text-align: left;">Phương thức bảo hành<span class="s2">: </span><span class="p">Khi nhận được thông báo của Bên A, Bên B sẽ phải tiến hành khắc phục các lỗi của chương trình theo một trong các phương thức sau đây:</span></p>
-            <ol id="l9">
-                <li data-list-text="1.">
-                    <p style="padding-top: 3pt;padding-left: 70pt;text-indent: -22pt;line-height: 130%;text-align: left;">Sửa lỗi trự tiếp ngay tại thời điểm yêu cầu dịch vụ qua mạng Internet với điều kiện máy tính của Bên A phải được kết nối mạng Internet.</p>
-                </li>
-                <li data-list-text="2.">
-                    <p style="padding-top: 3pt;padding-left: 70pt;text-indent: -22pt;line-height: 130%;text-align: left;">Hướng dẫn người sử dụng sửa lỗi chương trình thông qua điện thoại, Fax, hoặc E- mail trong vòng 04 (bốn) giờ, kể từ khi nhận được thông báo của Bên A.</p>
-                </li>
-                <li data-list-text="3.">
-                    <p style="padding-top: 3pt;padding-left: 69pt;text-indent: -22pt;text-align: left;">Trực tiếp sửa chữa lỗi của chương trình tại Bên A trong vòng 01 (một) ngày.</p>
-                </li>
-            </ol>
-        </li>
-        <li data-list-text="5.3">
-            <p class="s6" style="padding-top: 7pt;padding-left: 31pt;text-indent: -24pt;text-align: left;">Hỗ trợ sử dụng</p>
-            <p style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;line-height: 130%;text-align: left;">Khi Bên A có yêu cầu, Bên B sẽ trợ giúp người sử dụng phần mềm của Bên A về sử dụng phần mềm cung cấp theo Điều 1 từ xa (qua điện thoại, Fax, E-mail, và thư) hoặc trực tiếp tại Bên A.</p>
-            <p style="padding-top: 3pt;padding-left: 7pt;text-indent: 0pt;line-height: 130%;text-align: left;">Bên B sẽ không phải đến trực tiếp tại Bên A nếu các vướng mắc mà người sử dụng phần mềm của Bên A gặp phải có thể giải quyết được từ xa.</p>
-            <p class="s6" style="padding-top: 3pt;padding-left: 43pt;text-indent: 0pt;text-align: left;">Hỗ trợ sử dụng không bao gồm các công việc sau đây:</p>
-            <ol id="l10">
-                <li data-list-text="1.">
-                    <p style="padding-top: 7pt;padding-left: 69pt;text-indent: -22pt;text-align: left;">Vào chứng từ, số liệu, số dư và các công việc hạch toán khác.</p>
-                </li>
-                <li data-list-text="2.">
-                    <p style="padding-top: 7pt;padding-left: 69pt;text-indent: -22pt;text-align: left;">Khắc phục các sự cố do hỏng phần cứng hoặc virus.</p>
-                </li>
-                <li data-list-text="3.">
-                    <p style="padding-top: 7pt;padding-left: 69pt;text-indent: -22pt;text-align: left;">Đào tạo thêm người sử dụng chương trình cho Bên A.</p>
-                </li>
-            </ol>
-        </li>
-    </ol>
-</ol>
-<h1 style="padding-top: 12pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 6: TRÁCH NHIỆM CỦA BÊN A</h1>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<ol id="l11">
-    <ol id="l12">
-        <li data-list-text="6.1">
-            <p style="padding-left: 39pt;text-indent: -18pt;line-height: 130%;text-align: left;"> Không sao chép sửa đổi chương trình dưới mọi hình thức nếu không được sự đồng ý của Bên B. Bên A tuân thủ luật bảo hộ quyền tác giả đối với chương trình được cài đặt.</p>
-        </li>
-        <li data-list-text="6.2">
-            <p style="padding-top: 3pt;padding-left: 39pt;text-indent: -17pt;text-align: left;">Cử cán bộ có đủ năng lực để tiếp thu hướng dẫn sử dụng phần mềm <span class="h2">QUẢN LÝ BÁN</span></p>
-            <p style="padding-top: 11pt;text-indent: 0pt;text-align: left;"><br/></p>
-            <h2 style="padding-left: 39pt;text-indent: 0pt;text-align: left;">HÀNG ONLINE VIVA <span class="p">do Bên B truyền đạt.</span></h2>
-        </li>
-        <li data-list-text="6.3">
-            <p style="padding-top: 7pt;padding-left: 39pt;text-indent: -17pt;text-align: left;">Tạo điều kiện cho Bên B thực hiện đúng tiến độ hợp đồng.</p>
-        </li>
-        <li data-list-text="6.4">
-            <p style="padding-top: 7pt;padding-left: 39pt;text-indent: -17pt;text-align: left;">Thanh toán cho Bên B theo đúng thời hạn ghi ở Điều 8.</p>
-        </li>
-    </ol>
-</ol>
-<h1 style="padding-top: 12pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 7: TRÁCH NHIỆM CỦA BÊN B</h1>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<ol id="l13">
-    <ol id="l14">
-        <li data-list-text="7.1">
-            <p style="padding-left: 42pt;text-indent: -21pt;text-align: left;">Đảm bảo phần mềm cung cấp cho Bên A có các chức năng theo qui định tại Điều 1.</p>
-        </li>
-        <li data-list-text="7.2">
-            <p style="padding-top: 7pt;padding-left: 43pt;text-indent: -21pt;line-height: 130%;text-align: left;">Cử các cán bộ có đủ năng lực để thực hiện tốt các công việc trong Điều 1 theo các tiêu chuẩn đánh giá trong Điều 3.</p>
-        </li>
-        <li data-list-text="7.3">
-            <p style="padding-top: 3pt;padding-left: 39pt;text-indent: -17pt;text-align: left;">Thực hiện bảo hành theo Điều 5.</p>
-        </li>
-        <li data-list-text="7.4">
-            <p style="padding-top: 7pt;padding-left: 42pt;text-indent: -21pt;line-height: 130%;text-align: left;">Cập nhật miễn phí chương trình, khi có sự thay đổi, bổ sung của Bộ Tài chính trong thời gian bảo hành và bảo trì cho Bên A.</p>
-        </li>
-    </ol>
-</ol>
-<h1 style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 8: GIÁ TRỊ CỦA HỢP ĐỒNG, PHƯƠNG THỨC VÀ THỜI HẠN THANH TOÁN</h1>
-<p style="text-indent: 0pt;text-align: left;"><br/></p>
-<ol id="l15">
-    <ol id="l16">
-        <li data-list-text="8.1">
-            <p class="s6" style="padding-left: 29pt;text-indent: -22pt;text-align: left;">Giá trị hợp đồng tạm tính:</p>
-            <p style="text-indent: 0pt;text-align: left;"><br/></p>
-            <table style="border-collapse:collapse;margin-left:20.839pt" cellspacing="0">
-                <tr style="height:34pt">
-                    <td style="width:238pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s8" style="padding-top: 8pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">Sản phẩm, dịch vụ</p>
-                    </td>
-                    <td style="width:63pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s8" style="padding-top: 8pt;padding-right: 4pt;text-indent: 0pt;text-align: right;">Số lượng</p>
-                    </td>
-                    <td style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s8" style="padding-left: 15pt;text-indent: 0pt;line-height: 14pt;text-align: left;">Đơn giá</p>
-                        <p class="s8" style="padding-top: 3pt;padding-left: 19pt;text-indent: 0pt;text-align: left;">(VNĐ)</p>
-                    </td>
-                    <td style="width:76pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s8" style="text-indent: 0pt;line-height: 14pt;text-align: center;">Thành tiền</p>
-                        <p class="s8" style="padding-top: 3pt;text-indent: 0pt;text-align: center;">(VNĐ)</p>
-                    </td>
-                </tr>
-                <tr style="height:30pt">
-                    <td style="width:238pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s3" style="padding-left: 23pt;padding-right: 2pt;text-indent: -18pt;text-align: left;">1. Phần mềm <span class="s9">QUẢN LÝ BÁN HÀNG ONLINE VIVA</span></p>
-                    </td>
-                    <td style="width:63pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s3" style="padding-right: 4pt;text-indent: 0pt;line-height: 14pt;text-align: right;">01</p>
-                    </td>
-                    <td style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p style="text-indent: 0pt;text-align: left;"><br/></p>
-                    </td>
-                    <td style="width:76pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p style="text-indent: 0pt;text-align: left;"><br/></p>
-                    </td>
-                </tr>
-                <tr style="height:31pt">
-                    <td style="width:238pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s3" style="padding-left: 23pt;padding-right: 2pt;text-indent: -18pt;text-align: left;">2. Chi phí triển khai cho mỗi điểm bán hàng tiếp theo</p>
-                    </td>
-                    <td style="width:63pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s3" style="padding-right: 4pt;text-indent: 0pt;line-height: 14pt;text-align: right;">05</p>
-                    </td>
-                    <td style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p style="text-indent: 0pt;text-align: left;"><br/></p>
-                    </td>
-                    <td style="width:76pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p style="text-indent: 0pt;text-align: left;"><br/></p>
-                    </td>
-                </tr>
-                <tr style="height:17pt">
-                    <td style="width:238pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 14pt;text-align: left;">3. Thuế VAT (<i>thuộc dạng không chịu thuế</i>)</p>
-                    </td>
-                    <td style="width:63pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p style="text-indent: 0pt;text-align: left;"><br/></p>
-                    </td>
-                    <td style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p style="text-indent: 0pt;text-align: left;"><br/></p>
-                    </td>
-                    <td style="width:76pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s4" style="padding-right: 4pt;text-indent: 0pt;line-height: 14pt;text-align: right;">0</p>
-                    </td>
-                </tr>
-                <tr style="height:17pt">
-                    <td style="width:373pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="3">
-                        <p class="s4" style="padding-right: 4pt;text-indent: 0pt;text-align: right;">Tổng</p>
-                    </td>
-                    <td style="width:76pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s4" style="padding-right: 4pt;text-indent: 0pt;text-align: right;">0</p>
-                    </td>
-                </tr>
-                <tr style="height:28pt">
-                    <td style="width:449pt;border-top-style:solid;border-top-width:1pt" colspan="4">
-                        <p class="s8" style="padding-top: 13pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">(Bằng chữ: Năm mươi triệu đồng chẵn)</p>
-                    </td>
-                </tr>
-            </table>
-            <p style="padding-top: 7pt;text-indent: 0pt;text-align: left;"><br/></p>
-            <p class="s6" style="padding-left: 20pt;text-indent: 0pt;text-align: left;">Lưu ý:</p>
-            <p class="s11" style="padding-top: 9pt;padding-left: 52pt;text-indent: -13pt;line-height: 130%;text-align: left;">-  <span class="s2">Chi phí trên đã bao gồm miễn phí tên miền và 01 gói Hosting chuyên nghiệp cho năm đầu tiên.</span></p>
-        </li>
-        <li data-list-text="8.2">
-            <p class="s6" style="padding-top: 4pt;padding-left: 29pt;text-indent: -22pt;text-align: left;">Phương thức thanh toán: <span class="p">Bên A thanh toán cho Bên B bằng tiền mặt hoặc chuyển khoản.</span></p>
-        </li>
-        <li data-list-text="8.3">
-            <p class="s6" style="padding-top: 6pt;padding-left: 29pt;text-indent: -22pt;line-height: 150%;text-align: left;">Thời hạn thanh toán:<span class="p">Bên A thanh toán 100 % tổng trị giá hợp đồng cho Bên B được chia làm 02 đợt</span></p>
-        </li>
-    </ol>
-</ol>
-<p style="padding-left: 7pt;text-indent: 0pt;line-height: 130%;text-align: left;"><u><i><b>Đợt I:</b></i></u><i><b> </b></i>Quý công ty thanh toán 50% tổng giá trị hợp đồng là: <b>… VNĐ </b>(<i>…. triệu đồng chẵn.</i>) ngay sau khi ký Hợp đồng.</p>
-<p style="padding-top: 11pt;text-indent: 0pt;text-align: left;"><br/></p>
-<p style="padding-left: 7pt;text-indent: 0pt;line-height: 130%;text-align: left;"><u><i><b>Đợt II:</b></i></u><i><b> </b></i>Quý Công ty thanh toán 50% tổng trị giá hợp đồng là: <b>… VNĐ </b>(<i>…. triệu đồng chẵn.</i>) ngay sau khi ký nghiệm thu chương trình.</p>
-<h1 style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">ĐIỀU 9: HIỆU LỰC HỢP ĐỒNG</h1>
-<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"><br/></p>
-<ol id="l17">
-    <ol id="l18">
-        <li data-list-text="9.1">
-            <p style="padding-left: 32pt;text-indent: -25pt;text-align: justify;">Hợp đồng này có hiệu lực trong thời gian 12 tháng kể từ ngày Khách hàng ký hợp đồng.</p>
-        </li>
-        <li data-list-text="9.2">
-            <p style="padding-top: 6pt;padding-left: 34pt;text-indent: -27pt;line-height: 150%;text-align: justify;">Trước ngày hết hạn hợp đồng 30 ngày, nếu một trong hai bên không thông báo bằng văn bản với bên kia về việc kết thúc hay đề nghị thay đổi các điều khoản của hợp đồng, thì hợp đồng đã ký giữa 2 bên sẽ tự động được gia hạn thêm 12 tháng cho mỗi lần gia hạn.</p>
-        </li>
-        <li data-list-text="9.3">
-            <p style="padding-left: 34pt;text-indent: -27pt;line-height: 150%;text-align: justify;">Một trong hai bên có thể để nghị thay đổi lại các các điều khoản của hợp đồng này với thông báo bằng văn bản trước tối thiểu 30 ngày và được bên kia đồng ý bằng văn bản.</p>
-        </li>
-        <li data-list-text="9.4">
-            <p style="padding-left: 32pt;text-indent: -25pt;text-align: justify;">Hợp đồng này được lập thành 02 (hai) bản có giá trị như nhau, mỗi bên giữ 01 (một) bản.</p>
-        </li>
-    </ol>
-</ol>
-<p style="text-indent: 0pt;text-align: left;"><br/></p>
+<br/>
+<p style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">Hai bên thống nhất ký kết hợp đồng với các điều khoản sau đây:</p><br/>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<div th:utext="${info.term}"></div>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<br/>
 <table style="border-collapse:collapse;margin-left:65.12pt" cellspacing="0">
     <tr style="height:14pt">
         <td style="width:171pt">

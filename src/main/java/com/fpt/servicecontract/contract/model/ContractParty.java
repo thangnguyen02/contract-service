@@ -41,11 +41,6 @@ public class ContractParty {
 
     private  String bankAccOwer;
 
-    private String identificationNumber;
-
-    private Date dob;
-
-    private boolean gender;
-
+    private String email;
 
 }

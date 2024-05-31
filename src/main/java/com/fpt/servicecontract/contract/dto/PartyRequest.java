@@ -7,10 +7,22 @@ import lombok.Setter;
 @Setter
 public class PartyRequest {
     private String name;
-    private String phone;
-    private String position;
-    private String identificationNumber;
-    private String dob;
-    private boolean gender;
+
     private String address;
+
+    private String taxNumber;
+
+    private String presenter;
+
+    private String position;
+
+    private String businessNumber;
+
+    private String bankId;
+
+    private String bankName;
+
+    private  String bankAccOwer;
+
+    private String email;
 }

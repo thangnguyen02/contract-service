@@ -29,6 +29,7 @@ public class PdfUtils {
             renderer.getFontResolver()
                     .addFont(new ClassPathResource("fonts/DejaVuSans.ttf").getPath(),
                             "DejaVuSans", BaseFont.IDENTITY_H, true, null);
+            htmlContent = replaceSpecialCharacters(htmlContent);
             renderer.setDocumentFromString(htmlContent);
             renderer.layout();
             renderer.createPDF(outputStream);

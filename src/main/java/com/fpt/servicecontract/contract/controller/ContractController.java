@@ -23,38 +23,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContractController {
 
-  private final MailService mailService;
-  private final ContractService contractService;
+    private final MailService mailService;
+    private final ContractService contractService;
 
-  @PostMapping("/send-mail")
-  public String sendMail(@RequestParam String[] to,
-      @RequestParam(required = false) String[] cc,
-      @RequestParam String subject,
-      @RequestParam String htmlContent,
-      @RequestParam(required = false) MultipartFile[] attachments) throws MessagingException {
-    mailService.sendNewMail(to, cc, subject, htmlContent ,attachments);
-    return "SEND OK";
-  }
+    @PostMapping("/send-mail")
+    public String sendMail(@RequestParam String[] to,
+                           @RequestParam(required = false) String[] cc,
+                           @RequestParam String subject,
+                           @RequestParam String htmlContent,
+                           @RequestParam(required = false) MultipartFile[] attachments) throws MessagingException {
+        mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+        return "SEND OK";
+    }
 
-  @GetMapping("/test-role")
-  @PreAuthorize("hasRole('ROLE_USER')")
-  public String test() {
-    return "ROLE_USER";
-  }
+    @GetMapping("/test-role")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public String test() {
+        return "ROLE_USER";
+    }
 
-  @GetMapping("/test-permission")
-  @PreAuthorize("hasAuthority('PERMISSION_SALE')")
-  public String tests() {
-    return "PERMISSION_SALE";
-  }
+    @GetMapping("/test-permission")
+    @PreAuthorize("hasAuthority('PERMISSION_SALE')")
+    public String tests() {
+        return "PERMISSION_SALE";
+    }
 
-  @PostMapping()
-  public ResponseEntity<BaseResponse> createContract(@RequestBody ContractRequest contractRequest) throws Exception {
-    return ResponseEntity.ok(contractService.createContract(contractRequest));
-  }
+    @GetMapping()
+    public ResponseEntity<BaseResponse> findAll() {
+        return ResponseEntity.ok(contractService.findAll());
+    }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ContractDto> updateContract(@PathVariable String id, @RequestBody ContractDto contractDto) {
-    return null;
-  }
+    @PostMapping()
+    public ResponseEntity<BaseResponse> createContract(@RequestBody ContractRequest contractRequest) throws Exception {
+        return ResponseEntity.ok(contractService.createContract(contractRequest));
+    }
 }

@@ -2,6 +2,7 @@ package com.fpt.servicecontract.contract.repository;
 
 import com.fpt.servicecontract.contract.dto.ContractInterface;
 import com.fpt.servicecontract.contract.model.Contract;
+import com.fpt.servicecontract.contract.model.OldContract;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,6 @@ import java.util.List;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, String> {
-
 
     @Query(value = """
             select * from contract u join contract_party partyA on u.partyaid = partyA.id join contract_party partyB on u.partybid = partyB.id
@@ -38,4 +38,6 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
             @Param("namePartyB") String namePartyB,
             Pageable pageable
     );
+    @Query(value = "select * from contract ", nativeQuery = true)
+    List<Contract> findAllC();
 }
