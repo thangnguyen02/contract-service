@@ -54,6 +54,7 @@ public class ContractController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasAuthority('PERMISSION_SALE') || hasRole('ROLE_USER')")
     public ResponseEntity<BaseResponse> createContract(@RequestHeader("Authorization") String bearerToken,
                                                        @RequestBody ContractRequest contractRequest) throws Exception {
         String email = jwtService.extractUsername(bearerToken.substring(7));
