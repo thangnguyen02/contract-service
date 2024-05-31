@@ -1,21 +1,19 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
-import com.fpt.servicecontract.contract.dto.ContractDto;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
-import com.fpt.servicecontract.contract.dto.SearchContractRequest;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,6 +23,7 @@ public class ContractController {
 
     private final MailService mailService;
     private final ContractService contractService;
+    private  final JwtService jwtService;
 
     @PostMapping("/send-mail")
     public String sendMail(@RequestParam String[] to,
@@ -48,13 +47,16 @@ public class ContractController {
         return "PERMISSION_SALE";
     }
 
-    @GetMapping()
-    public ResponseEntity<BaseResponse> findAll() {
-        return ResponseEntity.ok(contractService.findAll());
+    @GetMapping("/{page}/{size}")
+    public ResponseEntity<BaseResponse> findAll(@PathVariable int page, @PathVariable int size) {
+        Pageable p = PageRequest.of(page, size);
+        return ResponseEntity.ok(contractService.findAll(p));
     }
 
     @PostMapping()
-    public ResponseEntity<BaseResponse> createContract(@RequestBody ContractRequest contractRequest) throws Exception {
-        return ResponseEntity.ok(contractService.createContract(contractRequest));
+    public ResponseEntity<BaseResponse> createContract(@RequestHeader("Authorization") String bearerToken,
+                                                       @RequestBody ContractRequest contractRequest) throws Exception {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(contractService.createContract(contractRequest, email));
     }
 }

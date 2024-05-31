@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.contract.dto.ContractRequest;
+import com.fpt.servicecontract.contract.dto.ContractResponse;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
@@ -13,16 +14,21 @@ import com.fpt.servicecontract.utils.DateUltil;
 import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ContractServiceImpl implements ContractService {
 
     private final ContractRepository contractRepository;
@@ -32,7 +38,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public BaseResponse createContract(ContractRequest contractRequest) throws Exception {
+    public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         ContractParty contractPartyA = ContractParty
                 .builder()
                 .address(contractRequest.getPartyA().getAddress())
@@ -61,11 +67,12 @@ public class ContractServiceImpl implements ContractService {
                 .build();
         contractPartyB = contractPartyRepository.save(contractPartyB);
         contractPartyA = contractPartyRepository.save(contractPartyA);
-        Contract contract  = Contract
+        Contract contract = Contract
                 .builder()
-                .contractName(contractRequest.getContractName())
-                .contractNumber(contractRequest.getContractNumber())
+                .name(contractRequest.getContractName())
+                .number(contractRequest.getContractNumber())
                 .rule(contractRequest.getRule())
+                .createdBy(email)
                 .term(contractRequest.getTerm())
                 .partyAId(contractPartyA.getId())
                 .partyBId(contractPartyB.getId())
@@ -80,16 +87,32 @@ public class ContractServiceImpl implements ContractService {
         context.setVariable("info", contract);
         context.setVariable("date", LocalDateTime.now().toLocalDate());
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
-        File file = pdfUtils.generatePdf(html, contract.getContractName() + "_" + UUID.randomUUID());
+        File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
         contract.setFile(cloudinaryService.uploadPdf(file));
         Contract res = contractRepository.save(contract);
-
+        if (file.exists() && file.isFile()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+            }
+        }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Ok", true, res);
     }
 
     @Override
-    public BaseResponse findAll() {
-        List<Contract> contractList = contractRepository.findAllC();
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractList);
+    public BaseResponse findAll(Pageable p) {
+        Page<Object[]> page = contractRepository.findAllContract(p);
+        List<ContractResponse> responses = new ArrayList<>();
+        for (Object[] obj : page) {
+            responses.add(ContractResponse.builder()
+                    .name(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
+                    .createdBy(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
+                    .file(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
+                    .createdDate(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
+                    .build());
+        }
+        Page<ContractResponse> result = new PageImpl<>(responses, p,
+                page.getTotalElements());
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
     }
 }

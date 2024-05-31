@@ -1,12 +1,12 @@
 package com.fpt.servicecontract.contract.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -20,8 +20,8 @@ public class Contract {
     @UuidGenerator
     private String id;
 
-    private String contractName;//required
-    private String contractNumber; //required
+    private String name;//required
+    private String number; //required
 
     @Column(columnDefinition="LONGTEXT")
     private String rule;
