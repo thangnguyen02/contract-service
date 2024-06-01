@@ -1,19 +1,19 @@
 package com.fpt.servicecontract.contract.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.fpt.servicecontract.auth.model.UserStatus;
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ContractTemplate {
     @Id
     @UuidGenerator
@@ -47,4 +47,10 @@ public class ContractTemplate {
     private  String bankAccOwer;
 
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
 }
