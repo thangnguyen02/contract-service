@@ -10,7 +10,6 @@ import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
-import com.fpt.servicecontract.utils.DateUltil;
 import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 

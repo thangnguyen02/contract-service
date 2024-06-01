@@ -1,7 +1,6 @@
 package com.fpt.servicecontract.contract.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

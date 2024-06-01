@@ -23,7 +23,7 @@ public class ContractController {
 
     private final MailService mailService;
     private final ContractService contractService;
-    private  final JwtService jwtService;
+    private final JwtService jwtService;
 
     @PostMapping("/send-mail")
     public String sendMail(@RequestParam String[] to,
