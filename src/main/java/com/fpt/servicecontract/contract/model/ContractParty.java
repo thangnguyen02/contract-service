@@ -1,9 +1,7 @@
 package com.fpt.servicecontract.contract.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
@@ -11,6 +9,8 @@ import org.hibernate.annotations.UuidGenerator;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ContractParty {
     @Id
     @UuidGenerator

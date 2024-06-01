@@ -6,12 +6,11 @@ import com.fpt.servicecontract.auth.dto.UpdateUserRequest;
 import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.service.UserService;
 import com.fpt.servicecontract.utils.BaseResponse;
+import com.fpt.servicecontract.utils.Constants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.auth.AuthenticationException;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,11 +31,12 @@ public class UserController {
     }
     @PostMapping("/register-for-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<BaseResponse> register(@RequestBody RegisterRequest request)  {
+    public BaseResponse register(@RequestBody RegisterRequest request) {
         if (Role.ADMIN.equals(request.getRole())) {
             log.warn("Admin is not created");
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "You not have permission", true, null);
         }
-        return ResponseEntity.ok(service.register(request));
+        return service.register(request);
     }
 
     @PutMapping("/{id}")

@@ -67,7 +67,7 @@ public class UserService {
     public BaseResponse update(String id, UpdateUserRequest userRequest, MultipartFile file) {
         var userOptional = userRepository.findById(id);
 
-        if (userOptional.isEmpty()) {
+        if(userOptional.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "User does not exist", true, null);
         }
         var user = userOptional.get();
