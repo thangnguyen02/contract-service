@@ -50,6 +50,10 @@ public class ContractController {
     public ResponseEntity<BaseResponse> findById(@PathVariable String id) {
         return ResponseEntity.ok(contractService.findById(id));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseResponse> delete(@PathVariable String id) {
+        return ResponseEntity.ok(contractService.delete(id));
+    }
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> findAll(@PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);

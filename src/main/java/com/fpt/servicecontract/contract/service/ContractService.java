@@ -11,4 +11,6 @@ public interface ContractService {
     BaseResponse findAll(Pageable p);
 
     BaseResponse findById(String id);
+
+    BaseResponse delete(String id);
 }

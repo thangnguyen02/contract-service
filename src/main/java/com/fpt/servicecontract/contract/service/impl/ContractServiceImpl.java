@@ -40,6 +40,7 @@ public class ContractServiceImpl implements ContractService {
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         ContractParty contractPartyA = ContractParty
                 .builder()
+                .id(contractRequest.getPartyA().getId())
                 .address(contractRequest.getPartyA().getAddress())
                 .name(contractRequest.getPartyA().getName())
                 .taxNumber(contractRequest.getPartyA().getTaxNumber())
@@ -53,6 +54,7 @@ public class ContractServiceImpl implements ContractService {
                 .build();
         ContractParty contractPartyB = ContractParty
                 .builder()
+                .id(contractRequest.getPartyB().getId())
                 .address(contractRequest.getPartyB().getAddress())
                 .name(contractRequest.getPartyB().getName())
                 .taxNumber(contractRequest.getPartyB().getTaxNumber())
@@ -94,7 +96,7 @@ public class ContractServiceImpl implements ContractService {
                 log.warn("Failed to delete the file: {}", file.getAbsolutePath());
             }
         }
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Ok", true, res);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, res);
     }
 
     @Override
@@ -128,32 +130,42 @@ public class ContractServiceImpl implements ContractService {
                     .rule(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
                     .term(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
                     .partyA(PartyRequest.builder()
-                            .name(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
-                            .address(Objects.nonNull(obj[6]) ? obj[6].toString() : null)
-                            .taxNumber(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
-                            .presenter(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
-                            .position(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
-                            .businessNumber(Objects.nonNull(obj[10]) ? obj[10].toString() : null)
-                            .bankId(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
-                            .email(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
-                            .bankName(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
-                            .bankAccOwer(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
+                            .id(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
+                            .name(Objects.nonNull(obj[6]) ? obj[6].toString() : null)
+                            .address(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
+                            .presenter(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
+                            .position(Objects.nonNull(obj[10]) ? obj[10].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
+                            .bankId(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
+                            .email(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
+                            .bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
                             .build())
                     .partyB(PartyRequest.builder()
-                            .name(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
-                            .address(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
-                            .taxNumber(Objects.nonNull(obj[17]) ? obj[17].toString() : null)
-                            .presenter(Objects.nonNull(obj[18]) ? obj[18].toString() : null)
-                            .position(Objects.nonNull(obj[19]) ? obj[19].toString() : null)
-                            .businessNumber(Objects.nonNull(obj[20]) ? obj[20].toString() : null)
-                            .bankId(Objects.nonNull(obj[21]) ? obj[21].toString() : null)
-                            .email(Objects.nonNull(obj[22]) ? obj[22].toString() : null)
-                            .bankName(Objects.nonNull(obj[23]) ? obj[23].toString() : null)
-                            .bankAccOwer(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
+                            .id(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
+                            .name(Objects.nonNull(obj[17]) ? obj[17].toString() : null)
+                            .address(Objects.nonNull(obj[18]) ? obj[18].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[19]) ? obj[19].toString() : null)
+                            .presenter(Objects.nonNull(obj[20]) ? obj[20].toString() : null)
+                            .position(Objects.nonNull(obj[21]) ? obj[21].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[22]) ? obj[22].toString() : null)
+                            .bankId(Objects.nonNull(obj[23]) ? obj[23].toString() : null)
+                            .email(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
+                            .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
                             .build())
                     .build();
         }
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractRequest);
+    }
+
+    @Override
+    public BaseResponse delete(String id) {
+        Contract contract = contractRepository.findById(id).get();
+        contract.setMarkDeleted(true);
+        contractRepository.save(contract);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, null);
     }
 }

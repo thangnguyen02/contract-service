@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PartyRequest {
+    private String id;
+
     private String name;
 
     private String address;
