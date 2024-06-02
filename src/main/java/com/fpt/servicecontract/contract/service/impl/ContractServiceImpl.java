@@ -155,6 +155,7 @@ public class ContractServiceImpl implements ContractService {
                             .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
                             .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
                             .build())
+                    .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
                     .build();
         }
 

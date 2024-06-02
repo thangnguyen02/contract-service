@@ -52,7 +52,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      pb.bank_id,
                      pb.email,
                      pb.bank_name,
-                     pb.bank_acc_ower
+                     pb.bank_acc_ower,
+                     c.file
                  FROM
                      fpt_company.contract c
                          LEFT JOIN
