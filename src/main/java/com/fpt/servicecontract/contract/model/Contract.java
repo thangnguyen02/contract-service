@@ -18,20 +18,15 @@ public class Contract {
     @Id
     @UuidGenerator
     private String id;
-
-    private String name;//required
-    private String number; //required
-
+    private String name;
+    private String number;
     @Column(columnDefinition="LONGTEXT")
     private String rule;
     @Column(columnDefinition="LONGTEXT")
     private String term;
-
-    private String partyAId; //required
-    private String partyBId;//required
-
+    private String partyAId;
+    private String partyBId;
     private String file;
-
     private String signA;
     private String signB;
     private String createdBy;
@@ -40,4 +35,6 @@ public class Contract {
     private Date contractEndDate;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+    private boolean markDeleted;
+    private String status;
 }

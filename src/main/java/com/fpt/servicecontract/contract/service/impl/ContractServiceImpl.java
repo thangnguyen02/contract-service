@@ -2,6 +2,7 @@ package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.ContractResponse;
+import com.fpt.servicecontract.contract.dto.PartyRequest;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
@@ -39,6 +40,7 @@ public class ContractServiceImpl implements ContractService {
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         ContractParty contractPartyA = ContractParty
                 .builder()
+                .id(contractRequest.getPartyA().getId())
                 .address(contractRequest.getPartyA().getAddress())
                 .name(contractRequest.getPartyA().getName())
                 .taxNumber(contractRequest.getPartyA().getTaxNumber())
@@ -52,6 +54,7 @@ public class ContractServiceImpl implements ContractService {
                 .build();
         ContractParty contractPartyB = ContractParty
                 .builder()
+                .id(contractRequest.getPartyB().getId())
                 .address(contractRequest.getPartyB().getAddress())
                 .name(contractRequest.getPartyB().getName())
                 .taxNumber(contractRequest.getPartyB().getTaxNumber())
@@ -67,8 +70,8 @@ public class ContractServiceImpl implements ContractService {
         contractPartyA = contractPartyRepository.save(contractPartyA);
         Contract contract = Contract
                 .builder()
-                .name(contractRequest.getContractName())
-                .number(contractRequest.getContractNumber())
+                .name(contractRequest.getName())
+                .number(contractRequest.getNumber())
                 .rule(contractRequest.getRule())
                 .createdBy(email)
                 .term(contractRequest.getTerm())
@@ -76,6 +79,7 @@ public class ContractServiceImpl implements ContractService {
                 .partyBId(contractPartyB.getId())
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
+                .status(Constants.STATUS.NEW)
                 .build();
         Context context = new Context();
         context.setVariable("partyA", contractPartyA);
@@ -92,7 +96,7 @@ public class ContractServiceImpl implements ContractService {
                 log.warn("Failed to delete the file: {}", file.getAbsolutePath());
             }
         }
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Ok", true, res);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, res);
     }
 
     @Override
@@ -105,10 +109,64 @@ public class ContractServiceImpl implements ContractService {
                     .createdBy(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
                     .file(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
                     .createdDate(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
+                    .id(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
+                    .status(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
                     .build());
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,
                 page.getTotalElements());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
+    }
+
+    @Override
+    public BaseResponse findById(String id) {
+        List<Object[]> lst = contractRepository.findByIdContract(id);
+        ContractRequest  contractRequest = new ContractRequest();
+        for (Object[] obj : lst) {
+               contractRequest = ContractRequest .builder()
+                    .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
+                    .name(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
+                    .number(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
+                    .rule(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
+                    .term(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
+                    .partyA(PartyRequest.builder()
+                            .id(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
+                            .name(Objects.nonNull(obj[6]) ? obj[6].toString() : null)
+                            .address(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
+                            .presenter(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
+                            .position(Objects.nonNull(obj[10]) ? obj[10].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
+                            .bankId(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
+                            .email(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
+                            .bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
+                            .build())
+                    .partyB(PartyRequest.builder()
+                            .id(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
+                            .name(Objects.nonNull(obj[17]) ? obj[17].toString() : null)
+                            .address(Objects.nonNull(obj[18]) ? obj[18].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[19]) ? obj[19].toString() : null)
+                            .presenter(Objects.nonNull(obj[20]) ? obj[20].toString() : null)
+                            .position(Objects.nonNull(obj[21]) ? obj[21].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[22]) ? obj[22].toString() : null)
+                            .bankId(Objects.nonNull(obj[23]) ? obj[23].toString() : null)
+                            .email(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
+                            .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
+                            .build())
+                    .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
+                    .build();
+        }
+
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractRequest);
+    }
+
+    @Override
+    public BaseResponse delete(String id) {
+        Contract contract = contractRepository.findById(id).get();
+        contract.setMarkDeleted(true);
+        contractRepository.save(contract);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, null);
     }
 }

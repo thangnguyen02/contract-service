@@ -72,7 +72,6 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setBankName(contractRequest.getBankName());
         template.setBankAccOwer(contractRequest.getBankAccOwer());
         template.setEmail(contractRequest.getEmail());
-        template.setStatus(UserStatus.ACTIVE);
         template.setCreatedDate(LocalDateTime.now());
         try {
             contractTemplateRepository.save(template);
@@ -91,7 +90,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         if (template.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "the contract template not exist", true, null);
         }
-        template.get().setStatus(UserStatus.INACTIVE);
+        template.get().setMarkDeleted(true);
         contractTemplateRepository.save(template.get());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successfully", true, null);
     }
@@ -117,7 +116,6 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setBankName(DataUtil.isNullObject(contractRequest.getBankName()) ? null : contractRequest.getBankName());
         template.setBankAccOwer(DataUtil.isNullObject(contractRequest.getBankAccOwer()) ? null : contractRequest.getBankAccOwer());
         template.setEmail(DataUtil.isNullObject(contractRequest.getEmail()) ? null : contractRequest.getEmail());
-        template.setStatus(DataUtil.isNullObject(contractRequest.getStatus()) ? null : UserStatus.valueOf(contractRequest.getStatus()));
         try {
             contractTemplateRepository.save(template);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Update Successfully", true, ContractTemplateDto.builder()

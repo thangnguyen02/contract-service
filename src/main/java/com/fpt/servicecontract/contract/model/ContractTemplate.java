@@ -48,8 +48,7 @@ public class ContractTemplate {
 
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private Boolean markDeleted;
 
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;

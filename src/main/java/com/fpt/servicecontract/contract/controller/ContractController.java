@@ -46,7 +46,14 @@ public class ContractController {
     public String tests() {
         return "PERMISSION_SALE";
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse> findById(@PathVariable String id) {
+        return ResponseEntity.ok(contractService.findById(id));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseResponse> delete(@PathVariable String id) {
+        return ResponseEntity.ok(contractService.delete(id));
+    }
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> findAll(@PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
@@ -54,7 +61,7 @@ public class ContractController {
     }
 
     @PostMapping()
-    @PreAuthorize("hasAuthority('PERMISSION_SALE') || hasRole('ROLE_USER')")
+    @PreAuthorize("hasAuthority('PERMISSION_SALE') || hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse> createContract(@RequestHeader("Authorization") String bearerToken,
                                                        @RequestBody ContractRequest contractRequest) throws Exception {
         String email = jwtService.extractUsername(bearerToken.substring(7));

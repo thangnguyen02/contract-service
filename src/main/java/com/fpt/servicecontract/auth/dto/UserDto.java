@@ -28,9 +28,9 @@ public class UserDto {
     private UserStatus status;
     private Role role;
     private Set<Permission> permissions;
-    private Date createdDate;
-    private Date updatedDate;
-    private Date dob;
+    private String createdDate;
+    private String updatedDate;
+    private String dob;
     private boolean gender;
     private String address;
     private String avatar;

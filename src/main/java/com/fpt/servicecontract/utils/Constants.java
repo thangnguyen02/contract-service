@@ -20,6 +20,10 @@ public interface Constants {
         final public static int PAGE_NUMBER = 0;
         final public static int PAGE_SIZE = 11;
     }
-
+    public static interface STATUS {
+        final public static String NEW = "NEW";
+        final public static String PROCESSING = "PROCESSING";
+        final public static String SUCCESS = "SUCCESS";
+    }
 
 }
