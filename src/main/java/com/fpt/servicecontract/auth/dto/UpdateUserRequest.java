@@ -25,4 +25,5 @@ public class UpdateUserRequest {
     private Boolean gender;
     private String address;
     private String dob;
+    private String identificationNumber;
 }

@@ -63,7 +63,6 @@ public class UserService {
         }
     }
 
-    @Transactional(rollbackOn = Exception.class)
     public BaseResponse update(String id, UpdateUserRequest userRequest, MultipartFile file) {
         var userOptional = userRepository.findById(id);
 
@@ -80,6 +79,7 @@ public class UserService {
         user.setGender(userRequest.getGender() == null ? user.isGender() : userRequest.getGender());
         user.setPhone(userRequest.getPhone() == null ? user.getPhone() : userRequest.getPhone());
         user.setDob(userRequest.getDob() == null ? user.getDob() : DateUltil.stringToDate(userRequest.getDob(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
+        user.setIdentificationNumber(userRequest.getIdentificationNumber() == null ? user.getIdentificationNumber() : userRequest.getIdentificationNumber());
         if (file != null) {
             try {
                 user.setAvatar(cloudinaryService.uploadImage(file));
