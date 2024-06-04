@@ -8,11 +8,11 @@ import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
+import com.fpt.servicecontract.contract.service.ContractHistoryService;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,6 +34,7 @@ public class ContractServiceImpl implements ContractService {
     private final ContractPartyRepository contractPartyRepository;
     private final PdfUtils pdfUtils;
     private final CloudinaryService cloudinaryService;
+    private final ContractHistoryService contractHistoryService;
 
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
@@ -73,6 +74,7 @@ public class ContractServiceImpl implements ContractService {
         }
         Contract contract = Contract
                 .builder()
+                .id(contractRequest.getId())
                 .name(contractRequest.getName())
                 .number(contractRequest.getNumber())
                 .rule(contractRequest.getRule())
@@ -92,14 +94,20 @@ public class ContractServiceImpl implements ContractService {
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
         File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
         contract.setFile(cloudinaryService.uploadPdf(file));
-        Contract res = contractRepository.save(contract);
+        contractRepository.save(contract);
         if (file.exists() && file.isFile()) {
             boolean deleted = file.delete();
             if (!deleted) {
                 log.warn("Failed to delete the file: {}", file.getAbsolutePath());
             }
         }
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, res);
+        if (contractRequest.getId() == null) {
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.NEW);
+        } else {
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.UPDATE);
+
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
 
     @Override
