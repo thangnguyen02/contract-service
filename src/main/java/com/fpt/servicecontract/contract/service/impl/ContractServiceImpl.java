@@ -10,6 +10,7 @@ import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.contract.service.ContractHistoryService;
 import com.fpt.servicecontract.contract.service.ContractService;
+import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
@@ -35,7 +36,7 @@ public class ContractServiceImpl implements ContractService {
     private final PdfUtils pdfUtils;
     private final CloudinaryService cloudinaryService;
     private final ContractHistoryService contractHistoryService;
-
+    private final ElasticSearchService elasticSearchService;
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         ContractParty contractPartyA = ContractParty
@@ -94,7 +95,7 @@ public class ContractServiceImpl implements ContractService {
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
         File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
         contract.setFile(cloudinaryService.uploadPdf(file));
-        contractRepository.save(contract);
+        Contract result =  contractRepository.save(contract);
         if (file.exists() && file.isFile()) {
             boolean deleted = file.delete();
             if (!deleted) {
@@ -107,6 +108,7 @@ public class ContractServiceImpl implements ContractService {
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.UPDATE);
 
         }
+        String x = elasticSearchService.indexContract(result);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
 
