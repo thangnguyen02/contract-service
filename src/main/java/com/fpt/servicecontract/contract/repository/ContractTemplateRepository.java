@@ -11,7 +11,7 @@ public interface ContractTemplateRepository extends JpaRepository<ContractTempla
     @Query(value = """
             select id, name_contract,number_contract,rule_contract,
                    term_contract,name,address,tax_number,presenter,position,
-                   business_number,bank_id,bank_name,bank_acc_ower,email from contract_template
+                   business_number,bank_id,bank_name,bank_acc_ower,email, created_date, updated_date from contract_template
                    where 1=1
                    and mark_deleted = false
             """, nativeQuery = true)

@@ -48,6 +48,8 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
                     .bankName(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
                     .bankAccOwer(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
                     .email(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
+                    .createdDate(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
+                    .updatedDate(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
                     .build());
         }
         Page<ContractTemplateDto> result = new PageImpl<>(responses, p,
@@ -117,6 +119,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setBankName(DataUtil.isNullObject(contractRequest.getBankName()) ? null : contractRequest.getBankName());
         template.setBankAccOwer(DataUtil.isNullObject(contractRequest.getBankAccOwer()) ? null : contractRequest.getBankAccOwer());
         template.setEmail(DataUtil.isNullObject(contractRequest.getEmail()) ? null : contractRequest.getEmail());
+        template.setUpdatedDate(LocalDateTime.now());
         try {
             contractTemplateRepository.save(template);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Update Successfully", true, ContractTemplateDto.builder()
