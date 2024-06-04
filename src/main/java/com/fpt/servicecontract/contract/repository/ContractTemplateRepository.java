@@ -13,7 +13,7 @@ public interface ContractTemplateRepository extends JpaRepository<ContractTempla
                    term_contract,name,address,tax_number,presenter,position,
                    business_number,bank_id,bank_name,bank_acc_ower,email from contract_template
                    where 1=1
-                   and status = :status
+                   and mark_deleted = false
             """, nativeQuery = true)
-    Page<Object[]> findAllContractTemplate(@Param("status") String status, Pageable p);
+    Page<Object[]> findAllContractTemplate(Pageable p);
 }

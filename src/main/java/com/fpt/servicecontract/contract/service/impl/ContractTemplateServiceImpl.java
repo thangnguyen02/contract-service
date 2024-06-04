@@ -29,7 +29,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
 
     @Override
     public BaseResponse finAllTemplates(Pageable p) {
-        Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(UserStatus.ACTIVE.toString(), p);
+        Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(p);
         List<ContractTemplateDto> responses = new ArrayList<>();
         for (Object[] obj : page) {
             responses.add(ContractTemplateDto.builder()
@@ -73,6 +73,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setBankAccOwer(contractRequest.getBankAccOwer());
         template.setEmail(contractRequest.getEmail());
         template.setCreatedDate(LocalDateTime.now());
+        template.setMarkDeleted(false);
         try {
             contractTemplateRepository.save(template);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create successfully", true, ContractTemplateDto.builder()
