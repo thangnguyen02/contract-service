@@ -50,6 +50,10 @@ public class ContractController {
     public ResponseEntity<BaseResponse> findById(@PathVariable String id) {
         return ResponseEntity.ok(contractService.findById(id));
     }
+    @GetMapping("/party/{id}")
+    public ResponseEntity<BaseResponse> findContractPartyById(@PathVariable String id) {
+        return ResponseEntity.ok(contractService.findContractPartyById(id));
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> delete(@PathVariable String id) {
         return ResponseEntity.ok(contractService.delete(id));

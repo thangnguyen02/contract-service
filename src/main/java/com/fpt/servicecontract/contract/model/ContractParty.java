@@ -15,25 +15,23 @@ public class ContractParty {
     @Id
     @UuidGenerator
     private String id;
-
     private String name;
-
     private String address;
-
-    private String taxNumber;
-
     private String presenter;
-
     private String position;
-
     private String businessNumber;
-
-    private String bankId;
-
     private String bankName;
 
-    private  String bankAccOwer;
+    @Column(unique = true)
+    private String bankId;
 
+
+    @Column(unique = true)
+    private String bankAccOwer;
+
+    @Column(unique = true)
     private String email;
 
+    @Column(unique = true)
+    private String taxNumber;
 }

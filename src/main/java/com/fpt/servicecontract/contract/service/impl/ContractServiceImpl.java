@@ -36,7 +36,6 @@ public class ContractServiceImpl implements ContractService {
     private final CloudinaryService cloudinaryService;
 
     @Override
-    @Transactional
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         ContractParty contractPartyA = ContractParty
                 .builder()
@@ -66,8 +65,12 @@ public class ContractServiceImpl implements ContractService {
                 .email(contractRequest.getPartyB().getEmail())
                 .position(contractRequest.getPartyB().getPosition())
                 .build();
-        contractPartyB = contractPartyRepository.save(contractPartyB);
-        contractPartyA = contractPartyRepository.save(contractPartyA);
+        try {
+            contractPartyB = contractPartyRepository.save(contractPartyB);
+            contractPartyA = contractPartyRepository.save(contractPartyA);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Failed", false, e.getMessage());
+        }
         Contract contract = Contract
                 .builder()
                 .name(contractRequest.getName())
@@ -121,9 +124,9 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public BaseResponse findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
-        ContractRequest  contractRequest = new ContractRequest();
+        ContractRequest contractRequest = new ContractRequest();
         for (Object[] obj : lst) {
-               contractRequest = ContractRequest .builder()
+            contractRequest = ContractRequest.builder()
                     .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .name(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
                     .number(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
@@ -168,5 +171,12 @@ public class ContractServiceImpl implements ContractService {
         contract.setMarkDeleted(true);
         contractRepository.save(contract);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, null);
+    }
+
+    @Override
+    public BaseResponse findContractPartyById(String id) {
+        Optional<ContractParty> contractPartyOptional = contractPartyRepository.findByTaxNumber(id);
+        ContractParty contractParty = contractPartyOptional.orElse(null);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractParty);
     }
 }
