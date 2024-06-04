@@ -26,4 +26,6 @@ public class ContractTemplateDto {
     private String bankName;
     private String bankAccOwer;
     private String email;
+    private String createdDate;
+    private String updatedDate;
 }
