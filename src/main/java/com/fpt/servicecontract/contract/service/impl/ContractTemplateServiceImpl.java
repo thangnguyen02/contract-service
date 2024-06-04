@@ -29,7 +29,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
 
     @Override
     public BaseResponse finAllTemplates(Pageable p) {
-        Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(UserStatus.ACTIVE.toString(), p);
+        Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(p);
         List<ContractTemplateDto> responses = new ArrayList<>();
         for (Object[] obj : page) {
             responses.add(ContractTemplateDto.builder()

@@ -15,5 +15,5 @@ public interface ContractTemplateRepository extends JpaRepository<ContractTempla
                    where 1=1
                    and mark_deleted = false
             """, nativeQuery = true)
-    Page<Object[]> findAllContractTemplate(@Param("status") String status, Pageable p);
+    Page<Object[]> findAllContractTemplate(Pageable p);
 }
