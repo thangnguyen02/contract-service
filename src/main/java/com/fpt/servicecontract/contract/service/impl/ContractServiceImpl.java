@@ -8,11 +8,11 @@ import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
+import com.fpt.servicecontract.contract.service.ContractHistoryService;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,9 +34,9 @@ public class ContractServiceImpl implements ContractService {
     private final ContractPartyRepository contractPartyRepository;
     private final PdfUtils pdfUtils;
     private final CloudinaryService cloudinaryService;
+    private final ContractHistoryService contractHistoryService;
 
     @Override
-    @Transactional
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         ContractParty contractPartyA = ContractParty
                 .builder()
@@ -66,10 +66,15 @@ public class ContractServiceImpl implements ContractService {
                 .email(contractRequest.getPartyB().getEmail())
                 .position(contractRequest.getPartyB().getPosition())
                 .build();
-        contractPartyB = contractPartyRepository.save(contractPartyB);
-        contractPartyA = contractPartyRepository.save(contractPartyA);
+        try {
+            contractPartyB = contractPartyRepository.save(contractPartyB);
+            contractPartyA = contractPartyRepository.save(contractPartyA);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Failed", false, e.getMessage());
+        }
         Contract contract = Contract
                 .builder()
+                .id(contractRequest.getId())
                 .name(contractRequest.getName())
                 .number(contractRequest.getNumber())
                 .rule(contractRequest.getRule())
@@ -89,14 +94,20 @@ public class ContractServiceImpl implements ContractService {
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
         File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
         contract.setFile(cloudinaryService.uploadPdf(file));
-        Contract res = contractRepository.save(contract);
+        contractRepository.save(contract);
         if (file.exists() && file.isFile()) {
             boolean deleted = file.delete();
             if (!deleted) {
                 log.warn("Failed to delete the file: {}", file.getAbsolutePath());
             }
         }
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, res);
+        if (contractRequest.getId() == null) {
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.NEW);
+        } else {
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.UPDATE);
+
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
 
     @Override
@@ -121,9 +132,9 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public BaseResponse findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
-        ContractRequest  contractRequest = new ContractRequest();
+        ContractRequest contractRequest = new ContractRequest();
         for (Object[] obj : lst) {
-               contractRequest = ContractRequest .builder()
+            contractRequest = ContractRequest.builder()
                     .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .name(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
                     .number(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
@@ -168,5 +179,12 @@ public class ContractServiceImpl implements ContractService {
         contract.setMarkDeleted(true);
         contractRepository.save(contract);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, null);
+    }
+
+    @Override
+    public BaseResponse findContractPartyById(String id) {
+        Optional<ContractParty> contractPartyOptional = contractPartyRepository.findByTaxNumber(id);
+        ContractParty contractParty = contractPartyOptional.orElse(null);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractParty);
     }
 }

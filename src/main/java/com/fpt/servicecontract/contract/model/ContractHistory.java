@@ -20,6 +20,7 @@ public class ContractHistory {
     @UuidGenerator
     private String id;
     private String contractId;
+    private String contractName;
     private String createdBy; // email
     private LocalDateTime createdDate;
     private String status;

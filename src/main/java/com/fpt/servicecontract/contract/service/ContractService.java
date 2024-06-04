@@ -13,4 +13,6 @@ public interface ContractService {
     BaseResponse findById(String id);
 
     BaseResponse delete(String id);
+
+    BaseResponse findContractPartyById(String id);
 }

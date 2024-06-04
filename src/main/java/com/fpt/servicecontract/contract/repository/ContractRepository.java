@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.repository;
 
 import com.fpt.servicecontract.contract.model.Contract;
+import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -64,4 +65,6 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                     c.mark_deleted = 0
             """, nativeQuery = true)
     List<Object[]> findByIdContract(String id);
+
+    BaseResponse findContractPartyById(String id);
 }

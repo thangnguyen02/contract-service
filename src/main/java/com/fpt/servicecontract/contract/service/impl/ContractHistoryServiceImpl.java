@@ -1,7 +1,6 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.contract.dto.ContractHistoryDto;
-import com.fpt.servicecontract.contract.dto.ContractTemplateDto;
 import com.fpt.servicecontract.contract.model.ContractHistory;
 import com.fpt.servicecontract.contract.repository.ContractHistoryRepository;
 import com.fpt.servicecontract.contract.service.ContractHistoryService;
@@ -21,10 +20,11 @@ public class ContractHistoryServiceImpl implements ContractHistoryService {
     private final ContractHistoryRepository repository;
 
     @Override
-    public void createContractHistory(String contractId, String createdBy, String status) {
+    public void createContractHistory(String contractId, String contractName, String createdBy, String status) {
         ContractHistory contractHistory = ContractHistory.builder()
                 .contractId(contractId)
                 .createdBy(createdBy)
+                .contractName(contractName)
                 .status(status)
                 .createdDate(LocalDateTime.now())
                 .build();
@@ -43,8 +43,9 @@ public class ContractHistoryServiceImpl implements ContractHistoryService {
                     .id(row[0].toString())
                     .contractId(row[1].toString())
                     .createdBy(row[2].toString())
-                    .createdDate(row[3].toString())
+                    .time(row[3].toString())
                     .status(row[4].toString())
+                    .contractName(row[5].toString())
                     .build());
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, response);

@@ -12,6 +12,7 @@ public class ContractHistoryDto {
     private String id;
     private String contractId;
     private String createdBy; // email
-    private String createdDate;
+    private String time;
     private String status;
+    private String contractName;
 }
