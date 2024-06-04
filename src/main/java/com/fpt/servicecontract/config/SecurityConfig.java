@@ -32,7 +32,6 @@ public class SecurityConfig {
             .requestMatchers("/api-docs/**").permitAll()
             .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
                 .requestMatchers("/contract-templates/**").permitAll()
-                .requestMatchers("/user/**").permitAll()
 //            .requestMatchers("/manager/**").hasAnyRole(ADMIN.name(), MANAGER.name())
             .anyRequest().authenticated()).sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 

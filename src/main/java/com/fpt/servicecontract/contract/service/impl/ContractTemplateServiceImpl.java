@@ -73,6 +73,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setBankAccOwer(contractRequest.getBankAccOwer());
         template.setEmail(contractRequest.getEmail());
         template.setCreatedDate(LocalDateTime.now());
+        template.setMarkDeleted(false);
         try {
             contractTemplateRepository.save(template);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create successfully", true, ContractTemplateDto.builder()
