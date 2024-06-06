@@ -21,7 +21,9 @@ public class Notification {
     private String id;
     private String title;
     private String message;
-    private String createdBy;
+    private String entityId;
+    private String senderId;
+    private String recipientId;
     private LocalDateTime createdDate;
     private Boolean markedDeleted;
     private Boolean markRead;
