@@ -2,7 +2,9 @@ package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.contract.dto.CreateNotificationRequest;
 import com.fpt.servicecontract.contract.dto.NotificationDto;
+import com.fpt.servicecontract.contract.model.EntityId;
 import com.fpt.servicecontract.contract.model.Notification;
+import com.fpt.servicecontract.contract.repository.EntityIdRepository;
 import com.fpt.servicecontract.contract.repository.NotificationRepository;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import com.fpt.servicecontract.utils.BaseResponse;
@@ -21,10 +23,11 @@ import java.util.Objects;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final EntityIdRepository entityIdRepository;
 
     @Override
-    public BaseResponse findAllNotifications() {
-        List<Object[]> notifications = notificationRepository.getAllNotificationBy();
+    public BaseResponse findAllNotifications(String recipientId) {
+        List<Object[]> notifications = notificationRepository.getAllNotificationBy(recipientId);
         if (notifications.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any notification", true, null);
         }
@@ -35,22 +38,35 @@ public class NotificationServiceImpl implements NotificationService {
                     .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .title(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
                     .message(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
-                    .createdBy(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
+                    .senderId(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
                     .createdDate(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
                     .markedDeleted((boolean) obj[5])
                     .markRead((boolean) obj[6])
+                    .recipientId(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
+                    .objectId(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
+                    .entityType(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
+                    .description(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
+                    .senderName(Objects.nonNull(obj[10]) ? obj[10].toString() : null)
+                    .recipientName(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
                     .build());
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "List Notifications", true, notificationDtos);
     }
 
     @Override
-    public BaseResponse createNotification(CreateNotificationRequest request) {
+    public BaseResponse createNotification(CreateNotificationRequest request, EntityId entityIdCreate) {
+        if(DataUtil.isNullObject(entityIdCreate)) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Entity Id cannot be null", true, null);
+        } else {
+            entityIdRepository.save(entityIdCreate);
+        }
         Notification notification = Notification.builder()
                 .title(request.getTitle())
                 .message(request.getMessage())
-                .createdBy(request.getCreatedBy())
+                .senderId(request.getSenderId())
                 .createdDate(LocalDateTime.now())
+                .recipientId(request.getRecipientId())
+                .entityId(entityIdCreate.getId())
                 .markedDeleted(false)
                 .markRead(false)
                 .build();
@@ -60,7 +76,7 @@ public class NotificationServiceImpl implements NotificationService {
                     .id(notification.getId())
                     .title(notification.getTitle())
                     .message(notification.getMessage())
-                    .createdBy(notification.getCreatedBy())
+                    .senderId(notification.getSenderId())
                     .build());
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Create failed", true, null);
@@ -77,7 +93,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = noti.get();
         notification.setTitle(DataUtil.isNullObject(request.getTitle()) ? notification.getTitle() : request.getTitle());
         notification.setMessage(DataUtil.isNullObject(request.getMessage()) ? notification.getMessage() : request.getMessage());
-        notification.setCreatedBy(DataUtil.isNullObject(request.getCreatedBy()) ? notification.getCreatedBy() : request.getCreatedBy());
+        notification.setSenderId(DataUtil.isNullObject(request.getSenderId()) ? notification.getSenderId() : request.getSenderId());
         notification.setMarkRead(DataUtil.isNullObject(request.getMarkRead()) ? notification.getMarkRead() : request.getMarkRead());
         try {
             notificationRepository.save(notification);
@@ -85,14 +101,13 @@ public class NotificationServiceImpl implements NotificationService {
                     .id(notification.getId())
                     .title(notification.getTitle())
                     .markRead(notification.getMarkRead())
-                    .createdBy(notification.getCreatedBy())
+                    .senderId(notification.getSenderId())
                     .message(notification.getMessage())
                     .markedDeleted(notification.getMarkedDeleted())
                     .build());
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Update failed", true, null);
         }
-
     }
 
     @Override

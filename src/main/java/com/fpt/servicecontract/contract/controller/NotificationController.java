@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.contract.dto.CreateNotificationRequest;
+import com.fpt.servicecontract.contract.model.EntityId;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +16,18 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
     private final NotificationService notificationService;
 
-    @GetMapping()
-    public ResponseEntity<BaseResponse> getAll() {
-
-        return ResponseEntity.ok(notificationService.findAllNotifications());
+    @GetMapping("/{recipientId}")
+    public ResponseEntity<BaseResponse> getAll(@PathVariable("recipientId") String recipientId) {
+        return ResponseEntity.ok(notificationService.findAllNotifications(recipientId));
     }
 
     @PostMapping()
     public ResponseEntity<BaseResponse> create(
-            @RequestBody CreateNotificationRequest createNotificationRequest
+            @RequestBody CreateNotificationRequest createNotificationRequest,
+            @RequestBody EntityId entityId
             )
     {
-        return ResponseEntity.ok(notificationService.createNotification(createNotificationRequest));
+        return ResponseEntity.ok(notificationService.createNotification(createNotificationRequest, entityId));
     }
 
 

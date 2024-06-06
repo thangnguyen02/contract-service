@@ -11,6 +11,7 @@ import lombok.Setter;
 public class CreateNotificationRequest {
     private String title;
     private String message;
-    private String createdBy;
+    private String senderId;
     private Boolean markRead;
+    private String recipientId;
 }
