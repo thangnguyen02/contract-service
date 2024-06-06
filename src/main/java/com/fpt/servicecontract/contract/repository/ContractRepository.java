@@ -14,15 +14,15 @@ import java.util.List;
 public interface ContractRepository extends JpaRepository<Contract, String> {
 
     @Query(value = """
-            select    
-            name, 
-            created_by, 
-            file,
-            created_date ,
-            id, 
-            status
-            from contract  where mark_deleted = 0
-            """, nativeQuery = true)
+            SELECT\s 
+                 name, 
+                 created_by, 
+                 file,
+                 created_date ,
+                 id, 
+                 status
+                 from contract  where mark_deleted = 0
+                 """, nativeQuery = true)
     Page<Object[]>  findAllContract(Pageable p);
 
     @Query(value = """
@@ -62,7 +62,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                          LEFT JOIN
                      contract_party pb ON c.partybid = pb.id
                  WHERE
-                    c.mark_deleted = 0
+                    c.mark_deleted = 0 and c.id = :id
             """, nativeQuery = true)
     List<Object[]> findByIdContract(String id);
 

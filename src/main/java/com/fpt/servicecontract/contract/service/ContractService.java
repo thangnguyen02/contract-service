@@ -4,15 +4,19 @@ import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+
 public interface ContractService {
 
     BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception;
 
     BaseResponse findAll(Pageable p);
 
-    BaseResponse findById(String id);
+    ContractRequest findById(String id);
 
-    BaseResponse delete(String id);
+    BaseResponse delete(String id) throws IOException;
 
     BaseResponse findContractPartyById(String id);
+
+    Void sync();
 }

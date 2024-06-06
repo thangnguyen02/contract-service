@@ -3,8 +3,11 @@ package com.fpt.servicecontract.contract.controller;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
+import com.fpt.servicecontract.contract.dto.SearchRequestBody;
 import com.fpt.servicecontract.contract.service.ContractService;
+import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.utils.BaseResponse;
+import com.fpt.servicecontract.utils.Constants;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @Slf4j
 @RestController
 @RequestMapping("/contract")
@@ -24,6 +29,7 @@ public class ContractController {
     private final MailService mailService;
     private final ContractService contractService;
     private final JwtService jwtService;
+    private final ElasticSearchService elasticSearchService;
 
     @PostMapping("/send-mail")
     public String sendMail(@RequestParam String[] to,
@@ -46,18 +52,22 @@ public class ContractController {
     public String tests() {
         return "PERMISSION_SALE";
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> findById(@PathVariable String id) {
-        return ResponseEntity.ok(contractService.findById(id));
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractService.findById(id)));
     }
+
     @GetMapping("/party/{id}")
     public ResponseEntity<BaseResponse> findContractPartyById(@PathVariable String id) {
         return ResponseEntity.ok(contractService.findContractPartyById(id));
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse> delete(@PathVariable String id) {
+    public ResponseEntity<BaseResponse> delete(@PathVariable String id) throws IOException {
         return ResponseEntity.ok(contractService.delete(id));
     }
+
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> findAll(@PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
@@ -70,5 +80,15 @@ public class ContractController {
                                                        @RequestBody ContractRequest contractRequest) throws Exception {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(contractService.createContract(contractRequest, email));
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<BaseResponse> searchContracts(@RequestBody SearchRequestBody searchRequestBody) throws IOException {
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
+                "Successfully", true, elasticSearchService.search("contract", searchRequestBody, ContractRequest.class)));
+    }
+    @GetMapping("/sync")
+    public ResponseEntity<Void> sync() throws IOException {
+        return ResponseEntity.ok(contractService.sync());
     }
 }

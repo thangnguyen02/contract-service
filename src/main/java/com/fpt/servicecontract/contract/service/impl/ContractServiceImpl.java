@@ -10,6 +10,7 @@ import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.contract.service.ContractHistoryService;
 import com.fpt.servicecontract.contract.service.ContractService;
+import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -35,6 +37,7 @@ public class ContractServiceImpl implements ContractService {
     private final PdfUtils pdfUtils;
     private final CloudinaryService cloudinaryService;
     private final ContractHistoryService contractHistoryService;
+    private final ElasticSearchService elasticSearchService;
 
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
@@ -94,7 +97,7 @@ public class ContractServiceImpl implements ContractService {
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
         File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
         contract.setFile(cloudinaryService.uploadPdf(file));
-        contractRepository.save(contract);
+        Contract result =  contractRepository.save(contract);
         if (file.exists() && file.isFile()) {
             boolean deleted = file.delete();
             if (!deleted) {
@@ -107,6 +110,8 @@ public class ContractServiceImpl implements ContractService {
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.UPDATE);
 
         }
+        contractRequest.setId(result.getId());
+        elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
 
@@ -130,7 +135,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public BaseResponse findById(String id) {
+    public ContractRequest findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
         ContractRequest contractRequest = new ContractRequest();
         for (Object[] obj : lst) {
@@ -169,15 +174,14 @@ public class ContractServiceImpl implements ContractService {
                     .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
                     .build();
         }
-
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractRequest);
+       return  contractRequest;
     }
-
     @Override
-    public BaseResponse delete(String id) {
+    public BaseResponse delete(String id) throws IOException {
         Contract contract = contractRepository.findById(id).get();
         contract.setMarkDeleted(true);
         contractRepository.save(contract);
+        elasticSearchService.deleteDocumentById("contract", id);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, null);
     }
 
@@ -186,5 +190,21 @@ public class ContractServiceImpl implements ContractService {
         Optional<ContractParty> contractPartyOptional = contractPartyRepository.findByTaxNumber(id);
         ContractParty contractParty = contractPartyOptional.orElse(null);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractParty);
+    }
+
+    @Override
+    public Void sync() {
+        List<String> ids = contractRepository.findAll().stream().map(m->m.getId()).toList();
+        ids.forEach(f->{
+            ContractRequest  contract = findById(f);
+            try {
+                if(contract.getId()!= null){
+                    elasticSearchService.indexDocument("contract", contract, ContractRequest::getId );
+                }
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return null;
     }
 }
