@@ -6,6 +6,7 @@ import com.fpt.servicecontract.contract.dto.OldContractDto;
 import com.fpt.servicecontract.contract.model.OldContract;
 import com.fpt.servicecontract.contract.repository.OldContractRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
+import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.contract.service.OldContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
@@ -39,7 +40,7 @@ public class OldContractServiceImpl implements OldContractService {
     private final CloudinaryService cloudinaryService;
     private final PdfUtils pdfUtils;
     private final JwtService jwtService;
-
+    private final ElasticSearchService elasticSearchService;
     @Override
     public BaseResponse getContracts(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
@@ -105,6 +106,7 @@ public class OldContractServiceImpl implements OldContractService {
 
         try {
             oldContractRepository.save(contract);
+            elasticSearchService.indexDocument("oldContract", contract, OldContract::getId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
                     .id(contract.getId())
                     .contractName(contract.getContractName())
@@ -118,12 +120,13 @@ public class OldContractServiceImpl implements OldContractService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public BaseResponse delete(String contractId) {
+    public BaseResponse delete(String contractId) throws IOException {
         var oldContract = oldContractRepository.findById(contractId);
         if (oldContract.isPresent()) {
             OldContract oldCon = oldContract.get();
             oldCon.setIsDeleted(true);
             oldContractRepository.save(oldCon);
+            elasticSearchService.deleteDocumentById("oldContract",contractId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successful", true, oldCon.getId());
         }
         return new BaseResponse(Constants.ResponseCode.FAILURE, "Delete Failed", false, null);

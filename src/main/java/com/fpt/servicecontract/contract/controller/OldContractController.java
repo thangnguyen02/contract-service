@@ -2,12 +2,19 @@ package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
+import com.fpt.servicecontract.contract.dto.SearchRequestBody;
+import com.fpt.servicecontract.contract.model.OldContract;
+import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.contract.service.OldContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
+import com.fpt.servicecontract.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -16,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class OldContractController {
     private final MailService mailService;
     private final OldContractService oldContractService;
-
+    private final ElasticSearchService elasticSearchService;
     @GetMapping()
     public BaseResponse getAll(@RequestParam("page") int page, @RequestParam("size") int size) {
 
@@ -37,7 +44,12 @@ public class OldContractController {
     @DeleteMapping("/{id}")
     public BaseResponse delete(
             @PathVariable("id") String id
-    ) {
+    ) throws IOException {
         return oldContractService.delete(id);
+    }
+    @PostMapping("/search")
+    public ResponseEntity<BaseResponse> searchContracts(@RequestBody SearchRequestBody searchRequestBody) throws IOException {
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
+                "Successfully", true, elasticSearchService.search("oldContract", searchRequestBody, OldContract.class)));
     }
 }

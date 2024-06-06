@@ -4,11 +4,13 @@ import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
 import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface OldContractService {
 
     BaseResponse getContracts(int page, int size);
 
     BaseResponse create(String token, CreateUpdateOldContract request, MultipartFile[] images);
 
-    BaseResponse delete(String contractId);
+    BaseResponse delete(String contractId) throws IOException;
 }
