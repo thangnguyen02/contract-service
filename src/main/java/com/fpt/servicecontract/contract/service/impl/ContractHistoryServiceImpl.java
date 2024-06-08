@@ -20,13 +20,14 @@ public class ContractHistoryServiceImpl implements ContractHistoryService {
     private final ContractHistoryRepository repository;
 
     @Override
-    public void createContractHistory(String contractId, String contractName, String createdBy, String status) {
+    public void createContractHistory(String contractId, String contractName, String createdBy, String comment, String status) {
         ContractHistory contractHistory = ContractHistory.builder()
                 .contractId(contractId)
                 .createdBy(createdBy)
                 .contractName(contractName)
                 .status(status)
                 .createdDate(LocalDateTime.now())
+                .comment(comment)
                 .build();
         repository.save(contractHistory);
     }

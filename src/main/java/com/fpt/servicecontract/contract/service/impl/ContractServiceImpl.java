@@ -3,6 +3,7 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.ContractResponse;
 import com.fpt.servicecontract.contract.dto.PartyRequest;
+import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
@@ -16,6 +17,7 @@ import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -97,7 +99,6 @@ public class ContractServiceImpl implements ContractService {
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
         File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
         contract.setFile(cloudinaryService.uploadPdf(file));
-        Contract result =  contractRepository.save(contract);
         if (file.exists() && file.isFile()) {
             boolean deleted = file.delete();
             if (!deleted) {
@@ -105,11 +106,14 @@ public class ContractServiceImpl implements ContractService {
             }
         }
         if (contractRequest.getId() == null) {
-            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.NEW);
+            contract.setStatus(Constants.STATUS.NEW);
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.NEW);
         } else {
-            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), Constants.STATUS.UPDATE);
+            contract.setStatus(Constants.STATUS.UPDATE);
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),"", Constants.STATUS.UPDATE);
 
         }
+        Contract result = contractRepository.save(contract);
         contractRequest.setId(result.getId());
         elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
@@ -174,8 +178,9 @@ public class ContractServiceImpl implements ContractService {
                     .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
                     .build();
         }
-       return  contractRequest;
+        return contractRequest;
     }
+
     @Override
     public BaseResponse delete(String id) throws IOException {
         Contract contract = contractRepository.findById(id).get();
@@ -194,17 +199,61 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public Void sync() {
-        List<String> ids = contractRepository.findAll().stream().map(m->m.getId()).toList();
-        ids.forEach(f->{
-            ContractRequest  contract = findById(f);
+        List<String> ids = contractRepository.findAll().stream().map(m -> m.getId()).toList();
+        ids.forEach(f -> {
+            ContractRequest contract = findById(f);
             try {
-                if(contract.getId()!= null){
-                    elasticSearchService.indexDocument("contract", contract, ContractRequest::getId );
+                if (contract.getId() != null) {
+                    elasticSearchService.indexDocument("contract", contract, ContractRequest::getId);
                 }
-              } catch (IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
         return null;
+    }
+
+    @Override
+    public String signContract(SignContractDTO signContractDTO) throws Exception {
+        ContractRequest contractRequest = findById(signContractDTO.getContractId());
+        Contract contract = contractRepository.findByIdNative(signContractDTO.getContractId());
+        Context context = new Context();
+        if (contract != null) {
+            if (!signContractDTO.isCustomer()) {
+                contract.setSignA(true);
+                context.setVariable("sign-a", signContractDTO.getSignImage());
+                if (contract.isSignB()) {
+                    contract.setStatus(Constants.STATUS.SUCCESS);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+                } else {
+                    contract.setStatus(Constants.STATUS.PROCESSING);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment() ,Constants.STATUS.SIGN_A);
+                }
+            } else {
+                contract.setSignB(true);
+                context.setVariable("sign-b", signContractDTO.getSignImage());
+                if (contract.isSignA()) {
+                    contract.setStatus(Constants.STATUS.SUCCESS);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+                } else {
+                    contract.setStatus(Constants.STATUS.PROCESSING);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SIGN_A);
+                }
+            }
+
+
+            context.setVariable("partyA", contractRequest.getPartyA());
+            context.setVariable("partyB", contractRequest.getPartyB());
+            context.setVariable("info", contract);
+            context.setVariable("date", contract.getCreatedDate());
+            String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
+            File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
+            contract.setFile(cloudinaryService.uploadPdf(file));
+
+            contractRepository.save(contract);
+            return "Sign ok";
+        } else {
+            return "Failed";
+        }
     }
 }

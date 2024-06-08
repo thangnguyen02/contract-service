@@ -17,8 +17,8 @@ public class ContractStatus {
     @Id
     @UuidGenerator
     private String id;
-    private String sender;//id uuid
-    private String receiver;// id uuid
+    private String sender;//id email
+    private String receiver;// id email
     private String contractId;
     private LocalDateTime sendDate;
 
