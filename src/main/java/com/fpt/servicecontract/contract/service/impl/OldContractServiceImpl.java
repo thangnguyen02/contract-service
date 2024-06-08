@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.config.JwtService;
+import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
 import com.fpt.servicecontract.contract.dto.OldContractDto;
 import com.fpt.servicecontract.contract.model.OldContract;
@@ -21,15 +22,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -106,7 +105,7 @@ public class OldContractServiceImpl implements OldContractService {
 
         try {
             oldContractRepository.save(contract);
-            elasticSearchService.indexDocument("oldContract", contract, OldContract::getId);
+            elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
                     .id(contract.getId())
                     .contractName(contract.getContractName())
@@ -126,9 +125,24 @@ public class OldContractServiceImpl implements OldContractService {
             OldContract oldCon = oldContract.get();
             oldCon.setIsDeleted(true);
             oldContractRepository.save(oldCon);
-            elasticSearchService.deleteDocumentById("oldContract",contractId);
+            elasticSearchService.deleteDocumentById("old_contract",contractId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successful", true, oldCon.getId());
         }
         return new BaseResponse(Constants.ResponseCode.FAILURE, "Delete Failed", false, null);
+    }
+
+    @Override
+    public Void sync() {
+        List<OldContract> oldContracts = oldContractRepository.findAll() ;
+        if(!CollectionUtils.isEmpty(oldContracts)){
+            oldContracts.forEach(o->{
+                try {
+                    elasticSearchService.indexDocument("old_contract", o, OldContract::getId );
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+        return null;
     }
 }

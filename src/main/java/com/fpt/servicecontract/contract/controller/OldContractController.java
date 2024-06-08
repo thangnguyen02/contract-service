@@ -50,6 +50,10 @@ public class OldContractController {
     @PostMapping("/search")
     public ResponseEntity<BaseResponse> searchContracts(@RequestBody SearchRequestBody searchRequestBody) throws IOException {
         return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
-                "Successfully", true, elasticSearchService.search("oldContract", searchRequestBody, OldContract.class)));
+                "Successfully", true, elasticSearchService.search("old_contract", searchRequestBody, OldContract.class)));
+    }
+    @GetMapping("/sync")
+    public ResponseEntity<Void> sync() throws IOException {
+        return ResponseEntity.ok(oldContractService.sync());
     }
 }
