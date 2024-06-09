@@ -12,14 +12,18 @@ import java.nio.file.Files;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +48,7 @@ public class PdfController {
   private final Cloudinary cloudinary;
 
   private final CloudinaryService cloudinaryService;
+
 
   @GetMapping("/generate")
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
@@ -80,5 +85,22 @@ public class PdfController {
   public @ResponseBody byte[] downloadFile(@RequestBody String url) throws IOException {
     InputStream in = new URL(url).openStream();
     return IOUtils.toByteArray(in);
+  }
+
+  @PostMapping("/test-pdf-to-text")
+  public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+    if (file.isEmpty()) {
+      return ResponseEntity.badRequest().body("Please upload a file");
+    }
+
+    try {
+      String text = pdfUtils.getTextFromPdfFile(file);
+      return ResponseEntity.ok().body(text);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the file");
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the file");
+    }
   }
 }

@@ -4,14 +4,19 @@ import com.lowagie.text.FontFactory;
 import com.lowagie.text.pdf.BaseFont;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import static com.lowagie.text.html.HtmlTags.HTML;
@@ -57,5 +62,14 @@ public class PdfUtils {
                 .replace("ᵒ", "&ordm;")
                 .replace("& ", "")
                 .replace("<br>", "<br/>");
+    }
+
+    public String getTextFromPdfFile(MultipartFile file) throws Exception {
+        InputStream inputStream = file.getInputStream();
+        PDDocument document = Loader.loadPDF(inputStream.readAllBytes());
+        PDFTextStripper stripper = new PDFTextStripper();
+        String text = stripper.getText(document);
+        document.close();
+        return text;
     }
 }
