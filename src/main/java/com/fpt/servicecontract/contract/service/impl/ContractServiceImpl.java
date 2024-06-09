@@ -223,6 +223,7 @@ public class ContractServiceImpl implements ContractService {
             if (!signContractDTO.isCustomer()) {
                 contract.setSignA(signContractDTO.getSignImage());
                 context.setVariable("signA", signContractDTO.getSignImage());
+                context.setVariable("signB", contract.getSignB());
                 if (!StringUtils.isBlank(contract.getSignB())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
                     contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
@@ -233,6 +234,7 @@ public class ContractServiceImpl implements ContractService {
             } else {
                 contract.setSignB(signContractDTO.getSignImage());
                 context.setVariable("signB", signContractDTO.getSignImage());
+                context.setVariable("signA", contract.getSignA());
                 if (!StringUtils.isBlank(contract.getSignA())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
                     contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
