@@ -240,7 +240,7 @@ public class ContractServiceImpl implements ContractService {
                     contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SIGN_A);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SIGN_B);
                 }
             }
             context.setVariable("partyA", contractRequest.getPartyA());

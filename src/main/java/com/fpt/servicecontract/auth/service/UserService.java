@@ -50,6 +50,7 @@ public class UserService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
+        user.setAddress(request.getAddress());
         user.setDepartment(request.getDepartment());
         user.setPosition(request.getPosition());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
