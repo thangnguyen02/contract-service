@@ -217,7 +217,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public String signContract(SignContractDTO signContractDTO) throws Exception {
         ContractRequest contractRequest = findById(signContractDTO.getContractId());
-        Contract contract = contractRepository.findByIdNative(signContractDTO.getContractId());
+        Contract contract =  contractRepository.findById(signContractDTO.getContractId()).orElse(null);
         Context context = new Context();
         if (contract != null) {
             if (!signContractDTO.isCustomer()) {
