@@ -43,7 +43,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
                         .fuzziness("AUTO")
                 ))
         );
-
         SearchRequest searchRequest = SearchRequest.of(s -> s
                 .index(indexName)
                 .query(multiMatchQuery)

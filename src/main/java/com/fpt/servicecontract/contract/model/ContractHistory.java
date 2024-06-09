@@ -24,4 +24,5 @@ public class ContractHistory {
     private String createdBy; // email
     private LocalDateTime createdDate;
     private String status;
+    private String comment;
 }

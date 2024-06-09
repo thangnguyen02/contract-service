@@ -4,6 +4,7 @@ import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.SearchRequestBody;
+import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.utils.BaseResponse;
@@ -87,8 +88,21 @@ public class ContractController {
         return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
                 "Successfully", true, elasticSearchService.search("contract", searchRequestBody, ContractRequest.class)));
     }
+
     @GetMapping("/sync")
     public ResponseEntity<Void> sync() throws IOException {
         return ResponseEntity.ok(contractService.sync());
+    }
+
+    @PostMapping("/public/sign-contract")
+    public ResponseEntity<BaseResponse> signContract(@RequestBody SignContractDTO signContractDTO) throws Exception {
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
+                "Successfully", true, contractService.signContract(signContractDTO)));
+    }
+
+    @PostMapping("/reject-contract")
+    public ResponseEntity<BaseResponse> rejectContract(@RequestBody SearchRequestBody searchRequestBody) throws IOException {
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
+                "Successfully", true, elasticSearchService.search("contract", searchRequestBody, ContractRequest.class)));
     }
 }

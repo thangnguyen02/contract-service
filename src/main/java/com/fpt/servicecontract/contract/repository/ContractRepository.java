@@ -66,5 +66,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
             """, nativeQuery = true)
     List<Object[]> findByIdContract(String id);
 
-    BaseResponse findContractPartyById(String id);
+    @Query(value = """
+           query by id
+                 """, nativeQuery = true)
+    Contract findByIdNative(String contractId);
 }

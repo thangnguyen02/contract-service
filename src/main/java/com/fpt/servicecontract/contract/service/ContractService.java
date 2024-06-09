@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.service;
 
 import com.fpt.servicecontract.contract.dto.ContractRequest;
+import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -19,4 +20,6 @@ public interface ContractService {
     BaseResponse findContractPartyById(String id);
 
     Void sync();
+
+    String signContract(SignContractDTO signContractDTO) throws Exception;
 }

@@ -13,4 +13,6 @@ public interface OldContractService {
     BaseResponse create(String token, CreateUpdateOldContract request, MultipartFile[] images);
 
     BaseResponse delete(String contractId) throws IOException;
+
+    Void sync();
 }

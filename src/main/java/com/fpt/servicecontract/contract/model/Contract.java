@@ -27,8 +27,8 @@ public class Contract {
     private String partyAId;
     private String partyBId;
     private String file;
-    private String signA;
-    private String signB;
+    private boolean signA;
+    private boolean signB;
     private String createdBy;
     private Date contractSignDate;
     private Date contractStartDate;
