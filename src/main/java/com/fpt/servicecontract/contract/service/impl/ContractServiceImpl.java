@@ -121,8 +121,8 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public BaseResponse findAll(Pageable p) {
-        Page<Object[]> page = contractRepository.findAllContract(p);
+    public BaseResponse findAll(Pageable p, String email) {
+        Page<Object[]> page = contractRepository.findAllContract(p, email);
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             responses.add(ContractResponse.builder()

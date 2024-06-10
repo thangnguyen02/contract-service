@@ -21,9 +21,9 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                  created_date ,
                  id, 
                  status
-                 from contract  where mark_deleted = 0
+                 from contract  where mark_deleted = 0 and created_by = :email
                  """, nativeQuery = true)
-    Page<Object[]>  findAllContract(Pageable p);
+    Page<Object[]>  findAllContract(Pageable p, String email);
 
     @Query(value = """
             SELECT\s
@@ -65,6 +65,4 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                     c.mark_deleted = 0 and c.id = :id
             """, nativeQuery = true)
     List<Object[]> findByIdContract(String id);
-
-
 }

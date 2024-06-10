@@ -5,7 +5,9 @@ import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.SearchRequestBody;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
+import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.service.ContractService;
+import com.fpt.servicecontract.contract.service.ContractStatusService;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
@@ -20,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -31,13 +36,26 @@ public class ContractController {
     private final ContractService contractService;
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
+    private final ContractStatusService contractStatusService;
 
     @PostMapping("/send-mail")
-    public String sendMail(@RequestParam String[] to,
+    public String sendMail(@RequestHeader("Authorization") String bearerToken, @RequestParam String[] to,
                            @RequestParam(required = false) String[] cc,
                            @RequestParam String subject,
                            @RequestParam String htmlContent,
-                           @RequestParam(required = false) MultipartFile[] attachments) throws MessagingException {
+                           @RequestParam(required = false) MultipartFile[] attachments,
+                           @RequestParam String contractId) throws MessagingException {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        //Contract status
+        List<String> receivers = new ArrayList<>();
+        for (String recipient : to) {
+            receivers.add(recipient.trim());
+        }
+
+        for (String recipient : cc) {
+            receivers.add(recipient.trim());
+        }
+        contractStatusService.create(email, receivers, contractId);
         mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         return "SEND OK";
     }
@@ -70,9 +88,10 @@ public class ContractController {
     }
 
     @GetMapping("/{page}/{size}")
-    public ResponseEntity<BaseResponse> findAll(@PathVariable int page, @PathVariable int size) {
+    public ResponseEntity<BaseResponse> findAll(@RequestHeader("Authorization") String bearerToken, @PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
-        return ResponseEntity.ok(contractService.findAll(p));
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(contractService.findAll(p, email));
     }
 
     @PostMapping()

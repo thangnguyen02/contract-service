@@ -2,8 +2,6 @@ package com.fpt.servicecontract.auth.controller;
 
 import com.fpt.servicecontract.auth.dto.AuthenticationRequest;
 import com.fpt.servicecontract.auth.dto.AuthenticationResponse;
-import com.fpt.servicecontract.auth.dto.RegisterRequest;
-import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
