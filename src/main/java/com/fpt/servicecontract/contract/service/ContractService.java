@@ -22,4 +22,5 @@ public interface ContractService {
     Void sync();
 
     String signContract(SignContractDTO signContractDTO) throws Exception;
+
 }

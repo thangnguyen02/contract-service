@@ -6,8 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -70,4 +73,27 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
            query by id
                  """, nativeQuery = true)
     Contract findByIdNative(String contractId);
+
+    @Query(value = """
+            SELECT\s
+                 count(id)
+                 from contract  where 
+                 created_date between :fromDate and :toDate
+                 and mark_deleted = 0
+                 """, nativeQuery = true)
+    Integer  staticalNewContract(
+            @Param("fromDate") Date fromDate,
+            @Param("toDate") Date toDate
+    );
+
+    @Query(value = """
+            SELECT
+                 count(id)
+                 from contract  where 
+                 mark_deleted = 0
+                 and (status = :status or :status is null)
+                 """, nativeQuery = true)
+    Integer  statisticSignStatus(
+            @Param("status") String status
+    );
 }
