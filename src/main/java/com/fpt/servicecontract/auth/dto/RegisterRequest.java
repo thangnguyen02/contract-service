@@ -19,6 +19,7 @@ public class RegisterRequest {
   private String phone;
   private String position;
   private String department;
+  private String address;
   private Set<Permission> permissions;
 
 }

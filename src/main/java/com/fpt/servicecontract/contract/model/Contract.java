@@ -27,8 +27,10 @@ public class Contract {
     private String partyAId;
     private String partyBId;
     private String file;
-    private boolean signA;
-    private boolean signB;
+    @Column(columnDefinition="LONGTEXT")
+    private String signA;
+    @Column(columnDefinition="LONGTEXT")
+    private String signB;
     private String createdBy;
     private Date contractSignDate;
     private Date contractStartDate;

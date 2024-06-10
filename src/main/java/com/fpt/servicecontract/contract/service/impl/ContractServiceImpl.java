@@ -18,6 +18,7 @@ import com.fpt.servicecontract.utils.PdfUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -216,13 +217,14 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public String signContract(SignContractDTO signContractDTO) throws Exception {
         ContractRequest contractRequest = findById(signContractDTO.getContractId());
-        Contract contract = contractRepository.findByIdNative(signContractDTO.getContractId());
+        Contract contract =  contractRepository.findById(signContractDTO.getContractId()).orElse(null);
         Context context = new Context();
         if (contract != null) {
             if (!signContractDTO.isCustomer()) {
-                contract.setSignA(true);
-                context.setVariable("sign-a", signContractDTO.getSignImage());
-                if (contract.isSignB()) {
+                contract.setSignA(signContractDTO.getSignImage());
+                context.setVariable("signA", signContractDTO.getSignImage());
+                context.setVariable("signB", contract.getSignB());
+                if (!StringUtils.isBlank(contract.getSignB())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
                     contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
                 } else {
@@ -230,18 +232,17 @@ public class ContractServiceImpl implements ContractService {
                     contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment() ,Constants.STATUS.SIGN_A);
                 }
             } else {
-                contract.setSignB(true);
-                context.setVariable("sign-b", signContractDTO.getSignImage());
-                if (contract.isSignA()) {
+                contract.setSignB(signContractDTO.getSignImage());
+                context.setVariable("signB", signContractDTO.getSignImage());
+                context.setVariable("signA", contract.getSignA());
+                if (!StringUtils.isBlank(contract.getSignA())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
                     contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SIGN_A);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SIGN_B);
                 }
             }
-
-
             context.setVariable("partyA", contractRequest.getPartyA());
             context.setVariable("partyB", contractRequest.getPartyB());
             context.setVariable("info", contract);
@@ -249,7 +250,12 @@ public class ContractServiceImpl implements ContractService {
             String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
             File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
             contract.setFile(cloudinaryService.uploadPdf(file));
-
+            if (file.exists() && file.isFile()) {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+                }
+            }
             contractRepository.save(contract);
             return "Sign ok";
         } else {
