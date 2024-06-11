@@ -14,4 +14,5 @@ public class ContractResponse {
     private String file;
     private String createdDate;
     private String status;
+    private boolean isUrgent;
 }

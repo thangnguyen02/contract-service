@@ -16,5 +16,6 @@ public class ContractRequest {
     private PartyRequest partyA;
     private PartyRequest partyB;
     private String file;
+    private boolean isUrgent;
 }
 
