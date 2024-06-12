@@ -59,4 +59,9 @@ public class UserController {
     public BaseResponse findById(@PathVariable("id")String id) {
         return service.getUserById(id);
     }
+
+    @GetMapping("/searchByPermission")
+    public BaseResponse getAll(@RequestParam("permission") String permission, Pageable pageable) {
+        return service.getUserByPermission(permission, pageable);
+    }
 }

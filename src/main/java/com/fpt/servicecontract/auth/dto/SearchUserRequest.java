@@ -17,5 +17,4 @@ public class SearchUserRequest {
     private String address;
     private String department;
     private String position;
-
 }

@@ -59,4 +59,18 @@ public interface UserRepository extends JpaRepository<User, String> {
                                @Param("position") String position,
                                @Param("role") String role,
                                Pageable pageable);
+
+    @Query(value = """
+        SELECT u.name, u.email, CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions
+                           FROM users u
+                           JOIN user_permissions up ON u.id = up.user_id where
+                                        (lower(u.role) like lower(:role) or :role is null)
+                                        and (permissions like lower(:permission) or :permission is null)
+                           GROUP BY u.name, u.email
+            """
+            , nativeQuery = true)
+    Page<UserInterface> getUserWithPermission(
+                               @Param("role") String role,
+                               @Param("permission") String permission,
+                               Pageable pageable);
 }
