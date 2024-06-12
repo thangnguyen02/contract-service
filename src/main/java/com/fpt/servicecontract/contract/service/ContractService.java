@@ -23,4 +23,5 @@ public interface ContractService {
 
     String signContract(SignContractDTO signContractDTO) throws Exception;
 
+    BaseResponse getContractSignById(String id);
 }

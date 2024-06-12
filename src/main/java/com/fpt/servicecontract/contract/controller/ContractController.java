@@ -113,6 +113,12 @@ public class ContractController {
         return ResponseEntity.ok(contractService.sync());
     }
 
+    @PostMapping("/public/sign-contract/{id}")
+    public ResponseEntity<BaseResponse> getContractSignById(@PathVariable String id) throws Exception {
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
+                "Successfully", true, contractService.getContractSignById(id)));
+    }
+
     @PostMapping("/public/sign-contract")
     public ResponseEntity<BaseResponse> signContract(@RequestBody SignContractDTO signContractDTO) throws Exception {
         return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
