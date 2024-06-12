@@ -143,4 +143,16 @@ public class UserService {
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Get Successful", true, user);
     }
+
+    public BaseResponse getUserByPermission(String permission, Pageable pageable) {
+        Page<UserInterface> result = userRepository.getUserWithPermission(
+                Role.USER.getRole(),
+                QueryUtils.appendPercent(permission),
+                pageable);
+        if (result.getTotalElements() > 0) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, result);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, null);
+    }
+
 }
