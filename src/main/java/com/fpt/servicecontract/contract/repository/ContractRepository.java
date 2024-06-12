@@ -17,16 +17,21 @@ import java.util.List;
 public interface ContractRepository extends JpaRepository<Contract, String> {
 
     @Query(value = """
-            SELECT\s 
-                 name, 
-                 created_by, 
-                 file,
-                 created_date ,
-                 id, 
-                 status
-                 from contract  where mark_deleted = 0 and created_by = :email
+            SELECT\s
+                name,
+                created_by,
+                file,
+                created_date,
+                id,
+                status,
+                is_urgent
+            FROM
+                contract
+            WHERE
+                mark_deleted = 0
+                 AND (created_by = :email OR id IN (:ids))  order by is_urgent desc, created_date desc
                  """, nativeQuery = true)
-    Page<Object[]>  findAllContract(Pageable p, String email);
+    Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids);
 
     @Query(value = """
             SELECT\s

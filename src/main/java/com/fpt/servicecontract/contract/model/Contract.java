@@ -39,4 +39,5 @@ public class Contract {
     private LocalDateTime updatedDate;
     private boolean markDeleted;
     private String status;
+    private boolean isUrgent;
 }

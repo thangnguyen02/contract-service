@@ -6,8 +6,10 @@ import com.fpt.servicecontract.contract.dto.PartyRequest;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractParty;
+import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
+import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.contract.service.ContractHistoryService;
 import com.fpt.servicecontract.contract.service.ContractService;
@@ -41,6 +43,7 @@ public class ContractServiceImpl implements ContractService {
     private final CloudinaryService cloudinaryService;
     private final ContractHistoryService contractHistoryService;
     private final ElasticSearchService elasticSearchService;
+    private final ContractStatusRepository contractStatusRepository;
 
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
@@ -91,6 +94,7 @@ public class ContractServiceImpl implements ContractService {
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
                 .status(Constants.STATUS.NEW)
+                .isUrgent(contractRequest.isUrgent())
                 .build();
         Context context = new Context();
         context.setVariable("partyA", contractPartyA);
@@ -111,7 +115,7 @@ public class ContractServiceImpl implements ContractService {
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.NEW);
         } else {
             contract.setStatus(Constants.STATUS.UPDATE);
-            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),"", Constants.STATUS.UPDATE);
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
 
         }
         Contract result = contractRepository.save(contract);
@@ -122,7 +126,11 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse findAll(Pageable p, String email) {
-        Page<Object[]> page = contractRepository.findAllContract(p, email);
+        List<String> ids = contractStatusRepository.findAll().stream()
+                .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
+                .map(ContractStatus::getContractId)
+                .toList();
+        Page<Object[]> page = contractRepository.findAllContract(p, email, ids);
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             responses.add(ContractResponse.builder()
@@ -132,6 +140,7 @@ public class ContractServiceImpl implements ContractService {
                     .createdDate(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
                     .id(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
                     .status(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
+                    .isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString()))
                     .build());
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,
@@ -217,7 +226,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public String signContract(SignContractDTO signContractDTO) throws Exception {
         ContractRequest contractRequest = findById(signContractDTO.getContractId());
-        Contract contract =  contractRepository.findById(signContractDTO.getContractId()).orElse(null);
+        Contract contract = contractRepository.findById(signContractDTO.getContractId()).orElse(null);
         Context context = new Context();
         if (contract != null) {
             if (!signContractDTO.isCustomer()) {
@@ -226,10 +235,10 @@ public class ContractServiceImpl implements ContractService {
                 context.setVariable("signB", contract.getSignB());
                 if (!StringUtils.isBlank(contract.getSignB())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment() ,Constants.STATUS.SIGN_A);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_A);
                 }
             } else {
                 contract.setSignB(signContractDTO.getSignImage());
@@ -237,10 +246,10 @@ public class ContractServiceImpl implements ContractService {
                 context.setVariable("signA", contract.getSignA());
                 if (!StringUtils.isBlank(contract.getSignA())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(),signContractDTO.getComment(), Constants.STATUS.SIGN_B);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B);
                 }
             }
             context.setVariable("partyA", contractRequest.getPartyA());
