@@ -22,8 +22,8 @@ public interface Constants {
     }
     public static interface STATUS {
         final public static String NEW = "NEW";
-        final public static String SIGN_A = "A signed";
-        final public static String SIGN_B = "B signed";
+        final public static String SIGN_A = "SIGN_A";
+        final public static String SIGN_B = "SIGN_B";
         final public static String UPDATE = "UPDATE";
         final public static String PROCESSING = "PROCESSING";
         final public static String SUCCESS = "SUCCESS";
