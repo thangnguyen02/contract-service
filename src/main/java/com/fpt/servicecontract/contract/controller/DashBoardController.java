@@ -19,15 +19,11 @@ public class DashBoardController {
 
     private final DashboardService dashboardService;
 
-    @GetMapping("/statisticByMonth")
+    @GetMapping("/statistic")
     public ResponseEntity<BaseResponse> statistical(@RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-                                                    @RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate) {
-        return ResponseEntity.ok(dashboardService.numberNewContract(fromDate, toDate));
+                                                    @RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate,
+                                                    @RequestParam(value = "signStatus", required = false) String status) {
+        return ResponseEntity.ok(dashboardService.numberNewContract(fromDate, toDate, status));
     }
 
-
-    @GetMapping("/signStatus")
-    public ResponseEntity<BaseResponse> statisticalBySignStatus(@RequestParam(value = "status", required = false) String status) {
-        return ResponseEntity.ok(dashboardService.numberContractBySignStatus(status));
-    }
 }

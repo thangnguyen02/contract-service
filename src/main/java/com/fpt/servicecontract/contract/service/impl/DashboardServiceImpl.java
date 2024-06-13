@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.service.impl;
 
+import com.fpt.servicecontract.contract.dto.StatisticalDto;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.repository.OldContractRepository;
 import com.fpt.servicecontract.contract.service.DashboardService;
@@ -17,20 +18,18 @@ public class DashboardServiceImpl implements DashboardService {
     private final OldContractRepository oldContractRepository;
 
     @Override
-    public BaseResponse numberNewContract(Date fromDate, Date toDate) {
+    public BaseResponse numberNewContract(Date fromDate, Date toDate, String signStatus) {
         Integer oldContract = oldContractRepository.staticalOldContract(fromDate, toDate);
         Integer newContract = contractRepository.staticalNewContract(fromDate, toDate);
 
-        Integer result = newContract + oldContract;
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Statistical successfully", true, result);
+        Integer resultByMonth = newContract + oldContract;
+        Integer resultBySignStatus = contractRepository.statisticSignStatus(signStatus);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Statistical successfully", true, StatisticalDto.builder()
+                .resultByMonth(resultByMonth)
+                .resultBySignStatus(resultBySignStatus)
+                .build());
     }
 
-    @Override
-    public BaseResponse numberContractBySignStatus(String signStatus) {
-        Integer result = contractRepository.statisticSignStatus(signStatus);
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Statistical successfully", true, result);
-
-    }
 
 
 }

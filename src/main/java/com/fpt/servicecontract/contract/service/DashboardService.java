@@ -6,6 +6,5 @@ import java.awt.print.Pageable;
 import java.util.Date;
 
 public interface DashboardService {
-    BaseResponse numberNewContract(Date fromDate, Date toDate);
-    BaseResponse numberContractBySignStatus(String signStatus);
+    BaseResponse numberNewContract(Date fromDate, Date toDate, String signStatus);
 }
