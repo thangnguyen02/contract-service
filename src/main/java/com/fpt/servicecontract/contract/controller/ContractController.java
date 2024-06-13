@@ -51,10 +51,11 @@ public class ContractController {
         for (String recipient : to) {
             receivers.add(recipient.trim());
         }
-
-        for (String recipient : cc) {
-            receivers.add(recipient.trim());
-        }
+       if(cc!=null){
+           for (String recipient : cc) {
+               receivers.add(recipient.trim());
+           }
+       }
         contractStatusService.create(email, receivers, contractId);
         mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         return "SEND OK";
