@@ -35,8 +35,7 @@ public class OldContractController {
             @RequestHeader("Authorization") String bearerToken,
             @ModelAttribute CreateUpdateOldContract contractDto,
             @RequestParam MultipartFile[] images
-            )
-    {
+            ) throws Exception {
           return oldContractService.create(bearerToken, contractDto, images);
     }
 
