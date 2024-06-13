@@ -15,15 +15,12 @@ public interface Constants {
         final public static String EXPIRED_JWT = "07";
         final public static String RESOURCE_ACCESS = "08";
     }
-
-    public static interface DETAIL_DEFAULT {
-        final public static int PAGE_NUMBER = 0;
-        final public static int PAGE_SIZE = 11;
-    }
     public static interface STATUS {
         final public static String NEW = "NEW";
         final public static String SIGN_A = "SIGN_A";
         final public static String SIGN_B = "SIGN_B";
+        final public static String REJECT_A = "REJECT_A";
+        final public static String REJECT_B = "REJECT_B";
         final public static String UPDATE = "UPDATE";
         final public static String PROCESSING = "PROCESSING";
         final public static String SUCCESS = "SUCCESS";
