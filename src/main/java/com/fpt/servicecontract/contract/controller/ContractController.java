@@ -51,10 +51,11 @@ public class ContractController {
         for (String recipient : to) {
             receivers.add(recipient.trim());
         }
-
-        for (String recipient : cc) {
-            receivers.add(recipient.trim());
-        }
+       if(cc!=null){
+           for (String recipient : cc) {
+               receivers.add(recipient.trim());
+           }
+       }
         contractStatusService.create(email, receivers, contractId);
         mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         return "SEND OK";
@@ -111,6 +112,12 @@ public class ContractController {
     @GetMapping("/sync")
     public ResponseEntity<Void> sync() throws IOException {
         return ResponseEntity.ok(contractService.sync());
+    }
+
+    @GetMapping("/public/sign-contract/{id}")
+    public ResponseEntity<BaseResponse> getContractSignById(@PathVariable String id) throws Exception {
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
+                "Successfully", true, contractService.getContractSignById(id)));
     }
 
     @PostMapping("/public/sign-contract")

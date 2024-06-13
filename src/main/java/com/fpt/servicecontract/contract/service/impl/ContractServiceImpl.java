@@ -186,6 +186,8 @@ public class ContractServiceImpl implements ContractService {
                             .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
                             .build())
                     .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
+                    .signA(Objects.nonNull(obj[28]) ? obj[28].toString() : null)
+                    .signB(Objects.nonNull(obj[29]) ? obj[29].toString() : null)
                     .build();
         }
         return contractRequest;
@@ -270,6 +272,11 @@ public class ContractServiceImpl implements ContractService {
         } else {
             return "Failed";
         }
+    }
+
+    @Override
+    public BaseResponse getContractSignById(String id) {
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, findById(id));
     }
 
 }

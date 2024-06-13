@@ -17,5 +17,7 @@ public class ContractRequest {
     private PartyRequest partyB;
     private String file;
     private boolean isUrgent;
+    private String signA;
+    private String signB;
 }
 
