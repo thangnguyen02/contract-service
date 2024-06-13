@@ -114,9 +114,7 @@ public class ContractServiceImpl implements ContractService {
             contract.setStatus(Constants.STATUS.NEW);
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.NEW);
         } else {
-            contract.setStatus(Constants.STATUS.UPDATE);
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
-
         }
         Contract result = contractRepository.save(contract);
         contractRequest.setId(result.getId());

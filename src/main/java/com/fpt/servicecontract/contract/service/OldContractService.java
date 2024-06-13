@@ -10,7 +10,7 @@ public interface OldContractService {
 
     BaseResponse getContracts(int page, int size);
 
-    BaseResponse create(String token, CreateUpdateOldContract request, MultipartFile[] images);
+    BaseResponse create(String token, CreateUpdateOldContract request, MultipartFile[] images) throws Exception;
 
     BaseResponse delete(String contractId) throws IOException;
 

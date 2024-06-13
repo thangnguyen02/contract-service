@@ -68,7 +68,7 @@ public class OldContractServiceImpl implements OldContractService {
     }
 
     @Override
-    public BaseResponse create(String token, CreateUpdateOldContract oldContractDto, MultipartFile[] images) {
+    public BaseResponse create(String token, CreateUpdateOldContract oldContractDto, MultipartFile[] images) throws Exception {
         OldContract contract = new OldContract();
         String email = jwtService.extractUsername(token.substring(7));
         contract.setCreatedBy(email);
@@ -76,34 +76,11 @@ public class OldContractServiceImpl implements OldContractService {
         contract.setContractEndDate(DateUltil.stringToDate(oldContractDto.getContractEndDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         contract.setContractStartDate(DateUltil.stringToDate(oldContractDto.getContractStartDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         contract.setContractSignDate(DateUltil.stringToDate(oldContractDto.getContractSignDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
-        contract.setContent(oldContractDto.getContent());
         contract.setCreatedDate(new Date());
-        try {
-            Context context = new Context();
-            List<String> imageList = new ArrayList<>();
-            for (MultipartFile image : images) {
-                byte[] fileBytes = IOUtils.toByteArray(image.getInputStream());
-                String encodedFile = "data:image/png;base64," + Base64.encodeBase64String(fileBytes);
-                imageList.add(encodedFile);
-            }
 
-            context.setVariable("images", imageList);
-            String html = pdfUtils.templateEngine().process("templates/old_contract.html", context);
-            File file = pdfUtils.generatePdf(html, contract.getContractName() + "_" + UUID.randomUUID());
-            contract.setFile(cloudinaryService.uploadPdf(file));
-            if (file.exists() && file.isFile()) {
-                boolean deleted = file.delete();
-                if (!deleted) {
-                    log.warn("Failed to delete the file: {}", file.getAbsolutePath());
-                }
-            }
-        } catch (IOException e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Upload Contract Failed", true, null);
-        } catch (Exception e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Can't create file from images", false, e);
-        }
-
-        try {
+        if(Objects.requireNonNull(List.of(images).get(0).getOriginalFilename()).endsWith(".pdf")){
+            contract.setFile(cloudinaryService.uploadImage(List.of(images).get(0)));
+            contract.setContent(pdfUtils.getTextFromPdfFile(List.of(images).get(0)));
             oldContractRepository.save(contract);
             elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
@@ -112,9 +89,47 @@ public class OldContractServiceImpl implements OldContractService {
                     .createdBy(email)
                     .file(contract.getFile())
                     .build());
-        } catch (Exception e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Create Failed", false, null);
+        }else{
+            try {
+                contract.setContent(oldContractDto.getContent());
+                Context context = new Context();
+                List<String> imageList = new ArrayList<>();
+                for (MultipartFile image : images) {
+                    byte[] fileBytes = IOUtils.toByteArray(image.getInputStream());
+                    String encodedFile = "data:image/png;base64," + Base64.encodeBase64String(fileBytes);
+                    imageList.add(encodedFile);
+                }
+
+                context.setVariable("images", imageList);
+                String html = pdfUtils.templateEngine().process("templates/old_contract.html", context);
+                File file = pdfUtils.generatePdf(html, contract.getContractName() + "_" + UUID.randomUUID());
+                contract.setFile(cloudinaryService.uploadPdf(file));
+                if (file.exists() && file.isFile()) {
+                    boolean deleted = file.delete();
+                    if (!deleted) {
+                        log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+                    }
+                }
+            } catch (IOException e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, "Upload Contract Failed", true, null);
+            } catch (Exception e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, "Can't create file from images", false, e);
+            }
+
+            try {
+                oldContractRepository.save(contract);
+                elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
+                return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
+                        .id(contract.getId())
+                        .contractName(contract.getContractName())
+                        .createdBy(email)
+                        .file(contract.getFile())
+                        .build());
+            } catch (Exception e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, "Create Failed", false, null);
+            }
         }
+
     }
 
     @Override
