@@ -276,7 +276,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse getContractSignById(String id) {
-        return null;
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, findById(id));
     }
 
 }
