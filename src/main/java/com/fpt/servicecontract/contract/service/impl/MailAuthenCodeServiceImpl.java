@@ -2,30 +2,34 @@ package com.fpt.servicecontract.contract.service.impl;
 
 
 import com.fpt.servicecontract.auth.dto.UserDto;
-import com.fpt.servicecontract.auth.model.User;
-import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.MailService;
+import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.model.MailAuthedCode;
+import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
 import com.fpt.servicecontract.contract.repository.MailAuthenCodeRepository;
 import com.fpt.servicecontract.contract.service.MailAuthenCodeService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import jakarta.mail.MessagingException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Random;
-@Service
-public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
-    private MailAuthenCodeRepository mailAuthenCodeRepository;
-    private UserRepository userRepository;
-    private MailService mailService;
 
-    public BaseResponse GetAuthenMailCode(String email) {
-        var user = userRepository.findByEmail(email);
+@Service
+@RequiredArgsConstructor
+public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
+
+    private final MailAuthenCodeRepository mailAuthenCodeRepository;
+    private final ContractPartyRepository contractPartyRepository;
+    private final MailService mailService;
+
+    public BaseResponse GetAuthenMailCode(String email, String contractId) {
+        var user = contractPartyRepository.checkMailContractParty(email, contractId);
         String[] emailList = new String[]{email};
-        if (user.isEmpty()) {
+        if (user == null) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "user not found", true, null);
         }
         int code = new Random().nextInt(999999);
@@ -58,10 +62,10 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
 
     @Override
     public BaseResponse AuthenticationMailWithCode(String email, Integer AuthenCode) {
-        var company = userRepository.findByEmail(email);
+        var contractPartyObject = contractPartyRepository.findByEmail(email);
         var mailAuthedCode = mailAuthenCodeRepository.findByEmail(email);
 
-        if(mailAuthedCode.isEmpty() || company.isEmpty()) {
+        if(mailAuthedCode.isEmpty() || contractPartyObject.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "User not exist", true, null);
         }
 
@@ -71,11 +75,10 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
         if((mailAuthedCode.get().getExpiryTime().isBefore(LocalDateTime.now()))) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Your code is expired", true, null);
         }
-        User user = company.get();
+        ContractParty contractParty = contractPartyObject.get();
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "found user", true, UserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .phone(user.getPhone())
+                .id(contractParty.getId())
+                .email(contractParty.getEmail())
                 .build());
     }
 }
