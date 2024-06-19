@@ -40,6 +40,7 @@ public class OldContractServiceImpl implements OldContractService {
     private final PdfUtils pdfUtils;
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
+
     @Override
     public BaseResponse getContracts(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
@@ -78,7 +79,7 @@ public class OldContractServiceImpl implements OldContractService {
         contract.setContractSignDate(DateUltil.stringToDate(oldContractDto.getContractSignDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         contract.setCreatedDate(new Date());
 
-        if(Objects.requireNonNull(List.of(images).get(0).getOriginalFilename()).endsWith(".pdf")){
+        if (Objects.requireNonNull(List.of(images).get(0).getOriginalFilename()).endsWith(".pdf")) {
             contract.setFile(cloudinaryService.uploadImage(List.of(images).get(0)));
             contract.setContent(pdfUtils.getTextFromPdfFile(List.of(images).get(0)));
             oldContractRepository.save(contract);
@@ -89,7 +90,7 @@ public class OldContractServiceImpl implements OldContractService {
                     .createdBy(email)
                     .file(contract.getFile())
                     .build());
-        }else{
+        } else {
             try {
                 contract.setContent(oldContractDto.getContent());
                 Context context = new Context();
@@ -133,6 +134,55 @@ public class OldContractServiceImpl implements OldContractService {
     }
 
     @Override
+    public BaseResponse createWithMobile(String token, CreateUpdateOldContract oldContractDto, String[] images) throws Exception {
+        OldContract contract = new OldContract();
+        String email = jwtService.extractUsername(token.substring(7));
+        contract.setCreatedBy(email);
+        contract.setContractName(oldContractDto.getContractName());
+        contract.setContractEndDate(DateUltil.stringToDate(oldContractDto.getContractEndDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
+        contract.setContractStartDate(DateUltil.stringToDate(oldContractDto.getContractStartDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
+        contract.setContractSignDate(DateUltil.stringToDate(oldContractDto.getContractSignDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
+        contract.setCreatedDate(new Date());
+        try {
+            contract.setContent(oldContractDto.getContent());
+            Context context = new Context();
+            List<String> imageList = new ArrayList<>();
+            for (String img : images) {
+                String encodedFile = "data:image/png;base64," + img.trim();
+                imageList.add(encodedFile);
+            }
+            context.setVariable("images", imageList);
+            String html = pdfUtils.templateEngine().process("templates/old_contract.html", context);
+            File file = pdfUtils.generatePdf(html, contract.getContractName() + "_" + UUID.randomUUID());
+            contract.setFile(cloudinaryService.uploadPdf(file));
+            if (file.exists() && file.isFile()) {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+                }
+            }
+        } catch (IOException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Upload Contract Failed", true, null);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Can't create file from images", false, e);
+        }
+
+        try {
+            oldContractRepository.save(contract);
+            elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
+                    .id(contract.getId())
+                    .contractName(contract.getContractName())
+                    .createdBy(email)
+                    .file(contract.getFile())
+                    .build());
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Create Failed", false, null);
+        }
+
+    }
+
+    @Override
     @Transactional(rollbackOn = Exception.class)
     public BaseResponse delete(String contractId) throws IOException {
         var oldContract = oldContractRepository.findById(contractId);
@@ -140,7 +190,7 @@ public class OldContractServiceImpl implements OldContractService {
             OldContract oldCon = oldContract.get();
             oldCon.setIsDeleted(true);
             oldContractRepository.save(oldCon);
-            elasticSearchService.deleteDocumentById("old_contract",contractId);
+            elasticSearchService.deleteDocumentById("old_contract", contractId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successful", true, oldCon.getId());
         }
         return new BaseResponse(Constants.ResponseCode.FAILURE, "Delete Failed", false, null);
@@ -148,11 +198,11 @@ public class OldContractServiceImpl implements OldContractService {
 
     @Override
     public Void sync() {
-        List<OldContract> oldContracts = oldContractRepository.findAll() ;
-        if(!CollectionUtils.isEmpty(oldContracts)){
-            oldContracts.forEach(o->{
+        List<OldContract> oldContracts = oldContractRepository.findAll();
+        if (!CollectionUtils.isEmpty(oldContracts)) {
+            oldContracts.forEach(o -> {
                 try {
-                    elasticSearchService.indexDocument("old_contract", o, OldContract::getId );
+                    elasticSearchService.indexDocument("old_contract", o, OldContract::getId);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -12,6 +12,8 @@ public interface OldContractService {
 
     BaseResponse create(String token, CreateUpdateOldContract request, MultipartFile[] images) throws Exception;
 
+    BaseResponse createWithMobile(String token, CreateUpdateOldContract request, String[] images) throws Exception;
+
     BaseResponse delete(String contractId) throws IOException;
 
     Void sync();

@@ -11,6 +11,8 @@ import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.DataUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,13 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final EntityIdRepository entityIdRepository;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    @Override
+    public String notifyFrontend(NotificationDto message) {
+        messagingTemplate.convertAndSend("/topic/notifications", message.toString());
+        return message.getMessage();
+    }
 
     @Override
     public BaseResponse findAllNotifications(String recipientId) {
@@ -33,7 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
         }
         List<NotificationDto> notificationDtos = new ArrayList<>();
 
-        for(Object[] obj : notifications) {
+        for (Object[] obj : notifications) {
             notificationDtos.add(NotificationDto.builder()
                     .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .title(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
@@ -53,10 +62,9 @@ public class NotificationServiceImpl implements NotificationService {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "List Notifications", true, notificationDtos);
     }
 
-    @Override
-    public BaseResponse createNotification(CreateNotificationRequest request, EntityId entityIdCreate) {
-        if(DataUtil.isNullObject(entityIdCreate)) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Entity Id cannot be null", true, null);
+    public String createNotification(CreateNotificationRequest request, EntityId entityIdCreate) {
+        if (DataUtil.isNullObject(entityIdCreate)) {
+            return "Entity Id cannot be null";
         } else {
             entityIdRepository.save(entityIdCreate);
         }
@@ -70,50 +78,30 @@ public class NotificationServiceImpl implements NotificationService {
                 .markedDeleted(false)
                 .markRead(false)
                 .build();
+        notifyFrontend(NotificationDto.builder()
+                .title(request.getTitle())
+                .message(request.getMessage())
+                .senderId(request.getSenderId())
+                .recipientId(request.getRecipientId())
+                .createdDate(String.valueOf(LocalDateTime.now()))
+                .markedDeleted(false)
+                .markRead(false)
+                .objectId(entityIdCreate.getObjectId())
+                .entityType(String.valueOf(entityIdCreate.getEntityType()))
+                .description(entityIdCreate.getDescription())
+                .build());
         try {
             notificationRepository.save(notification);
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create successfully", true, NotificationDto.builder()
-                    .id(notification.getId())
-                    .title(notification.getTitle())
-                    .message(notification.getMessage())
-                    .senderId(notification.getSenderId())
-                    .build());
+            return "Create successfully";
         } catch (Exception e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Create failed", true, null);
-        }
-    }
-
-    @Override
-    public BaseResponse updateNotification(String id, CreateNotificationRequest request) {
-        var noti = notificationRepository.findById(id);
-        if(noti.isEmpty()) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Notification not found", true, null);
-        }
-
-        Notification notification = noti.get();
-        notification.setTitle(DataUtil.isNullObject(request.getTitle()) ? notification.getTitle() : request.getTitle());
-        notification.setMessage(DataUtil.isNullObject(request.getMessage()) ? notification.getMessage() : request.getMessage());
-        notification.setSenderId(DataUtil.isNullObject(request.getSenderId()) ? notification.getSenderId() : request.getSenderId());
-        notification.setMarkRead(DataUtil.isNullObject(request.getMarkRead()) ? notification.getMarkRead() : request.getMarkRead());
-        try {
-            notificationRepository.save(notification);
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification update successfully", true, NotificationDto.builder()
-                    .id(notification.getId())
-                    .title(notification.getTitle())
-                    .markRead(notification.getMarkRead())
-                    .senderId(notification.getSenderId())
-                    .message(notification.getMessage())
-                    .markedDeleted(notification.getMarkedDeleted())
-                    .build());
-        } catch (Exception e) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Update failed", true, null);
+            return "Create failed";
         }
     }
 
     @Override
     public BaseResponse deleteNotification(String id) {
         var noti = notificationRepository.findById(id);
-        if(noti.isEmpty()) {
+        if (noti.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Notification not found", true, null);
         }
 

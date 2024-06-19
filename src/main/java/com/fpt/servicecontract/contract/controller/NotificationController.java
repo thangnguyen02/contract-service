@@ -1,12 +1,15 @@
 package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.contract.dto.CreateNotificationRequest;
+import com.fpt.servicecontract.contract.dto.NotificationDto;
 import com.fpt.servicecontract.contract.model.EntityId;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -21,15 +24,11 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.findAllNotifications(recipientId));
     }
 
-    @PostMapping()
-    public ResponseEntity<BaseResponse> create(
-            @RequestBody CreateNotificationRequest createNotificationRequest,
-            @RequestBody EntityId entityId
-            )
-    {
-        return ResponseEntity.ok(notificationService.createNotification(createNotificationRequest, entityId));
-    }
 
+    @PostMapping("/notify")
+    public String notifyAll(@RequestBody NotificationDto message) {
+       return notificationService.notifyFrontend(message);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> delete(
@@ -38,11 +37,4 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.deleteNotification(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse> update(
-            @PathVariable("id") String id,
-            @RequestBody CreateNotificationRequest createNotificationRequest
-    ) {
-        return ResponseEntity.ok(notificationService.updateNotification(id, createNotificationRequest));
-    }
 }

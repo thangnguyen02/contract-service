@@ -22,4 +22,23 @@ public class NotificationDto {
     private String description;
     private String senderName;
     private String recipientName;
+
+    @Override
+    public String toString() {
+        return "NotificationDto{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", senderId='" + senderId + '\'' +
+                ", recipientId='" + recipientId + '\'' +
+                ", objectId='" + objectId + '\'' +
+                ", entityType='" + entityType + '\'' +
+                ", createdDate='" + createdDate + '\'' +
+                ", markedDeleted=" + markedDeleted +
+                ", markRead=" + markRead +
+                ", description='" + description + '\'' +
+                ", senderName='" + senderName + '\'' +
+                ", recipientName='" + recipientName + '\'' +
+                '}';
+    }
 }

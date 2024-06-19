@@ -38,7 +38,14 @@ public class OldContractController {
             ) throws Exception {
           return oldContractService.create(bearerToken, contractDto, images);
     }
-
+    @PostMapping("/mobile")
+    public BaseResponse createWithMobile(
+            @RequestHeader("Authorization") String bearerToken,
+            @ModelAttribute CreateUpdateOldContract contractDto,
+            @RequestParam(required = false) String[] images
+    ) throws Exception {
+        return oldContractService.createWithMobile(bearerToken, contractDto, images);
+    }
 
     @DeleteMapping("/{id}")
     public BaseResponse delete(
