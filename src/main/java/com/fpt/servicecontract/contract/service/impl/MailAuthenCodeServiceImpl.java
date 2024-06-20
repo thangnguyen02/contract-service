@@ -4,7 +4,7 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.auth.dto.UserDto;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.model.ContractParty;
-import com.fpt.servicecontract.contract.model.MailAuthedCode;
+import com.fpt.servicecontract.contract.model.AuthenticationCode;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
 import com.fpt.servicecontract.contract.repository.MailAuthenCodeRepository;
 import com.fpt.servicecontract.contract.service.MailAuthenCodeService;
@@ -36,7 +36,7 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
         var mailCode = mailAuthenCodeRepository.findByEmail(email);
         if (mailCode.isEmpty()) {
             LocalDateTime startTime = LocalDateTime.now();
-            MailAuthedCode mailAuthedCode = MailAuthedCode.builder()
+            AuthenticationCode mailAuthedCode = AuthenticationCode.builder()
                     .email(email)
                     .code(code)
                     .expiryTime(startTime.plusMinutes(5))

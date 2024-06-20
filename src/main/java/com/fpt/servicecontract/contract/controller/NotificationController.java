@@ -1,15 +1,11 @@
 package com.fpt.servicecontract.contract.controller;
 
-import com.fpt.servicecontract.contract.dto.CreateNotificationRequest;
 import com.fpt.servicecontract.contract.dto.NotificationDto;
-import com.fpt.servicecontract.contract.model.EntityId;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j

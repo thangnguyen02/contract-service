@@ -5,7 +5,6 @@ import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.SearchRequestBody;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
-import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.contract.service.ContractStatusService;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;
@@ -23,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j

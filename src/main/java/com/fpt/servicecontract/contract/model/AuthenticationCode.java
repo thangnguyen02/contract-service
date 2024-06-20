@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MailAuthedCode {
+public class AuthenticationCode {
     @Id
     @UuidGenerator
     private String id;

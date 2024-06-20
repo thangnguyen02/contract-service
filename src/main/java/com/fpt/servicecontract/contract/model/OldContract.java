@@ -30,4 +30,5 @@ public class OldContract {
   private Date contractStartDate;
   private Date contractEndDate;
   private String updatedBy;
+  private String contractTypeId;
 }

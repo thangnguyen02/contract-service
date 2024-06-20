@@ -2,16 +2,12 @@ package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.contract.dto.CreateNotificationRequest;
 import com.fpt.servicecontract.contract.dto.NotificationDto;
-import com.fpt.servicecontract.contract.model.EntityId;
 import com.fpt.servicecontract.contract.model.Notification;
-import com.fpt.servicecontract.contract.repository.EntityIdRepository;
 import com.fpt.servicecontract.contract.repository.NotificationRepository;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
-import com.fpt.servicecontract.utils.DataUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +21,6 @@ import java.util.Objects;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final EntityIdRepository entityIdRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
     @Override
@@ -62,19 +57,14 @@ public class NotificationServiceImpl implements NotificationService {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "List Notifications", true, notificationDtos);
     }
 
-    public String createNotification(CreateNotificationRequest request, EntityId entityIdCreate) {
-        if (DataUtil.isNullObject(entityIdCreate)) {
-            return "Entity Id cannot be null";
-        } else {
-            entityIdRepository.save(entityIdCreate);
-        }
+    public String createNotification(CreateNotificationRequest request ) {
+
         Notification notification = Notification.builder()
                 .title(request.getTitle())
                 .message(request.getMessage())
                 .senderId(request.getSenderId())
                 .createdDate(LocalDateTime.now())
                 .recipientId(request.getRecipientId())
-                .entityId(entityIdCreate.getId())
                 .markedDeleted(false)
                 .markRead(false)
                 .build();
@@ -86,9 +76,6 @@ public class NotificationServiceImpl implements NotificationService {
                 .createdDate(String.valueOf(LocalDateTime.now()))
                 .markedDeleted(false)
                 .markRead(false)
-                .objectId(entityIdCreate.getObjectId())
-                .entityType(String.valueOf(entityIdCreate.getEntityType()))
-                .description(entityIdCreate.getDescription())
                 .build());
         try {
             notificationRepository.save(notification);
