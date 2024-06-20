@@ -5,6 +5,8 @@ import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.SearchRequestBody;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
+import com.fpt.servicecontract.contract.dto.SignContractResponse;
+import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.contract.service.ContractStatusService;
@@ -39,12 +41,17 @@ public class ContractController {
     private final ContractStatusService contractStatusService;
 
     @PostMapping("/send-mail")
-    public String sendMail(@RequestHeader("Authorization") String bearerToken, @RequestParam String[] to,
-                           @RequestParam(required = false) String[] cc,
-                           @RequestParam String subject,
-                           @RequestParam String htmlContent,
-                           @RequestParam(required = false) MultipartFile[] attachments,
-                           @RequestParam String contractId) throws MessagingException {
+    public SignContractResponse sendMail(@RequestHeader("Authorization") String bearerToken,
+                                         @RequestParam String[] to,
+                                         @RequestParam(required = false) String[] cc,
+                                         @RequestParam String subject,
+                                         @RequestParam String htmlContent,
+                                         @RequestParam(required = false) MultipartFile[] attachments,
+                                         @RequestParam String contractId,
+                                         @RequestParam String status,
+                                         @RequestParam String description
+    ) throws MessagingException {
+        SignContractResponse signContractResponse = new SignContractResponse();
         String email = jwtService.extractUsername(bearerToken.substring(7));
         //Contract status
         List<String> receivers = new ArrayList<>();
@@ -56,9 +63,34 @@ public class ContractController {
                receivers.add(recipient.trim());
            }
        }
-        contractStatusService.create(email, receivers, contractId);
-        mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
-        return "SEND OK";
+
+
+
+//        //màn hình hợp đồng của OFFICE_ADMIN:
+//        // btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
+//        if(status.equals(SignContractStatus.APPROVED.name())) {
+//            signContractResponse.setCanSendForMng(true);
+//        }
+
+
+        if(status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
+            signContractResponse.setSign(true);
+        }
+
+        // site a or b reject with reseon
+        if(status.equals(SignContractStatus.SIGN_B_FAIL.name())
+                || status.equals(SignContractStatus.SIGN_A_FAIL.name())
+            ) {
+            contractStatusService.create(email, receivers, contractId, status, description);
+            mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+        }
+
+
+        if(status.equals(SignContractStatus.WAIT_SIGN_B.name())) {
+            signContractResponse.setSign(true);
+        }
+       mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+       return signContractResponse;
     }
 
     @GetMapping("/test-role")
@@ -89,7 +121,8 @@ public class ContractController {
     }
 
     @GetMapping("/{page}/{size}")
-    public ResponseEntity<BaseResponse> findAll(@RequestHeader("Authorization") String bearerToken, @PathVariable int page, @PathVariable int size) {
+    public ResponseEntity<BaseResponse> findAll(@RequestHeader("Authorization") String bearerToken,
+                                                @PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(contractService.findAll(p, email));

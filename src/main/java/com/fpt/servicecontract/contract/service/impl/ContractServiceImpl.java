@@ -4,16 +4,14 @@ import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.ContractResponse;
 import com.fpt.servicecontract.contract.dto.PartyRequest;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
+import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
-import com.fpt.servicecontract.contract.service.CloudinaryService;
-import com.fpt.servicecontract.contract.service.ContractHistoryService;
-import com.fpt.servicecontract.contract.service.ContractService;
-import com.fpt.servicecontract.contract.service.ElasticSearchService;
+import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
@@ -44,6 +42,7 @@ public class ContractServiceImpl implements ContractService {
     private final ContractHistoryService contractHistoryService;
     private final ElasticSearchService elasticSearchService;
     private final ContractStatusRepository contractStatusRepository;
+    private final ContractStatusService contractStatusService;
 
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
@@ -131,7 +130,7 @@ public class ContractServiceImpl implements ContractService {
         Page<Object[]> page = contractRepository.findAllContract(p, email, ids);
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
-            responses.add(ContractResponse.builder()
+            ContractResponse response = ContractResponse.builder()
                     .name(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .createdBy(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
                     .file(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
@@ -139,7 +138,34 @@ public class ContractServiceImpl implements ContractService {
                     .id(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
                     .status(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
                     .isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString()))
-                    .build());
+                    .build();
+            String status = contractStatusService.getContractStatusByLastStatus(response.getId());
+            //send office_admin
+            if(status.equals(SignContractStatus.NEW.name())) {
+                response.setCanResend(false);
+            }
+
+            if(status.equals(SignContractStatus.APPROVED.name())) {
+                response.setApproved(true);
+            }
+
+            //btn gửi cho MANAGER:backend trả về trường canSendForMng cho FE check (case  OFFICE_ADMIN approve rồi mới có thể gửi)
+            if(status != null) {
+                if(status.equals(SignContractStatus.APPROVED.name())) {
+                    response.setCanSendForMng(true);
+                }
+            }
+            if(status.equals(SignContractStatus.WAIT_SIGN_A.name()) || status.equals(SignContractStatus.WAIT_SIGN_B.name())) {
+                response.setSign(true);
+            }
+
+            if(status.equals(SignContractStatus.SIGN_B_FAIL.name())
+                    || status.equals(SignContractStatus.SIGN_A_FAIL.name())
+            ) {
+                response.setCanResend(true);
+            }
+
+            responses.add(response);
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,
                 page.getTotalElements());
