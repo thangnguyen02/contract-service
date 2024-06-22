@@ -71,24 +71,25 @@ public class ContractController {
 
         // man hinh sale send contract cho office-admin
         if(status.equals(SignContractStatus.WAIT_APPROVE.name())) {
-            signContractResponse.setCanResend(false);
+            signContractResponse.setCanSend(false);
         }
 
         //officer-admin reject
         if(status.equals(SignContractStatus.APPROVE_FAIL.name())) {
-            signContractResponse.setCanResend(true);
+            signContractResponse.setCanSend(true);
         }
 
         // site a or b reject with reseon
         if(status.equals(SignContractStatus.SIGN_B_FAIL.name())
                 || status.equals(SignContractStatus.SIGN_A_FAIL.name())
             ) {
-            signContractResponse.setCanResend(true);
+            signContractResponse.setCanSend(true);
         }
 
 
         if(status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
             signContractResponse.setSign(true);
+            signContractResponse.setCanSend(true);
         }
         contractStatusService.create(email, receivers, contractId, status, description);
         mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
