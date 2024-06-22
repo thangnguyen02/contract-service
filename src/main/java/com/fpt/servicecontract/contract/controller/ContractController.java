@@ -63,10 +63,13 @@ public class ContractController {
            }
        }
 
+        String statusDb = contractStatusService.getContractStatusByLastStatus(contractId);
+
 //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
         if(status.equals(SignContractStatus.APPROVED.name())) {
             signContractResponse.setCanSendForMng(true);
+            signContractResponse.setCanSend(true);
         }
 
         // man hinh sale send contract cho office-admin
@@ -84,6 +87,14 @@ public class ContractController {
                 || status.equals(SignContractStatus.SIGN_A_FAIL.name())
             ) {
             signContractResponse.setCanSend(true);
+            signContractResponse.setCanSendForMng(true);
+        }
+
+        if(status.equals(SignContractStatus.SIGN_A_OK.name()) || status.equals(SignContractStatus.SIGN_B_OK.name())
+        ) {
+            if(SignContractStatus.SIGN_A_OK.name().equals(statusDb) || SignContractStatus.SIGN_B_OK.name().equals(statusDb)) {
+                status = SignContractStatus.DONE.name();
+            }
         }
 
 
