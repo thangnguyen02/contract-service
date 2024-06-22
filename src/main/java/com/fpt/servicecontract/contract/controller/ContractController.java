@@ -98,6 +98,7 @@ public class ContractController {
         //officer-admin reject
         if(status.equals(SignContractStatus.APPROVE_FAIL.name())) {
             signContractResponse.setCanSend(true);
+            signContractResponse.setCanSendForMng(false);
         }
 
         // site a or b reject with reseon
@@ -105,11 +106,13 @@ public class ContractController {
                 || status.equals(SignContractStatus.SIGN_A_FAIL.name())
             ) {
             signContractResponse.setCanSend(true);
-            signContractResponse.setCanSendForMng(true);
+            signContractResponse.setCanSendForMng(false);
         }
 
         if(status.equals(SignContractStatus.SIGN_A_OK.name()) || status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
+            signContractResponse.setCanSend(false);
+            signContractResponse.setCanSendForMng(false);
             if(SignContractStatus.SIGN_A_OK.name().equals(statusDb) || SignContractStatus.SIGN_B_OK.name().equals(statusDb)) {
                 status = SignContractStatus.DONE.name();
             }
