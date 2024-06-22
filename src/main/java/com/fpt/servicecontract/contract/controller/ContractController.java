@@ -7,7 +7,6 @@ import com.fpt.servicecontract.contract.dto.SearchRequestBody;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.dto.SignContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
-import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.contract.service.ContractStatusService;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;
@@ -64,29 +63,31 @@ public class ContractController {
            }
        }
 
-
-
 //        //màn hình hợp đồng của OFFICE_ADMIN:
-//        // btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
-//        if(status.equals(SignContractStatus.APPROVED.name())) {
-//            signContractResponse.setCanSendForMng(true);
-//        }
+//         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
+        if(status.equals(SignContractStatus.APPROVED.name())) {
+            signContractResponse.setCanSendForMng(true);
+        }
 
+        // man hinh sale send contract cho office-admin
+        if(status.equals(SignContractStatus.WAIT_APPROVE.name())) {
+            signContractResponse.setCanResend(false);
+        }
 
-        if(status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            signContractResponse.setSign(true);
+        //officer-admin reject
+        if(status.equals(SignContractStatus.APPROVE_FAIL.name())) {
+            signContractResponse.setCanResend(true);
         }
 
         // site a or b reject with reseon
         if(status.equals(SignContractStatus.SIGN_B_FAIL.name())
                 || status.equals(SignContractStatus.SIGN_A_FAIL.name())
             ) {
-            contractStatusService.create(email, receivers, contractId, status, description);
-            mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+            signContractResponse.setCanResend(true);
         }
 
 
-        if(status.equals(SignContractStatus.WAIT_SIGN_B.name())) {
+        if(status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
             signContractResponse.setSign(true);
         }
        mailService.sendNewMail(to, cc, subject, htmlContent, attachments);

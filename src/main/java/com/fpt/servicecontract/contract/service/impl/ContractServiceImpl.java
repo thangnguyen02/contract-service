@@ -140,21 +140,35 @@ public class ContractServiceImpl implements ContractService {
                     .isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString()))
                     .build();
             String status = contractStatusService.getContractStatusByLastStatus(response.getId());
+            //        //màn hình hợp đồng của OFFICE_ADMIN:
+//         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
+            if(status.equals(SignContractStatus.APPROVED.name())) {
+                response.setCanSendForMng(true);
+            }
+
+            // man hinh sale send contract cho office-admin
+            if(status.equals(SignContractStatus.WAIT_APPROVE.name())) {
+                response.setCanResend(false);
+            }
+
+            //officer-admin reject
+            if(status.equals(SignContractStatus.APPROVE_FAIL.name())) {
+                response.setCanResend(true);
+            }
+
+            if(status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
+                response.setSign(true);
+            }
+
+
+            if(status.equals(SignContractStatus.WAIT_SIGN_B.name())) {
+                response.setSign(true);
+            }
             //send office_admin
             if(status.equals(SignContractStatus.NEW.name())) {
                 response.setCanResend(false);
             }
 
-            if(status.equals(SignContractStatus.APPROVED.name())) {
-                response.setApproved(true);
-            }
-
-            //btn gửi cho MANAGER:backend trả về trường canSendForMng cho FE check (case  OFFICE_ADMIN approve rồi mới có thể gửi)
-            if(status != null) {
-                if(status.equals(SignContractStatus.APPROVED.name())) {
-                    response.setCanSendForMng(true);
-                }
-            }
             if(status.equals(SignContractStatus.WAIT_SIGN_A.name()) || status.equals(SignContractStatus.WAIT_SIGN_B.name())) {
                 response.setSign(true);
             }
