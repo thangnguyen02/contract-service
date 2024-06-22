@@ -149,7 +149,7 @@ public class ContractServiceImpl implements ContractService {
 
             // man hinh sale send contract cho office-admin
             if(SignContractStatus.WAIT_APPROVE.name().equals(status)) {
-                response.setCanResend(false);
+                response.setCanSend(false);
             }
 
             //officer-admin reject
@@ -160,7 +160,6 @@ public class ContractServiceImpl implements ContractService {
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setSign(true);
             }
-
 
             if(SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setSign(true);
