@@ -90,7 +90,8 @@ public class ContractController {
         if(status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
             signContractResponse.setSign(true);
         }
-       mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+        contractStatusService.create(email, receivers, contractId, status, description);
+        mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
        return signContractResponse;
     }
 
