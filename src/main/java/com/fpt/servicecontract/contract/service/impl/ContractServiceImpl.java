@@ -142,39 +142,40 @@ public class ContractServiceImpl implements ContractService {
             String status = contractStatusService.getContractStatusByLastStatus(response.getId());
             //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
-            if(status.equals(SignContractStatus.APPROVED.name())) {
+            if(SignContractStatus.APPROVED.name().equals(status)) {
                 response.setCanSendForMng(true);
             }
 
             // man hinh sale send contract cho office-admin
-            if(status.equals(SignContractStatus.WAIT_APPROVE.name())) {
+            if(SignContractStatus.WAIT_APPROVE.name().equals(status)) {
                 response.setCanResend(false);
             }
 
             //officer-admin reject
-            if(status.equals(SignContractStatus.APPROVE_FAIL.name())) {
+            if(SignContractStatus.APPROVE_FAIL.name().equals(status)) {
                 response.setCanResend(true);
             }
 
-            if(status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
+            if(SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setSign(true);
             }
 
 
-            if(status.equals(SignContractStatus.WAIT_SIGN_B.name())) {
+            if(SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setSign(true);
             }
             //send office_admin
-            if(status.equals(SignContractStatus.NEW.name())) {
+            if(SignContractStatus.NEW.name().equals(status)) {
                 response.setCanResend(false);
             }
 
-            if(status.equals(SignContractStatus.WAIT_SIGN_A.name()) || status.equals(SignContractStatus.WAIT_SIGN_B.name())) {
+            if(SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
+                    SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setSign(true);
             }
 
-            if(status.equals(SignContractStatus.SIGN_B_FAIL.name())
-                    || status.equals(SignContractStatus.SIGN_A_FAIL.name())
+            if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)
             ) {
                 response.setCanResend(true);
             }
