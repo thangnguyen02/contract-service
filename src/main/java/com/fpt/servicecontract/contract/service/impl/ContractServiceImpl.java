@@ -142,6 +142,10 @@ public class ContractServiceImpl implements ContractService {
                     .canSend(true)
                     .build();
             String status = contractStatusService.getContractStatusByLastStatus(response.getId());
+            if(SignContractStatus.APPROVED.name().equals(status)) {
+                response.setCanSendForMng(true);
+                response.setCanSend(false);
+            }
 
             //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
@@ -161,6 +165,7 @@ public class ContractServiceImpl implements ContractService {
 
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setSign(true);
+                response.setCanSendForMng(false);
             }
 
             if(SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
