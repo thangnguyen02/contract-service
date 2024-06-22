@@ -20,4 +20,5 @@ public class ContractResponse {
     private boolean canResend = false;
     private boolean sign = false;
     private boolean isApproved = false;
+    private String approvedBy;
 }

@@ -24,7 +24,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                 created_date,
                 id,
                 status,
-                is_urgent
+                is_urgent,
+                approved_by
             FROM
                 contract
             WHERE

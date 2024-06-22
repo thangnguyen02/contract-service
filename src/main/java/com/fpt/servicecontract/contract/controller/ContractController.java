@@ -2,11 +2,10 @@ package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
-import com.fpt.servicecontract.contract.dto.ContractRequest;
-import com.fpt.servicecontract.contract.dto.SearchRequestBody;
-import com.fpt.servicecontract.contract.dto.SignContractDTO;
-import com.fpt.servicecontract.contract.dto.SignContractResponse;
+import com.fpt.servicecontract.contract.dto.*;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
+import com.fpt.servicecontract.contract.model.Contract;
+import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.contract.service.ContractStatusService;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;
@@ -22,10 +21,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -38,6 +39,7 @@ public class ContractController {
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
     private final ContractStatusService contractStatusService;
+    private final ContractRepository contractRepository;
 
     @PostMapping("/send-mail")
     public SignContractResponse sendMail(@RequestHeader("Authorization") String bearerToken,
@@ -68,6 +70,12 @@ public class ContractController {
 //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
         if(status.equals(SignContractStatus.APPROVED.name())) {
+            String approved = jwtService.extractUsername(bearerToken.substring(7));
+            Optional<Contract> contract = contractRepository.findById(contractId);
+            if (contract.isPresent()) {
+                contract.get().setApprovedBy(approved);
+                contractRepository.save(contract.get());
+            }
             signContractResponse.setCanSendForMng(true);
             signContractResponse.setCanSend(true);
         }
