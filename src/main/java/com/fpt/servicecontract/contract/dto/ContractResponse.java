@@ -15,7 +15,7 @@ public class ContractResponse {
     private String createdDate;
     private String status;
     private boolean isUrgent;
-    private boolean canSend = false;
+    private boolean canSend = true;
     private boolean canSendForMng = false;
     private boolean canResend = false;
     private boolean sign = false;
