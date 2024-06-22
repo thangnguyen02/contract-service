@@ -37,4 +37,9 @@ public class ContractStatusServiceImpl implements ContractStatusService {
         return contractStatus;
     }
 
+    @Override
+    public List<String> checkDoneSign(String contractId) {
+        return contractStatusRepository.checkDoneSign(contractId);
+    }
+
 }

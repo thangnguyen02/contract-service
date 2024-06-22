@@ -7,4 +7,5 @@ import java.util.List;
 public interface ContractStatusService {
     void create(String sender, List<String> to, String contractId, String status, String description);
     String getContractStatusByLastStatus(String contractId);
+    List<String> checkDoneSign(String contractId);
 }

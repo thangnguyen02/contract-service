@@ -65,7 +65,6 @@ public class ContractController {
            }
        }
 
-        String statusDb = contractStatusService.getContractStatusByLastStatus(contractId);
 
 //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
@@ -108,13 +107,23 @@ public class ContractController {
             signContractResponse.setCanSend(true);
             signContractResponse.setCanSendForMng(false);
         }
+        List<String> statusDb = contractStatusService.checkDoneSign(contractId);
 
-        if(status.equals(SignContractStatus.SIGN_A_OK.name()) || status.equals(SignContractStatus.SIGN_B_OK.name())
+        if(status.equals(SignContractStatus.SIGN_A_OK.name())
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
-            if(SignContractStatus.SIGN_A_OK.name().equals(statusDb) || SignContractStatus.SIGN_B_OK.name().equals(statusDb)) {
-                status = SignContractStatus.DONE.name();
+            if(statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
+                status = SignContractStatus.SUCCESS.name();
+            }
+        }
+
+        if(status.equals(SignContractStatus.SIGN_B_OK.name())
+        ) {
+            signContractResponse.setCanSend(false);
+            signContractResponse.setCanSendForMng(false);
+            if(statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
+                status = SignContractStatus.SUCCESS.name();
             }
         }
 
