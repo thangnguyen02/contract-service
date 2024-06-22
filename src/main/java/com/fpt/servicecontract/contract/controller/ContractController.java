@@ -87,6 +87,7 @@ public class ContractController {
 
         if(status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
             signContractResponse.setCanSendForMng(false);
+            signContractResponse.setCanSend(false);
         }
 
         // man hinh sale send contract cho office-admin
