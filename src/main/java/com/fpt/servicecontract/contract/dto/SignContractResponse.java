@@ -10,7 +10,7 @@ import lombok.*;
 public class SignContractResponse {
     private String res;
     private String status;
-    private boolean canSend = false;
+    private boolean canSend = true;
     private boolean canSendForMng = false;
     private boolean canResend = false;
     private boolean sign = false;
