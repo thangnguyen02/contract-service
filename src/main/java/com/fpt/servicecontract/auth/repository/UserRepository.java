@@ -39,7 +39,7 @@ public interface UserRepository extends JpaRepository<User, String> {
                                            and (lower(u.email) like lower(:email) or :email is null)
                                            and (lower(u.address) like lower(:address) or :address is null)
                                            and (lower(u.identification_number) like lower(:identificationNumber) or :identificationNumber is null)
-                                           and (lower(u.status) like lower(:status) or :status is null)
+                                           and (lower(u.status) = :status or :status is null)
                                            and (lower(u.department) like lower(:department) or :department is null)
                                            and (lower(u.phone) like lower(:phoneNumber) or :department is null)
                                            and (lower(u.position) like lower(:position) or :department is null)
@@ -53,7 +53,7 @@ public interface UserRepository extends JpaRepository<User, String> {
                                @Param("email") String email,
                                @Param("address") String address,
                                @Param("identificationNumber") String identificationNumber,
-                               @Param("status") UserStatus status,
+                               @Param("status") String status,
                                @Param("department") String department,
                                @Param("phoneNumber") String phoneNumber,
                                @Param("position") String position,
