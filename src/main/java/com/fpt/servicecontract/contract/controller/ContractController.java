@@ -205,4 +205,32 @@ public class ContractController {
         return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
                 "Successfully", true, elasticSearchService.search("contract", searchRequestBody, ContractRequest.class)));
     }
+
+
+    @PostMapping("/public/send-mail")
+    public SignContractResponse sendMail(
+                                         @RequestParam String[] to,
+                                         @RequestParam(required = false) String[] cc,
+                                         @RequestParam String subject,
+                                         @RequestParam String htmlContent,
+                                         @RequestParam String createdBy,
+                                         @RequestParam String contractId,
+                                         @RequestParam String status,
+                                         @RequestParam String description
+    ) throws MessagingException {
+        SignContractResponse signContractResponse = new SignContractResponse();
+        //Contract status
+        List<String> receivers = new ArrayList<>();
+        for (String recipient : to) {
+            receivers.add(recipient.trim());
+        }
+        if(cc!=null){
+            for (String recipient : cc) {
+                receivers.add(recipient.trim());
+            }
+        }
+        contractStatusService.create(createdBy, receivers, contractId, status, description);
+        mailService.sendNewMail(to, cc, subject, htmlContent, null);
+        return signContractResponse;
+    }
 }
