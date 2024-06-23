@@ -19,5 +19,7 @@ public class ContractRequest {
     private boolean isUrgent;
     private String signA;
     private String signB;
+    private String createdBy;
+    private String approvedBy;
 }
 

@@ -67,17 +67,17 @@ public class ContractController {
 //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
         if(status.equals(SignContractStatus.WAIT_APPROVE.name())) {
+            signContractResponse.setCanSendForMng(false);
+            signContractResponse.setCanSend(false);
+        }
+
+        if(status.equals(SignContractStatus.APPROVED.name())) {
             String approved = jwtService.extractUsername(bearerToken.substring(7));
             Optional<Contract> contract = contractRepository.findById(contractId);
             if (contract.isPresent()) {
                 contract.get().setApprovedBy(approved);
                 contractRepository.save(contract.get());
             }
-            signContractResponse.setCanSendForMng(true);
-            signContractResponse.setCanSend(false);
-        }
-
-        if(status.equals(SignContractStatus.APPROVED.name())) {
             signContractResponse.setCanSendForMng(true);
             signContractResponse.setCanSend(false);
         }
