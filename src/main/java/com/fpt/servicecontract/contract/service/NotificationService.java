@@ -1,10 +1,19 @@
 package com.fpt.servicecontract.contract.service;
 
-import com.fpt.servicecontract.contract.dto.NotificationDto;
-import com.fpt.servicecontract.utils.BaseResponse;
+import com.fpt.servicecontract.contract.model.Notification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
 
 public interface NotificationService {
-    BaseResponse findAllNotifications(String recipientId);
-    BaseResponse deleteNotification(String id);
-    String notifyFrontend(NotificationDto message);
+    Optional<Notification> findNotificationById(String id);
+
+    boolean deleteNotificationById(String id);
+
+    Page<Notification> findAllNotifications(Pageable pageable);
+
+    String create(Notification message);
+
+    void readNotificationById(String id, boolean isRead);
 }

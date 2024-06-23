@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table
@@ -21,9 +22,10 @@ public class Notification {
     private String id;
     private String title;
     private String message;
-    private String entityId;
     private String senderId;
-    private String recipientId;
+    private List<String> receivers;
+    private String typeNotification;
+    private String idType;
     private LocalDateTime createdDate;
     private Boolean markedDeleted;
     private Boolean markRead;
