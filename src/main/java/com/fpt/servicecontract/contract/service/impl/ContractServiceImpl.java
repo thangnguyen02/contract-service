@@ -187,7 +187,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanResend(true);
             }
 
-            if(SignContractStatus.SIGN_A_OK.name().equals(status) || status.equals(SignContractStatus.SIGN_B_OK.equals(status))
+            if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.equals(status)
             ) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
