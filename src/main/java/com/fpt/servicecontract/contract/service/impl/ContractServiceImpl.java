@@ -139,6 +139,7 @@ public class ContractServiceImpl implements ContractService {
                     .status(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
                     .isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString()))
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
+                    .canSend(true)
                     .build();
             String status = contractStatusService.getContractStatusByLastStatus(response.getId());
             response.setStatusCurrent(status);
