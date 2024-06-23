@@ -21,4 +21,5 @@ public class ContractResponse {
     private boolean sign = false;
     private boolean isApproved = false;
     private String approvedBy;
+    private String statusCurrent;
 }
