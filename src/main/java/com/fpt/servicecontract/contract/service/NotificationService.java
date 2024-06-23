@@ -11,7 +11,7 @@ public interface NotificationService {
 
     boolean deleteNotificationById(String id);
 
-    Page<Notification> findAllNotifications(Pageable pageable);
+    Page<Notification> findAllNotifications(Pageable pageable, String email);
 
     String create(Notification message);
 

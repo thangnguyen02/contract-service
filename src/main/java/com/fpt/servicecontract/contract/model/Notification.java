@@ -22,7 +22,7 @@ public class Notification {
     private String id;
     private String title;
     private String message;
-    private String senderId;
+    private String sender;
     private List<String> receivers;
     private String typeNotification;
     private String idType;

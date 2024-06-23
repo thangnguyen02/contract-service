@@ -4,7 +4,9 @@ import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.NotificationRepository;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.webjars.NotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +42,17 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Page<Notification> findAllNotifications(Pageable pageable) {
-        return notificationRepository.findAllByMarkedDeletedFalse(pageable);
+    public Page<Notification> findAllNotifications(Pageable pageable, String email) {
+        List<Notification> notifications = notificationRepository.findAllByMarkedDeletedFalse();
+        List<Notification> filteredNotifications = notifications.stream()
+                .filter(notification -> notification.getReceivers().contains(email))
+                .toList();
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        int endItem = Math.min(startItem + pageSize, filteredNotifications.size());
+        List<Notification> pagedNotifications = filteredNotifications.subList(startItem, endItem);
+        return new PageImpl<>(pagedNotifications, pageable, filteredNotifications.size());
     }
 
     @Override

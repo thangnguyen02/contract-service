@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -19,20 +20,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class NotificationController {
     private final NotificationService notificationService;
-
+    private final JwtService jwtService;
     @PostMapping()
     public String testNotifyAll(@RequestBody Notification message) {
-        message.setSenderId("7bfb03f0-8fbf-462d-9f73-99bfb3e5c3a3");
-        message.setReceivers(List.of("45130aca-2196-4bbc-87ac-3ad3eafe5d8d"));
+        message.setSender("salesep490@gmail.com");
+        message.setReceivers(List.of("officeadminsep490@gmail.com"));
         return notificationService.create(message);
     }
 
     @GetMapping
-    public ResponseEntity<Page<Notification>> getAllNotifications(
+    public ResponseEntity<Page<Notification>> getAllNotifications(@RequestHeader("Authorization") String bearerToken,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
         Pageable pageable = PageRequest.of(page, size);
-        Page<Notification> notifications = notificationService.findAllNotifications(pageable);
+        Page<Notification> notifications = notificationService.findAllNotifications(pageable,email);
         return ResponseEntity.ok(notifications);
     }
 
