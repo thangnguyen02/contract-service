@@ -40,5 +40,6 @@ public class Contract {
     private boolean markDeleted;
     private String status;
     private boolean isUrgent;
+    private String approvedBy;
     private String contractTypeId;
 }

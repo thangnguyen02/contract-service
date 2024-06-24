@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 public class SearchUserRequest {
     private String name;
     private String email;
-    private UserStatus status;
+    private String status;
     private String identificationNumber;
     private String phoneNumber;
     private String address;

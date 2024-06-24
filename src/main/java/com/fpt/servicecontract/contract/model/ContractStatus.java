@@ -25,5 +25,6 @@ public class ContractStatus {
     private List<String> receiver;// id email
     private String contractId;
     private LocalDateTime sendDate;
-
+    private String status;
+    private String description;
 }

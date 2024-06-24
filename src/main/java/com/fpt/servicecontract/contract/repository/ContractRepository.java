@@ -24,7 +24,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                 created_date,
                 id,
                 status,
-                is_urgent
+                is_urgent,
+                approved_by
             FROM
                 contract
             WHERE
@@ -64,7 +65,9 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      pb.bank_acc_ower,
                      c.file,
                      c.signa,
-                     c.signb
+                     c.signb,
+                     c.created_by,
+                     c.approved_by
                  FROM
                      fpt_company.contract c
                          LEFT JOIN
