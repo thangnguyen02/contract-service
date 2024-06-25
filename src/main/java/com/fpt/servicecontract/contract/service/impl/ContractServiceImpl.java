@@ -122,12 +122,12 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public BaseResponse findAll(Pageable p, String email) {
+    public BaseResponse findAll(Pageable p, String email, String statusSearch) {
         List<String> ids = contractStatusRepository.findAll().stream()
                 .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
-        Page<Object[]> page = contractRepository.findAllContract(p, email, ids);
+        Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusSearch);
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             ContractResponse response = ContractResponse.builder()
