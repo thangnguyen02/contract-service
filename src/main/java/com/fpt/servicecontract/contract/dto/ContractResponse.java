@@ -22,4 +22,6 @@ public class ContractResponse {
     private boolean isApproved = false;
     private String approvedBy;
     private String statusCurrent;
+    private boolean canUpdate = true;
+    private boolean canDelete = true;
 }

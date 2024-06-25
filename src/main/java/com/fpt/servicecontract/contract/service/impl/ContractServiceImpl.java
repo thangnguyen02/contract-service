@@ -142,6 +142,7 @@ public class ContractServiceImpl implements ContractService {
                     .canSend(true)
                     .build();
             String status = contractStatusService.getContractStatusByLastStatus(response.getId());
+            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
             response.setStatusCurrent(status);
             if(SignContractStatus.APPROVED.name().equals(status)) {
                 response.setCanSendForMng(true);
@@ -182,10 +183,23 @@ public class ContractServiceImpl implements ContractService {
                 response.setSign(true);
             }
 
+            if(statusList.contains(SignContractStatus.SIGN_B_FAIL.name())
+            && statusList.contains(SignContractStatus.SIGN_A_FAIL.name())) {
+                response.setCanUpdate(true);
+                response.setCanDelete(true);
+            }
+
+            if(statusList.contains(SignContractStatus.WAIT_SIGN_B.name())
+                    && statusList.contains(SignContractStatus.WAIT_SIGN_A.name())) {
+                response.setCanUpdate(false);
+                response.setCanDelete(false);
+            }
+
             if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
                     || SignContractStatus.SIGN_A_FAIL.name().equals(status)
             ) {
-                response.setCanResend(true);
+                response.setCanSend(true);
+
             }
 
             if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.equals(status)
