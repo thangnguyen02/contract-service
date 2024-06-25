@@ -164,7 +164,7 @@ public class ContractServiceImpl implements ContractService {
             }
 
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
-                response.setSign(true);
+                response.setCanSend(true);
                 response.setCanSendForMng(false);
             }
 
@@ -179,6 +179,8 @@ public class ContractServiceImpl implements ContractService {
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
                     SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setSign(true);
+                response.setCanSend(true);
+                response.setCanSendForMng(false);
             }
 
             if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
