@@ -116,6 +116,8 @@ public class ContractServiceImpl implements ContractService {
         }
         Contract result = contractRepository.save(contract);
         contractRequest.setId(result.getId());
+        contractRequest.setSignA("");
+        contractRequest.setSignB("");
         elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
@@ -272,6 +274,8 @@ public class ContractServiceImpl implements ContractService {
             ContractRequest contract = findById(f);
             try {
                 if (contract.getId() != null) {
+                    contract.setSignA("");
+                    contract.setSignB("");
                     elasticSearchService.indexDocument("contract", contract, ContractRequest::getId);
                 }
             } catch (IOException e) {
