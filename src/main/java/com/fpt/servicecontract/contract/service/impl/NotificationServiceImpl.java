@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,6 +47,7 @@ public class NotificationServiceImpl implements NotificationService {
         List<Notification> notifications = notificationRepository.findAllByMarkedDeletedFalse();
         List<Notification> filteredNotifications = notifications.stream()
                 .filter(notification -> notification.getReceivers().contains(email))
+                .sorted(Comparator.comparing(Notification::getCreatedDate).reversed())
                 .toList();
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
