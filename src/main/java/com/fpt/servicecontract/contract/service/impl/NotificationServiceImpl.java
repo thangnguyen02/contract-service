@@ -61,9 +61,8 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setMarkedDeleted(false);
         notification.setMarkRead(false);
         notification.getReceivers().forEach(f -> {
-            messagingTemplate.convertAndSend("/topic/notifications/" + f, notification);
+            messagingTemplate.convertAndSend("/topic/notifications/" + f, notificationRepository.save(notification));
         });
-        notificationRepository.save(notification);
         return "Notification ok! ";
     }
 
