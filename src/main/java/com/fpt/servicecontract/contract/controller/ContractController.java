@@ -66,7 +66,6 @@ public class ContractController {
             }
         }
         Optional<Contract> contract = contractRepository.findById(contractId);
-
 //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
         if (status.equals(SignContractStatus.WAIT_APPROVE.name())) {
@@ -96,11 +95,6 @@ public class ContractController {
                     .receivers(receivers)
                     .sender(email)
                     .build());
-        }
-
-        if (status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            signContractResponse.setCanSendForMng(false);
-            signContractResponse.setCanSend(false);
         }
 
         //officer-admin reject
@@ -138,14 +132,15 @@ public class ContractController {
             signContractResponse.setCanSendForMng(false);
             if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(email + "đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(email)
+                        .build());
             }
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + "đã kí hợp đồng")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .build());
+
         }
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
@@ -154,14 +149,15 @@ public class ContractController {
             signContractResponse.setCanSendForMng(false);
             if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(email + "đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(email)
+                        .build());
             }
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + "đã kí hợp đồng")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .build());
+
         }
 
 
@@ -170,7 +166,7 @@ public class ContractController {
             signContractResponse.setCanSend(true);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
-                    .message(email + "đã gửi hợp đồng cần kí")
+                    .message(email + " đang chờ ký")
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
