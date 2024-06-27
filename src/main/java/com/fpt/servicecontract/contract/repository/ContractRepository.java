@@ -25,16 +25,27 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                 id,
                 status,
                 is_urgent,
-                approved_by
+                approved_by,
+                (SELECT status
+                    FROM contract_status
+                    where contract_id = contract.id
+                    ORDER BY send_date DESC
+                    LIMIT 1) as statusCurrent
             FROM
                 contract
             WHERE
                  mark_deleted = 0 
                  AND (created_by = :email OR id IN (:ids))
-                 AND (status = :statusSearch or :statusSearch is null)
+                 AND (
+                         SELECT status
+                         FROM contract_status
+                         WHERE contract_id = contract.id
+                         ORDER BY send_date DESC
+                         LIMIT 1
+                     ) = :statusCurrentSearch
                  order by is_urgent desc, created_date desc
                  """, nativeQuery = true)
-    Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids, String statusSearch);
+    Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids, String statusCurrentSearch);
 
     @Query(value = """
             SELECT\s
