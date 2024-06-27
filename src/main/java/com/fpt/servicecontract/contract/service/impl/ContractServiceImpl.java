@@ -262,6 +262,8 @@ public class ContractServiceImpl implements ContractService {
                     .signB(Objects.nonNull(obj[29]) ? obj[29].toString() : null)
                     .createdBy(Objects.nonNull(obj[30]) ? obj[30].toString() : null)
                     .approvedBy(Objects.nonNull(obj[31]) ? obj[31].toString() : null)
+                    .isUrgent(Objects.nonNull(obj[32]) ? Boolean.parseBoolean(obj[32].toString()) : null)
+                    .contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null)
                     .build();
         }
         return contractRequest;
