@@ -21,5 +21,6 @@ public class ContractRequest {
     private String signB;
     private String createdBy;
     private String approvedBy;
+    private String contractTypeId;
 }
 
