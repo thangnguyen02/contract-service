@@ -29,10 +29,12 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
             FROM
                 contract
             WHERE
-                mark_deleted = 0
-                 AND (created_by = :email OR id IN (:ids))  order by is_urgent desc, created_date desc
+                 mark_deleted = 0 
+                 AND (created_by = :email OR id IN (:ids))
+                 AND (status = :statusSearch or :statusSearch is null)
+                 order by is_urgent desc, created_date desc
                  """, nativeQuery = true)
-    Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids);
+    Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids, String statusSearch);
 
     @Query(value = """
             SELECT\s

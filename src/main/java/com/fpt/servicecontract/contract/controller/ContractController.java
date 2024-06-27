@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -206,10 +207,11 @@ public class ContractController {
 
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> findAll(@RequestHeader("Authorization") String bearerToken,
+                                                @RequestParam(required = false) String status,
                                                 @PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
         String email = jwtService.extractUsername(bearerToken.substring(7));
-        return ResponseEntity.ok(contractService.findAll(p, email));
+        return ResponseEntity.ok(contractService.findAll(p, email, status));
     }
 
     @PostMapping()
