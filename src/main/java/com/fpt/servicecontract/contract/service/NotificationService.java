@@ -16,4 +16,6 @@ public interface NotificationService {
     String create(Notification message);
 
     void readNotificationById(String id, boolean isRead);
+
+    Integer countNotRead(String email);
 }

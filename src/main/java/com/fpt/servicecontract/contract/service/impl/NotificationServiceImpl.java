@@ -79,4 +79,11 @@ public class NotificationServiceImpl implements NotificationService {
             throw new NotFoundException("Not found!!");
         }
     }
+
+    @Override
+    public Integer countNotRead(String email) {
+        List<Notification> notificationList = notificationRepository.findAll();
+        List<Notification> list = notificationList.stream().filter(f -> f.getReceivers().contains(email) && !f.getMarkRead()).toList();
+        return list.size();
+    }
 }

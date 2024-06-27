@@ -16,7 +16,7 @@ public interface ContractStatusRepository extends JpaRepository<ContractStatus, 
         FROM contract_status
         where contract_id = ?1
         ORDER BY send_date DESC
-        LIMIT 1;    
+        LIMIT 1   
     """, nativeQuery = true)
     String findByContractLastStatus(String contractId);
 

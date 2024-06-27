@@ -38,6 +38,12 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
+    @GetMapping("/unread")
+    public ResponseEntity<Integer> countNotRead(@RequestHeader("Authorization") String bearerToken) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(notificationService.countNotRead(email));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Notification> getNotificationById(@PathVariable String id) {
         Optional<Notification> notificationOptional = notificationService.findNotificationById(id);
