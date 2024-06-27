@@ -15,13 +15,13 @@ public class ContractResponse {
     private String createdDate;
     private String status;
     private boolean isUrgent;
-    private boolean canSend = true;
-    private boolean canSendForMng = false;
-    private boolean canResend = false;
-    private boolean sign = false;
-    private boolean isApproved = false;
+    private boolean canSend;
+    private boolean canSendForMng ;
+    private boolean canResend ;
+    private boolean sign ;
+    private boolean isApproved ;
     private String approvedBy;
     private String statusCurrent;
-    private boolean canUpdate = true;
-    private boolean canDelete = true;
+    private boolean canUpdate ;
+    private boolean canDelete ;
 }

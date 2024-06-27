@@ -140,9 +140,10 @@ public class ContractServiceImpl implements ContractService {
                     .status(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
                     .isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString()))
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
+                    .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .canSend(true)
                     .build();
-            String status = contractStatusService.getContractStatusByLastStatus(response.getId());
+            String status = response.getStatusCurrent();
             List<String> statusList = contractStatusService.checkDoneSign(response.getId());
             response.setStatusCurrent(status);
             if(SignContractStatus.APPROVED.name().equals(status)) {
@@ -177,6 +178,8 @@ public class ContractServiceImpl implements ContractService {
             //send office_admin
             if(SignContractStatus.NEW.name().equals(status)) {
                 response.setCanResend(false);
+                response.setCanUpdate(true);
+                response.setCanDelete(true);
             }
 
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
@@ -210,8 +213,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
             }
-
-            responses.add(response);
+                responses.add(response);
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,
                 page.getTotalElements());
