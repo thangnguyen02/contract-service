@@ -142,8 +142,6 @@ public class ContractServiceImpl implements ContractService {
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .canSend(true)
-                    .canUpdate(true)
-                    .canDelete(true)
                     .build();
             String status = response.getStatusCurrent();
             List<String> statusList = contractStatusService.checkDoneSign(response.getId());
@@ -180,6 +178,8 @@ public class ContractServiceImpl implements ContractService {
             //send office_admin
             if(SignContractStatus.NEW.name().equals(status)) {
                 response.setCanResend(false);
+                response.setCanUpdate(true);
+                response.setCanDelete(true);
             }
 
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
