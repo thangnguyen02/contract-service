@@ -167,14 +167,14 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanResend(true);
             }
 
-            if(SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
-                response.setCanSend(true);
-                response.setCanSendForMng(false);
-            }
-
-            if(SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
-                response.setSign(true);
-            }
+//            if(SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+//                response.setCanSend(true);
+//                response.setCanSendForMng(false);
+//            }
+//
+//            if(SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
+//                response.setSign(true);
+//            }
             //send office_admin
             if(SignContractStatus.NEW.name().equals(status)) {
                 response.setCanResend(false);
@@ -185,7 +185,7 @@ public class ContractServiceImpl implements ContractService {
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
                     SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setSign(true);
-                response.setCanSend(true);
+                response.setCanSend(false);
                 response.setCanSendForMng(false);
             }
 
