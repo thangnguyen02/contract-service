@@ -163,8 +163,7 @@ public class ContractController {
 
 
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            signContractResponse.setSign(true);
-            signContractResponse.setCanSend(true);
+            signContractResponse.setCanSend(false);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + " đang chờ ký")
