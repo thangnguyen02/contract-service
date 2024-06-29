@@ -17,33 +17,37 @@ import java.util.List;
 public interface ContractRepository extends JpaRepository<Contract, String> {
 
     @Query(value = """
-            SELECT\s
-                name,
-                created_by,
-                file,
-                created_date,
-                id,
-                status,
-                is_urgent,
-                approved_by,
-                (SELECT status
-                    FROM contract_status
-                    where contract_id = contract.id
-                    ORDER BY send_date DESC
-                    LIMIT 1) as statusCurrent
-            FROM
-                contract
-            WHERE
-                 mark_deleted = 0 
-                 AND (created_by = :email OR id IN (:ids))
-                 AND (
-                         SELECT status
-                         FROM contract_status
-                         WHERE contract_id = contract.id
-                         ORDER BY send_date DESC
-                         LIMIT 1
-                     ) = :statusCurrentSearch
-                 order by is_urgent desc, created_date desc
+            WITH latest_status AS (
+                                                                SELECT\s
+                                                                    cs.contract_id,
+                                                                    cs.status,
+                                                                    ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
+                                                                FROM\s
+                                                                    contract_status cs
+                                                            )
+                                                            SELECT\s
+                                                                c.name,\s
+                                                                c.created_by,\s
+                                                                c.file,\s
+                                                                c.created_date,\s
+                                                                c.id,\s
+                                                                c.status,\s
+                                                                c.is_urgent,\s
+                                                                c.approved_by,\s
+                                                                ls.status AS statusCurrent,\s
+                                                                c.mark_deleted
+                                                            FROM\s
+                                                                contract c
+                                                            LEFT JOIN\s
+                                                                latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
+                                                            WHERE\s
+                                                                c.mark_deleted = 0\s
+                                                                AND (c.created_by = :email OR c.id IN (:ids))
+                                                                AND (ls.status = :statusCurrentSearch OR :statusCurrentSearch IS NULL)
+                                                            ORDER BY\s
+                                                                c.is_urgent DESC,\s
+                                                                c.created_date DESC;
+                                                            
                  """, nativeQuery = true)
     Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids, String statusCurrentSearch);
 
