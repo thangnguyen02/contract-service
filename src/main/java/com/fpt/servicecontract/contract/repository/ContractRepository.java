@@ -17,38 +17,37 @@ import java.util.List;
 public interface ContractRepository extends JpaRepository<Contract, String> {
 
     @Query(value = """
-            WITH latest_status AS (
-                                                                SELECT\s
-                                                                    cs.contract_id,
-                                                                    cs.status,
-                                                                    ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
-                                                                FROM\s
-                                                                    contract_status cs
-                                                            )
-                                                            SELECT\s
-                                                                c.name,\s
-                                                                c.created_by,\s
-                                                                c.file,\s
-                                                                c.created_date,\s
-                                                                c.id,\s
-                                                                c.status,\s
-                                                                c.is_urgent,\s
-                                                                c.approved_by,\s
-                                                                ls.status AS statusCurrent,\s
-                                                                c.mark_deleted
-                                                            FROM\s
-                                                                contract c
-                                                            LEFT JOIN\s
-                                                                latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
-                                                            WHERE\s
-                                                                c.mark_deleted = 0\s
-                                                                AND (c.created_by = :email OR c.id IN (:ids))
-                                                                AND (ls.status = :statusCurrentSearch OR :statusCurrentSearch IS NULL)
-                                                            ORDER BY\s
-                                                                c.is_urgent DESC,\s
-                                                                c.created_date DESC;
-                                                            
-                 """, nativeQuery = true)
+            WITH latest_status AS (        \s
+                       SELECT
+                         cs.contract_id,
+                         cs.status,
+                         ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
+                     FROM
+                         contract_status cs
+                 )
+                 SELECT
+                     c.name,
+                     c.created_by,
+                     c.file,
+                     c.created_date,
+                     c.id,
+                     c.status,
+                     c.is_urgent,
+                     c.approved_by,
+                     ls.status AS statusCurrent,
+                     c.mark_deleted
+                 FROM
+                     contract c
+                 LEFT JOIN
+                     latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
+                 WHERE
+                     c.mark_deleted = 0
+                     AND (c.created_by = :email OR c.id IN (:ids))
+                     AND (ls.status = :statusCurrentSearch OR :statusCurrentSearch IS NULL)
+                 ORDER BY
+                     c.is_urgent DESC,
+                     c.created_date DESC;
+                    \s""", nativeQuery = true)
     Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids, String statusCurrentSearch);
 
     @Query(value = """
