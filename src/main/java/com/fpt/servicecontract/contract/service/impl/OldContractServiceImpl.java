@@ -7,6 +7,7 @@ import com.fpt.servicecontract.contract.dto.OldContractDto;
 import com.fpt.servicecontract.contract.model.OldContract;
 import com.fpt.servicecontract.contract.repository.OldContractRepository;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
+import com.fpt.servicecontract.contract.service.ContractTypeService;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.contract.service.OldContractService;
 import com.fpt.servicecontract.utils.BaseResponse;
@@ -40,7 +41,7 @@ public class OldContractServiceImpl implements OldContractService {
     private final PdfUtils pdfUtils;
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
-
+    private final ContractTypeService contractTypeService;
     @Override
     public BaseResponse getContracts(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
@@ -78,7 +79,7 @@ public class OldContractServiceImpl implements OldContractService {
         contract.setContractStartDate(DateUltil.stringToDate(oldContractDto.getContractStartDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         contract.setContractSignDate(DateUltil.stringToDate(oldContractDto.getContractSignDate(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         contract.setCreatedDate(new Date());
-
+        contract.setContractTypeId(oldContractDto.getContractTypeId());
         if (Objects.requireNonNull(List.of(images).get(0).getOriginalFilename()).endsWith(".pdf")) {
             contract.setFile(cloudinaryService.uploadImage(List.of(images).get(0)));
             contract.setContent(pdfUtils.getTextFromPdfFile(List.of(images).get(0)));
@@ -119,6 +120,7 @@ public class OldContractServiceImpl implements OldContractService {
 
             try {
                 oldContractRepository.save(contract);
+                contract.setContractTypeId(contractTypeService.getContractTypeById(oldContractDto.getContractTypeId()).get().getTitle());
                 elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
                 return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
                         .id(contract.getId())

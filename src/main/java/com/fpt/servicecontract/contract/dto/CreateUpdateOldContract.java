@@ -16,4 +16,5 @@ public class CreateUpdateOldContract {
     private String contractSignDate;
     private String contractStartDate;
     private String contractEndDate;
+    private String contractTypeId;
 }

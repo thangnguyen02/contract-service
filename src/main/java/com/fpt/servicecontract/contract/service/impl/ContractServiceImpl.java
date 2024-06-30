@@ -43,7 +43,7 @@ public class ContractServiceImpl implements ContractService {
     private final ElasticSearchService elasticSearchService;
     private final ContractStatusRepository contractStatusRepository;
     private final ContractStatusService contractStatusService;
-
+    private final ContractTypeService contractTypeService;
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         Party partyA = Party
@@ -119,6 +119,7 @@ public class ContractServiceImpl implements ContractService {
         contractRequest.setId(result.getId());
         contractRequest.setSignA("");
         contractRequest.setSignB("");
+        contract.setContractTypeId(contractTypeService.getContractTypeById(contractRequest.getContractTypeId()).get().getTitle());
         elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
