@@ -94,6 +94,7 @@ public class ContractServiceImpl implements ContractService {
                 .updatedDate(LocalDateTime.now())
                 .status(Constants.STATUS.NEW)
                 .isUrgent(contractRequest.isUrgent())
+                .contractTypeId(contractRequest.getContractTypeId())
                 .build();
         Context context = new Context();
         context.setVariable("partyA", partyA);
@@ -121,6 +122,7 @@ public class ContractServiceImpl implements ContractService {
         contractRequest.setSignB("");
         contract.setContractTypeId(contractTypeService.getContractTypeById(contractRequest.getContractTypeId()).get().getTitle());
         elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
+        contract.setContractTypeId(contractRequest.getContractTypeId());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
 

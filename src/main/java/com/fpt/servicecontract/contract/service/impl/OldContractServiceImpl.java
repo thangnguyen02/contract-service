@@ -122,6 +122,7 @@ public class OldContractServiceImpl implements OldContractService {
                 oldContractRepository.save(contract);
                 contract.setContractTypeId(contractTypeService.getContractTypeById(oldContractDto.getContractTypeId()).get().getTitle());
                 elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
+                contract.setContractTypeId(oldContractDto.getContractTypeId());
                 return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
                         .id(contract.getId())
                         .contractName(contract.getContractName())
