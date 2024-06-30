@@ -7,8 +7,9 @@ import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractParty;
+import com.fpt.servicecontract.contract.model.Party;
 import com.fpt.servicecontract.contract.model.ContractStatus;
-import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
+import com.fpt.servicecontract.contract.repository.PartyRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
 import com.fpt.servicecontract.contract.service.*;
@@ -35,7 +36,7 @@ import java.util.*;
 public class ContractServiceImpl implements ContractService {
 
     private final ContractRepository contractRepository;
-    private final ContractPartyRepository contractPartyRepository;
+    private final PartyRepository partyRepository;
     private final PdfUtils pdfUtils;
     private final CloudinaryService cloudinaryService;
     private final ContractHistoryService contractHistoryService;
@@ -45,7 +46,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
-        ContractParty contractPartyA = ContractParty
+        Party partyA = Party
                 .builder()
                 .id(contractRequest.getPartyA().getId())
                 .address(contractRequest.getPartyA().getAddress())
@@ -59,7 +60,7 @@ public class ContractServiceImpl implements ContractService {
                 .email(contractRequest.getPartyA().getEmail())
                 .position(contractRequest.getPartyA().getPosition())
                 .build();
-        ContractParty contractPartyB = ContractParty
+        Party partyB = Party
                 .builder()
                 .id(contractRequest.getPartyB().getId())
                 .address(contractRequest.getPartyB().getAddress())
@@ -74,8 +75,8 @@ public class ContractServiceImpl implements ContractService {
                 .position(contractRequest.getPartyB().getPosition())
                 .build();
         try {
-            contractPartyB = contractPartyRepository.save(contractPartyB);
-            contractPartyA = contractPartyRepository.save(contractPartyA);
+            partyB = partyRepository.save(partyB);
+            partyA = partyRepository.save(partyA);
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Failed", false, e.getMessage());
         }
@@ -87,16 +88,16 @@ public class ContractServiceImpl implements ContractService {
                 .rule(contractRequest.getRule())
                 .createdBy(email)
                 .term(contractRequest.getTerm())
-                .partyAId(contractPartyA.getId())
-                .partyBId(contractPartyB.getId())
+                .partyAId(partyA.getId())
+                .partyBId(partyB.getId())
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
                 .status(Constants.STATUS.NEW)
                 .isUrgent(contractRequest.isUrgent())
                 .build();
         Context context = new Context();
-        context.setVariable("partyA", contractPartyA);
-        context.setVariable("partyB", contractPartyB);
+        context.setVariable("partyA", partyA);
+        context.setVariable("partyB", partyB);
         context.setVariable("info", contract);
         context.setVariable("date", LocalDateTime.now().toLocalDate());
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
@@ -280,9 +281,9 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse findContractPartyById(String id) {
-        Optional<ContractParty> contractPartyOptional = contractPartyRepository.findByTaxNumber(id);
-        ContractParty contractParty = contractPartyOptional.orElse(null);
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractParty);
+        Optional<Party> contractPartyOptional = partyRepository.findByTaxNumber(id);
+        Party party = contractPartyOptional.orElse(null);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, party);
     }
 
     @Override

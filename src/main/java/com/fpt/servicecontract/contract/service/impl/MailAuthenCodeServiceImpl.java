@@ -3,9 +3,9 @@ package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.auth.dto.UserDto;
 import com.fpt.servicecontract.config.MailService;
-import com.fpt.servicecontract.contract.model.ContractParty;
+import com.fpt.servicecontract.contract.model.Party;
 import com.fpt.servicecontract.contract.model.AuthenticationCode;
-import com.fpt.servicecontract.contract.repository.ContractPartyRepository;
+import com.fpt.servicecontract.contract.repository.PartyRepository;
 import com.fpt.servicecontract.contract.repository.MailAuthenCodeRepository;
 import com.fpt.servicecontract.contract.service.MailAuthenCodeService;
 import com.fpt.servicecontract.utils.BaseResponse;
@@ -23,11 +23,11 @@ import java.util.Random;
 public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
 
     private final MailAuthenCodeRepository mailAuthenCodeRepository;
-    private final ContractPartyRepository contractPartyRepository;
+    private final PartyRepository partyRepository;
     private final MailService mailService;
 
     public BaseResponse GetAuthenMailCode(String email, String contractId) {
-        var user = contractPartyRepository.checkMailContractParty(email, contractId);
+        var user = partyRepository.checkMailContractParty(email, contractId);
         String[] emailList = new String[]{email};
         if (user == null) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "user not found", true, null);
@@ -62,7 +62,7 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
 
     @Override
     public BaseResponse AuthenticationMailWithCode(String email, Integer AuthenCode) {
-        var contractPartyObject = contractPartyRepository.findByEmail(email);
+        var contractPartyObject = partyRepository.findByEmail(email);
         var mailAuthedCode = mailAuthenCodeRepository.findByEmail(email);
 
         if(mailAuthedCode.isEmpty() || contractPartyObject.isEmpty()) {
@@ -75,10 +75,10 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
         if((mailAuthedCode.get().getExpiryTime().isBefore(LocalDateTime.now()))) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Your code is expired", true, null);
         }
-        ContractParty contractParty = contractPartyObject.get();
+        Party party = contractPartyObject.get();
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "found user", true, UserDto.builder()
-                .id(contractParty.getId())
-                .email(contractParty.getEmail())
+                .id(party.getId())
+                .email(party.getEmail())
                 .build());
     }
 }

@@ -53,7 +53,7 @@ public class UserService {
         user.setAddress(request.getAddress());
         user.setDepartment(request.getDepartment());
         user.setPosition(request.getPosition());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(passwordEncoder.encode("123456"));
         user.setRole(request.getRole());
         user.setPermissions(request.getPermissions());
         try {

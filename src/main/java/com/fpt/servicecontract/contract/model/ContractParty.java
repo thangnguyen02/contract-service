@@ -1,9 +1,10 @@
 package com.fpt.servicecontract.contract.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
-
 @Entity
 @Table
 @Getter
@@ -15,23 +16,6 @@ public class ContractParty {
     @Id
     @UuidGenerator
     private String id;
-    private String name;
-    private String address;
-    private String presenter;
-    private String position;
-    private String businessNumber;
-    private String bankName;
-
-    @Column(unique = true)
-    private String bankId;
-
-
-    @Column(unique = true)
-    private String bankAccOwer;
-
-    @Column(unique = true)
-    private String email;
-
-    @Column(unique = true)
-    private String taxNumber;
+    private String contract_id;
+    private String party_id;
 }
