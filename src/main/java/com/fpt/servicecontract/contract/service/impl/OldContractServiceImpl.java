@@ -59,9 +59,9 @@ public class OldContractServiceImpl implements OldContractService {
                         .createdBy(item.getCreatedBy())
                         .content(item.getContent())
                         .file(item.getFile())
-                        .contractSignDate(item.getContractSignDate().toString())
-                        .contractEndDate(item.getContractEndDate().toString())
-                        .contractStartDate(item.getContractStartDate().toString())
+                        .contractSignDate(String.valueOf(item.getContractSignDate()))
+                        .contractEndDate(String.valueOf(item.getContractEndDate()))
+                        .contractStartDate(String.valueOf(item.getContractStartDate()))
                         .build()
         ).toList();
 
@@ -84,6 +84,7 @@ public class OldContractServiceImpl implements OldContractService {
             contract.setFile(cloudinaryService.uploadImage(List.of(images).get(0)));
             contract.setContent(pdfUtils.getTextFromPdfFile(List.of(images).get(0)));
             oldContractRepository.save(contract);
+            contract.setContractTypeId(contractTypeService.getContractTypeById(oldContractDto.getContractTypeId()).get().getTitle());
             elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
                     .id(contract.getId())
@@ -122,7 +123,6 @@ public class OldContractServiceImpl implements OldContractService {
                 oldContractRepository.save(contract);
                 contract.setContractTypeId(contractTypeService.getContractTypeById(oldContractDto.getContractTypeId()).get().getTitle());
                 elasticSearchService.indexDocument("old_contract", contract, OldContract::getId);
-                contract.setContractTypeId(oldContractDto.getContractTypeId());
                 return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, OldContractDto.builder()
                         .id(contract.getId())
                         .contractName(contract.getContractName())
