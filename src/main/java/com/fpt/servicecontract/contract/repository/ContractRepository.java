@@ -89,9 +89,9 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                  FROM
                      fpt_company.contract c
                          LEFT JOIN
-                     contract_party pa ON c.partyaid = pa.id
+                     party pa ON c.partyaid = pa.id
                          LEFT JOIN
-                     contract_party pb ON c.partybid = pb.id
+                     party pb ON c.partybid = pb.id
                  WHERE
                     c.mark_deleted = 0 and c.id = :id
             """, nativeQuery = true)
