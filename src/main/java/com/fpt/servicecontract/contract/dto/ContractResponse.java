@@ -24,4 +24,5 @@ public class ContractResponse {
     private String statusCurrent;
     private boolean canUpdate ;
     private boolean canDelete ;
+    private boolean canUpdateContractRecieve;
 }
