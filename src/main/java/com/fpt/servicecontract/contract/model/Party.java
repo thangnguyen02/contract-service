@@ -21,12 +21,7 @@ public class Party {
     private String position;
     private String businessNumber;
     private String bankName;
-
-    @Column(unique = true)
     private String bankId;
-
-
-    @Column(unique = true)
     private String bankAccOwer;
 
     @Column(unique = true)
