@@ -6,7 +6,6 @@ import com.fpt.servicecontract.contract.dto.PartyRequest;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
-import com.fpt.servicecontract.contract.model.ContractParty;
 import com.fpt.servicecontract.contract.model.Party;
 import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.repository.PartyRepository;
