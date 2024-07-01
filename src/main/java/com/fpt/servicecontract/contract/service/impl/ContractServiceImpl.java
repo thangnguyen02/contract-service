@@ -1,13 +1,13 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fpt.servicecontract.contract.dto.ContractRequest;
-import com.fpt.servicecontract.contract.dto.ContractResponse;
-import com.fpt.servicecontract.contract.dto.PartyRequest;
-import com.fpt.servicecontract.contract.dto.SignContractDTO;
+import com.fpt.servicecontract.config.JwtService;
+import com.fpt.servicecontract.config.MailService;
+import com.fpt.servicecontract.contract.dto.*;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.Party;
 import com.fpt.servicecontract.contract.model.ContractStatus;
+import com.fpt.servicecontract.contract.model.*;
 import com.fpt.servicecontract.contract.repository.PartyRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
@@ -15,6 +15,7 @@ import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.PdfUtils;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
@@ -43,6 +45,12 @@ public class ContractServiceImpl implements ContractService {
     private final ContractStatusRepository contractStatusRepository;
     private final ContractStatusService contractStatusService;
     private final ContractTypeService contractTypeService;
+    private final NotificationService notificationService;
+    private final JwtService jwtService;
+    private final MailService mailService;
+
+
+
     @Override
     public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
         Party partyA = Party
@@ -169,14 +177,6 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanResend(true);
             }
 
-//            if(SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
-//                response.setCanSend(true);
-//                response.setCanSendForMng(false);
-//            }
-//
-//            if(SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
-//                response.setSign(true);
-//            }
             //send office_admin
             if(SignContractStatus.NEW.name().equals(status)) {
                 response.setCanResend(false);
@@ -207,7 +207,6 @@ public class ContractServiceImpl implements ContractService {
                     || SignContractStatus.SIGN_A_FAIL.name().equals(status)
             ) {
                 response.setCanSend(true);
-
             }
 
             if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.equals(status)
@@ -360,6 +359,139 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public BaseResponse getContractSignById(String id) {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, findById(id));
+    }
+
+    @Override
+    public SignContractResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
+        SignContractResponse signContractResponse = new SignContractResponse();
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        //Contract status
+        List<String> receivers = new ArrayList<>();
+        for (String recipient : to) {
+            receivers.add(recipient.trim());
+        }
+        if (cc != null) {
+            for (String recipient : cc) {
+                receivers.add(recipient.trim());
+            }
+        }
+        Optional<Contract> contract = contractRepository.findById(contractId);
+        if (contract.isEmpty()) {
+            return null;
+        }
+//        //màn hình hợp đồng của OFFICE_ADMIN:
+//         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
+        if (status.equals(SignContractStatus.WAIT_APPROVE.name())) {
+            signContractResponse.setCanSendForMng(false);
+            signContractResponse.setCanSend(false);
+
+            notificationService.create(Notification.builder()
+                    .title(contract.get().getName())
+                    .message("Bạn có hợp đồng mới cần kiểm tra")
+                    .typeNotification("CONTRACT")
+                    .receivers(receivers)
+                    .sender(email)
+                    .build());
+        }
+        if (status.equals(SignContractStatus.APPROVED.name())) {
+            String approved = jwtService.extractUsername(bearerToken.substring(7));
+            if (contract.isPresent()) {
+                contract.get().setApprovedBy(approved);
+                contractRepository.save(contract.get());
+            }
+            signContractResponse.setCanSendForMng(true);
+            signContractResponse.setCanSend(false);
+            notificationService.create(Notification.builder()
+                    .title(contract.get().getName())
+                    .message(email + "đã duyệt hợp đồng")
+                    .typeNotification("CONTRACT")
+                    .receivers(receivers)
+                    .sender(email)
+                    .build());
+        }
+
+        //officer-admin reject
+        if (status.equals(SignContractStatus.APPROVE_FAIL.name())) {
+            signContractResponse.setCanSend(true);
+            signContractResponse.setCanSendForMng(false);
+            notificationService.create(Notification.builder()
+                    .title(contract.get().getName())
+                    .message(email + "đã yêu cầu xem lại hợp đồng")
+                    .typeNotification("CONTRACT")
+                    .receivers(receivers)
+                    .sender(email)
+                    .build());
+        }
+
+        // site a or b reject with reseon
+        if (status.equals(SignContractStatus.SIGN_B_FAIL.name())
+                || status.equals(SignContractStatus.SIGN_A_FAIL.name())
+        ) {
+            signContractResponse.setCanSend(true);
+            signContractResponse.setCanSendForMng(false);
+            notificationService.create(Notification.builder()
+                    .title(contract.get().getName())
+                    .message(email + "đã từ chối kí hợp đồng")
+                    .typeNotification("CONTRACT")
+                    .receivers(receivers)
+                    .sender(email)
+                    .build());
+        }
+        List<String> statusDb = contractStatusService.checkDoneSign(contractId);
+
+        if (status.equals(SignContractStatus.SIGN_A_OK.name())
+        ) {
+            signContractResponse.setCanSend(false);
+            signContractResponse.setCanSendForMng(false);
+            if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
+                status = SignContractStatus.SUCCESS.name();
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(email + "đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(email)
+                        .build());
+            }
+
+        }
+
+        if (status.equals(SignContractStatus.SIGN_B_OK.name())
+        ) {
+            signContractResponse.setCanSend(false);
+            signContractResponse.setCanSendForMng(false);
+            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
+                status = SignContractStatus.SUCCESS.name();
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(email + "đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(email)
+                        .build());
+            }
+
+        }
+
+
+        if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
+            signContractResponse.setCanSend(false);
+            notificationService.create(Notification.builder()
+                    .title(contract.get().getName())
+                    .message(email + " đang chờ ký")
+                    .typeNotification("CONTRACT")
+                    .receivers(receivers)
+                    .sender(email)
+                    .build());
+        }
+        contractStatusService.create(email, receivers, contractId, status, description);
+        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status);
+        try {
+            mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        return signContractResponse;
     }
 
 }
