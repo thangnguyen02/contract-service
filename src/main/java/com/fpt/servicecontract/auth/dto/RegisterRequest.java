@@ -21,5 +21,6 @@ public class RegisterRequest {
   private String department;
   private String address;
   private Set<Permission> permissions;
-
+  private String identificationNumber;
+  private String dob;
 }

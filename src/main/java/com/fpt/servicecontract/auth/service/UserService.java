@@ -56,6 +56,8 @@ public class UserService {
         user.setPassword(passwordEncoder.encode("123456"));
         user.setRole(request.getRole());
         user.setPermissions(request.getPermissions());
+        user.setIdentificationNumber(request.getIdentificationNumber());
+        user.setDob(DateUltil.stringToDate(request.getDob(), "yyyy-MM-dd"));
         try {
             userRepository.save(user);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user);
