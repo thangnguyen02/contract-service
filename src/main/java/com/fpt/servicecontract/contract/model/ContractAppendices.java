@@ -7,6 +7,9 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Entity
 @Table
 @Getter
@@ -20,9 +23,24 @@ public class ContractAppendices {
     private String id;
     private String contract_id;
     private String appendix_number;
-    private String appendix_date;// Ngày ký phụ lục
+    private String name;
+    private String number;
     @Column(columnDefinition="LONGTEXT")
-    private String appendix_details;// Chi tiết phụ lục
-    private String effective_date;//Ngày bắt đầu hiệu lực
-    private String expiry_date;// Ngày hết hạn (nếu có)
+    private String rule;
+    @Column(columnDefinition="LONGTEXT")
+    private String term;
+    private String file;
+    @Column(columnDefinition="LONGTEXT")
+    private String signA;
+    @Column(columnDefinition="LONGTEXT")
+    private String signB;
+    private String createdBy;
+    private Date contractSignDate;
+    private Date contractStartDate;
+    private Date contractEndDate;
+    private LocalDateTime createdDate;
+    private LocalDateTime updatedDate;
+    private boolean markDeleted;
+    private String status;
+    private String approvedBy;
 }
