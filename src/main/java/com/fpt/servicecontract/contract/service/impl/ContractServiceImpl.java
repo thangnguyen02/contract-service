@@ -135,7 +135,8 @@ public class ContractServiceImpl implements ContractService {
                 .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
-        Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusSearch);
+        List<String> statusListSearch = getListStatusSearch(statusSearch);
+        Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusListSearch);
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             ContractResponse response = ContractResponse.builder()
@@ -216,6 +217,34 @@ public class ContractServiceImpl implements ContractService {
         Page<ContractResponse> result = new PageImpl<>(responses, p,
                 page.getTotalElements());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
+    }
+
+    private static List<String> getListStatusSearch(String statusSearch) {
+        List<String> statusListSearch = new ArrayList<>();
+
+        if(SignContractStatus.ALL.name().equals(statusSearch)) {
+            statusListSearch.add(SignContractStatus.NEW.name());
+            statusListSearch.add(SignContractStatus.APPROVED.name());
+            statusListSearch.add(SignContractStatus.APPROVE_FAIL.name());
+            statusListSearch.add(SignContractStatus.WAIT_APPROVE.name());
+            statusListSearch.add(SignContractStatus.WAIT_SIGN_A.name());
+            statusListSearch.add(SignContractStatus.WAIT_SIGN_B.name());
+            statusListSearch.add(SignContractStatus.SIGN_B_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_A_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_A_OK.name());
+            statusListSearch.add(SignContractStatus.SIGN_B_OK.name());
+            statusListSearch.add(SignContractStatus.DONE.name());
+        }
+
+        if(SignContractStatus.MANAGER_CONTRACT.name().equals(statusSearch)) {
+            statusListSearch.add(SignContractStatus.NEW.name());
+            statusListSearch.add(SignContractStatus.APPROVE_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_B_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_A_FAIL.name());
+        } else {
+            statusListSearch.add(statusSearch);
+        }
+        return statusListSearch;
     }
 
     @Override
