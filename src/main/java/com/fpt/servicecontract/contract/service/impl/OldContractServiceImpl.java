@@ -62,6 +62,7 @@ public class OldContractServiceImpl implements OldContractService {
                         .contractSignDate(String.valueOf(item.getContractSignDate()))
                         .contractEndDate(String.valueOf(item.getContractEndDate()))
                         .contractStartDate(String.valueOf(item.getContractStartDate()))
+                        .contractTypeId(String.valueOf(item.getContractTypeId()))
                         .build()
         ).toList();
 

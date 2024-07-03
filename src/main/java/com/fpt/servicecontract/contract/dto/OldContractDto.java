@@ -21,4 +21,6 @@ public class OldContractDto {
     private String contractSignDate;
     private String contractStartDate;
     private String contractEndDate;
+    private String contractTypeId;
+
 }
