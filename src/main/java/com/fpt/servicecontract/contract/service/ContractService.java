@@ -15,7 +15,7 @@ public interface ContractService {
 
     BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception;
 
-    BaseResponse findAll(Pageable p, String email, String status);
+    BaseResponse findAll(Pageable p, String email, String status, String search);
 
     ContractRequest findById(String id);
 
