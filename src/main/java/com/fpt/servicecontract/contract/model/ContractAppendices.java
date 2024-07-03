@@ -36,11 +36,10 @@ public class ContractAppendices {
     private String signB;
     private String createdBy;
     private Date contractSignDate;
-    private Date contractStartDate;
-    private Date contractEndDate;
+    private Date contractAppendicesStartDate;
+    private Date contractAppendicesEndDate;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
-    private boolean markDeleted;
     private String status;
     private String approvedBy;
 }
