@@ -12,9 +12,7 @@ import com.fpt.servicecontract.contract.repository.PartyRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
 import com.fpt.servicecontract.contract.service.*;
-import com.fpt.servicecontract.utils.BaseResponse;
-import com.fpt.servicecontract.utils.Constants;
-import com.fpt.servicecontract.utils.PdfUtils;
+import com.fpt.servicecontract.utils.*;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,12 +131,13 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public BaseResponse findAll(Pageable p, String email, String statusSearch) {
+    public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) {
         List<String> ids = contractStatusRepository.findAll().stream()
                 .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
-        Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusSearch);
+        List<String> statusListSearch = getListStatusSearch(statusSearch);
+        Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusListSearch, QueryUtils.appendPercent(search));
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             ContractResponse response = ContractResponse.builder()
@@ -152,29 +151,30 @@ public class ContractServiceImpl implements ContractService {
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .canSend(true)
+                    .canApprove(false)
+                    .canSign(true)
                     .build();
             String status = response.getStatusCurrent();
-            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
+//            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
             response.setStatusCurrent(status);
             if(SignContractStatus.APPROVED.name().equals(status)) {
                 response.setCanSendForMng(true);
                 response.setCanSend(false);
             }
 
-            //        //màn hình hợp đồng của OFFICE_ADMIN:
-//         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
-            if(SignContractStatus.APPROVED.name().equals(status)) {
-                response.setCanSendForMng(true);
-            }
 
             // man hinh sale send contract cho office-admin
             if(SignContractStatus.WAIT_APPROVE.name().equals(status)) {
                 response.setCanSend(false);
+                response.setCanApprove(true);
+                response.setCanSign(false);
             }
 
             //officer-admin reject
             if(SignContractStatus.APPROVE_FAIL.name().equals(status)) {
                 response.setCanResend(true);
+                response.setCanApprove(true);
+                response.setCanSign(false);
             }
 
             //send office_admin
@@ -182,23 +182,24 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanResend(false);
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
+                response.setCanApprove(true);
+                response.setCanSign(false);
             }
 
             if(SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
                     SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
-                response.setSign(true);
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
             }
 
-            if(statusList.contains(SignContractStatus.SIGN_B_FAIL.name())
-            && statusList.contains(SignContractStatus.SIGN_A_FAIL.name())) {
+            if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
+            && SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
             }
 
-            if(statusList.contains(SignContractStatus.WAIT_SIGN_B.name())
-                    && statusList.contains(SignContractStatus.WAIT_SIGN_A.name())) {
+            if(SignContractStatus.WAIT_SIGN_B.name().equals(status)
+                    && SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
             }
@@ -214,11 +215,54 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
             }
+
+            if (SignContractStatus.SIGN_B_OK.name().equals(status)) {
+                response.setCanSign(false);
+            }
+
+
                 responses.add(response);
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,
                 page.getTotalElements());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
+    }
+
+    private boolean checkLastStatusExist(String statusCheck, List<String> status) {
+        for(String s : status) {
+            if(s.equals(statusCheck)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static List<String> getListStatusSearch(String statusSearch) {
+        List<String> statusListSearch = new ArrayList<>();
+
+        if(SignContractStatus.ALL.name().equals(statusSearch)) {
+            statusListSearch.add(SignContractStatus.NEW.name());
+            statusListSearch.add(SignContractStatus.APPROVED.name());
+            statusListSearch.add(SignContractStatus.APPROVE_FAIL.name());
+            statusListSearch.add(SignContractStatus.WAIT_APPROVE.name());
+            statusListSearch.add(SignContractStatus.WAIT_SIGN_A.name());
+            statusListSearch.add(SignContractStatus.WAIT_SIGN_B.name());
+            statusListSearch.add(SignContractStatus.SIGN_B_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_A_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_A_OK.name());
+            statusListSearch.add(SignContractStatus.SIGN_B_OK.name());
+            statusListSearch.add(SignContractStatus.DONE.name());
+        }
+
+        if(SignContractStatus.MANAGER_CONTRACT.name().equals(statusSearch)) {
+            statusListSearch.add(SignContractStatus.NEW.name());
+            statusListSearch.add(SignContractStatus.APPROVE_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_B_FAIL.name());
+            statusListSearch.add(SignContractStatus.SIGN_A_FAIL.name());
+        } else {
+            statusListSearch.add(statusSearch);
+        }
+        return statusListSearch;
     }
 
     @Override

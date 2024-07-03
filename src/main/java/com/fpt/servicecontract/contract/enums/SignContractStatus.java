@@ -13,6 +13,8 @@ public enum SignContractStatus {
     APPROVED("APPROVED"),
     SIGN_A_OK("SIGN_A_OK"),
     SIGN_B_OK("SIGN_B_OK"),
+    MANAGER_CONTRACT("MANAGER_CONTRACT"),
+    ALL("ALL")
     ;
 
     private final String signContractStatus;

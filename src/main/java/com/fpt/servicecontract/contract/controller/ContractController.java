@@ -84,10 +84,11 @@ public class ContractController {
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> findAll(@RequestHeader("Authorization") String bearerToken,
                                                 @RequestParam(required = false) String status,
+                                                @RequestParam(required = false) String search,
                                                 @PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
         String email = jwtService.extractUsername(bearerToken.substring(7));
-        return ResponseEntity.ok(contractService.findAll(p, email, status));
+        return ResponseEntity.ok(contractService.findAll(p, email, status, search));
     }
 
     @PostMapping()

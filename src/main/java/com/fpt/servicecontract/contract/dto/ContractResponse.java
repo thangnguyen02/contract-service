@@ -18,11 +18,12 @@ public class ContractResponse {
     private boolean canSend;
     private boolean canSendForMng ;
     private boolean canResend ;
-    private boolean sign ;
+    private boolean canSign ;
     private boolean isApproved ;
     private String approvedBy;
     private String statusCurrent;
     private boolean canUpdate ;
     private boolean canDelete ;
     private boolean canUpdateContractRecieve;
+    private boolean canApprove;
 }

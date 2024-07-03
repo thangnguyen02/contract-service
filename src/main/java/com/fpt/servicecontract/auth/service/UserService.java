@@ -148,7 +148,6 @@ public class UserService {
 
     public BaseResponse getUserByPermission(String permission, Pageable pageable) {
         Page<UserInterface> result = userRepository.getUserWithPermission(
-                Role.USER.getRole(),
                 QueryUtils.appendPercent(permission),
                 pageable);
         if (result.getTotalElements() > 0) {
