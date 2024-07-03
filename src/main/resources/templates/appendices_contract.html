@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <title>Contract Images</title>
+    <style>
+        * {margin:0; padding:0; text-indent:0; }
+         @font-face {
+            font-family: 'DejaVuSans';
+            src: url('fonts/DejaVuSans.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'DejaVuSans', sans-serif;
+        }
+
+        .contract-image {
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+         .s1 { color: black; font-style: normal; font-weight: bold; text-decoration: none; font-size: 12pt; }
+         h1 { color: black; font-style: normal; font-weight: bold; text-decoration: underline; font-size: 12pt; }
+         .p, p { color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; margin:0pt; }
+         .s2 { color: black; font-style: italic; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         .s3 { color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         .s4 { color: black; font-style: normal; font-weight: bold; text-decoration: none; font-size: 12pt; }
+         .s5 { color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         .h2, h2 { color: black; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt; }
+         .s6 { color: black; font-style: italic; font-weight: bold; text-decoration: none; font-size: 12pt; }
+         .s7 { color: black; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt; }
+         .s8 { color: black; font-style: italic; font-weight: bold; text-decoration: none; font-size: 12pt; }
+         .s9 { color: black; font-style: normal; font-weight: bold; text-decoration: none; font-size: 11pt; }
+         .s11 { color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt; }
+         li {display: block; }
+         #l1 {padding-left: 0pt; }
+         #l1> li>*:first-child:before {content: "- "; color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         li {display: block; }
+         #l2 {padding-left: 0pt;counter-reset: d1 2; }
+         #l2> li>*:first-child:before {counter-increment: d1; content: counter(d1, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l2> li:first-child>*:first-child:before {counter-increment: d1 0;  }
+         #l3 {padding-left: 0pt;counter-reset: d2 1; }
+         #l3> li>*:first-child:before {counter-increment: d2; content: counter(d1, decimal)"."counter(d2, decimal)" "; color: black; font-style: italic; font-weight: bold; text-decoration: none; font-size: 12pt; }
+         #l3> li:first-child>*:first-child:before {counter-increment: d2 0;  }
+         #l4 {padding-left: 0pt;counter-reset: d3 1; }
+         #l4> li>*:first-child:before {counter-increment: d3; content: counter(d3, decimal)". "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l4> li:first-child>*:first-child:before {counter-increment: d3 0;  }
+         #l5 {padding-left: 0pt;counter-reset: d3 1; }
+         #l5> li>*:first-child:before {counter-increment: d3; content: counter(d3, decimal)". "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l5> li:first-child>*:first-child:before {counter-increment: d3 0;  }
+         #l6 {padding-left: 0pt;counter-reset: d4 1; }
+         #l6> li>*:first-child:before {counter-increment: d4; content: counter(d3, decimal)"."counter(d4, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         #l6> li:first-child>*:first-child:before {counter-increment: d4 0;  }
+         li {display: block; }
+         #l7 {padding-left: 0pt;counter-reset: e1 5; }
+         #l7> li>*:first-child:before {counter-increment: e1; content: counter(e1, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l7> li:first-child>*:first-child:before {counter-increment: e1 0;  }
+         #l8 {padding-left: 0pt;counter-reset: e2 1; }
+         #l8> li>*:first-child:before {counter-increment: e2; content: counter(e1, decimal)"."counter(e2, decimal)" "; color: black; font-style: italic; font-weight: bold; text-decoration: none; font-size: 12pt; }
+         #l8> li:first-child>*:first-child:before {counter-increment: e2 0;  }
+         #l9 {padding-left: 0pt;counter-reset: e3 1; }
+         #l9> li>*:first-child:before {counter-increment: e3; content: counter(e3, decimal)". "; color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         #l9> li:first-child>*:first-child:before {counter-increment: e3 0;  }
+         #l10 {padding-left: 0pt;counter-reset: e3 1; }
+         #l10> li>*:first-child:before {counter-increment: e3; content: counter(e3, decimal)". "; color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         #l10> li:first-child>*:first-child:before {counter-increment: e3 0;  }
+         li {display: block; }
+         #l11 {padding-left: 0pt;counter-reset: f1 6; }
+         #l11> li>*:first-child:before {counter-increment: f1; content: counter(f1, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l11> li:first-child>*:first-child:before {counter-increment: f1 0;  }
+         #l12 {padding-left: 0pt;counter-reset: f2 1; }
+         #l12> li>*:first-child:before {counter-increment: f2; content: counter(f1, decimal)"."counter(f2, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         #l12> li:first-child>*:first-child:before {counter-increment: f2 0;  }
+         li {display: block; }
+         #l13 {padding-left: 0pt;counter-reset: g1 7; }
+         #l13> li>*:first-child:before {counter-increment: g1; content: counter(g1, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l13> li:first-child>*:first-child:before {counter-increment: g1 0;  }
+         #l14 {padding-left: 0pt;counter-reset: g2 1; }
+         #l14> li>*:first-child:before {counter-increment: g2; content: counter(g1, decimal)"."counter(g2, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         #l14> li:first-child>*:first-child:before {counter-increment: g2 0;  }
+         li {display: block; }
+         #l15 {padding-left: 0pt;counter-reset: h1 8; }
+         #l15> li>*:first-child:before {counter-increment: h1; content: counter(h1, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l15> li:first-child>*:first-child:before {counter-increment: h1 0;  }
+         #l16 {padding-left: 0pt;counter-reset: h2 1; }
+         #l16> li>*:first-child:before {counter-increment: h2; content: counter(h1, decimal)"."counter(h2, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l16> li:first-child>*:first-child:before {counter-increment: h2 0;  }
+         li {display: block; }
+         #l17 {padding-left: 0pt;counter-reset: i1 9; }
+         #l17> li>*:first-child:before {counter-increment: i1; content: counter(i1, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; }
+         #l17> li:first-child>*:first-child:before {counter-increment: i1 0;  }
+         #l18 {padding-left: 0pt;counter-reset: i2 1; }
+         #l18> li>*:first-child:before {counter-increment: i2; content: counter(i1, decimal)"."counter(i2, decimal)" "; color: black; font-style: normal; font-weight: normal; text-decoration: none; font-size: 12pt; }
+         #l18> li:first-child>*:first-child:before {counter-increment: i2 0;  }
+         table, tbody {vertical-align: top; overflow: visible; }
+    </style>
+</head>
+<body>
+<p class="s1" style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: center;">CỘNG HOÀ XÃ HỘI CHỦ NGHĨA
+    VIỆT NAM</p>
+<h1 style="padding-top: 9pt;padding-left: 15pt;text-indent: 0pt;text-align: center;">Độc lập - Tự do - Hạnh phúc</h1>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<br/>
+<p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;">PHỤ LỤC HỢP ĐỒNG</p>
+<p style="padding-top: 2pt;text-indent: 0pt;text-align: left;"></p>
+<p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;" th:text="${info.name}">PHẦN MỀM QUẢN LÝ
+    BÁN HÀNG ONLINE VIVA</p>
+<span>Phụ lục hợp đồng số: </span><span style="padding-top: 10pt;padding-left: 178pt;text-indent: 0pt;text-align: left;"
+                                th:text="${info.number}"></span>
+<br/>
+<div th:utext="${info.rule}"></div>
+<br/>
+<p style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">Hai bên thống nhất ký kết hợp đồng với
+    các điều khoản sau đây:</p><br/>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<div th:utext="${info.term}"></div>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<br/>
+<table style="border-collapse: collapse; margin-left: 65.12pt;" cellspacing="0">
+    <tr style="height: 14pt;">
+        <td style="width: 171pt; padding: 0 2pt 0 2pt; vertical-align: top;">
+            <p class="s4" style="line-height: 12pt; text-align: left; margin: 0;">ĐẠI DIỆN BÊN A</p>
+        </td>
+        <td style="width: 170pt; padding: 0 2pt 0 2pt; vertical-align: top;">
+            <p class="s4" style="line-height: 12pt; text-align: center; margin: 0;">ĐẠI DIỆN BÊN B</p>
+        </td>
+    </tr>
+</table>
+<table style="border-collapse: collapse; margin-left: 65.12pt; margin-top: 15pt" cellspacing="0">
+    <tr style="height: 24pt;">
+        <td style="width: 171pt; padding: 0 2pt 0 2pt; vertical-align: top;">
+            <img th:src="${signA}" alt="Contract Image" style="width: 120pt; display: block; margin-top: 15pt;" />
+        </td>
+        <td style="width: 170pt; padding: 0 2pt 0 2pt; vertical-align: top;">
+            <img th:src="${signB}" alt="Contract Image" style="width: 120pt; display: block; margin-top: 15pt;" />
+        </td>
+    </tr>
+</table>
+</body>
+</html>
