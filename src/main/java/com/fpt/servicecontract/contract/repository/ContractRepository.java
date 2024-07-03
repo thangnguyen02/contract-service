@@ -44,10 +44,13 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.mark_deleted = 0
                      AND (c.created_by = :email OR c.id IN (:ids))
                      AND (ls.status in (:statusCurrentSearch))
-                     OR (lower(c.name) like lower(:search) or :search is null)
-                     OR (lower(c.created_by) like lower(:search) or :search is null)
-                     OR (c.id like lower(:search) or :search is null)
-                     OR (c.approved_by like lower(:search) or :search is null)
+                     AND (
+                     lower(c.name) like lower(:search)
+                     OR lower(c.created_by) like lower(:search)
+                     OR c.id like lower(:search)
+                     OR c.approved_by like lower(:search) 
+                     OR :search is null
+                     )
                      
                  ORDER BY
                      c.is_urgent DESC,
