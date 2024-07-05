@@ -219,9 +219,7 @@ public class ContractServiceImpl implements ContractService {
             if (SignContractStatus.SIGN_B_OK.name().equals(status)) {
                 response.setCanSign(false);
             }
-
-
-                responses.add(response);
+            responses.add(response);
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,
                 page.getTotalElements());

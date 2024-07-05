@@ -1,16 +1,21 @@
 package com.fpt.servicecontract.contract.service;
 
+import com.fpt.servicecontract.contract.dto.SignContractResponse;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
-
-import java.util.List;
-import java.util.Optional;
+import com.fpt.servicecontract.utils.BaseResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ContractAppendicesService {
-    List<ContractAppendices> getAll();
+    BaseResponse getAll(Pageable p, String email, String status);
 
-    Optional<ContractAppendices> getById(String id);
+    BaseResponse getById(String id);
 
-    ContractAppendices save(ContractAppendices contractAppendices);
+    BaseResponse save(ContractAppendices contractAppendices);
 
-    void deleteById(String id);
+    BaseResponse deleteById(String id);
+
+    BaseResponse update(String id, ContractAppendices contractAppendices);
+
+    SignContractResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description);
 }

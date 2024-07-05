@@ -42,4 +42,5 @@ public class ContractAppendices {
     private LocalDateTime updatedDate;
     private String status;
     private String approvedBy;
+    private boolean markDeleted;
 }
