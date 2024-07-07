@@ -35,9 +35,12 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.is_urgent,
                      c.approved_by,
                      ls.status AS statusCurrent,
+                     pt.email,
                      c.mark_deleted
                  FROM
                      contract c
+                 JOIN 
+                     party pt on c.partybid = pt.id
                  LEFT JOIN
                      latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
                  WHERE
@@ -127,4 +130,31 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
     Integer  statisticSignStatus(
             @Param("status") String status
     );
+
+
+    @Query(value = """
+            WITH latest_status AS (        \s
+                       SELECT
+                         cs.contract_id,
+                         cs.status,
+                         ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
+                     FROM
+                         contract_status cs
+                 )
+                 SELECT
+                     count(*)
+                 FROM
+                     contract c
+                 LEFT JOIN
+                     latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
+                 WHERE
+                     c.mark_deleted = 0
+                     AND (c.created_by = :email)
+                     AND (ls.status = :statusCurrentSearch)
+                 ORDER BY
+                     c.is_urgent DESC,
+                     c.created_date DESC;
+                    \s""", nativeQuery = true)
+    Integer getNumberContractBySale(String email ,String statusCurrentSearch);
+
 }

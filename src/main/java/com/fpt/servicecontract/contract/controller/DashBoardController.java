@@ -26,4 +26,12 @@ public class DashBoardController {
         return ResponseEntity.ok(dashboardService.numberNewContract(fromDate, toDate, status));
     }
 
+    @GetMapping("/sale")
+    public ResponseEntity<BaseResponse> getNumberSale(
+            @RequestParam String userEmail,
+            @RequestParam String status
+    ){
+        return ResponseEntity.ok(dashboardService.getNumberSale(userEmail, status));
+    }
+
 }

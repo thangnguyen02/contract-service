@@ -30,6 +30,14 @@ public class DashboardServiceImpl implements DashboardService {
                 .build());
     }
 
+    @Override
+    public BaseResponse getNumberSale(String email, String status) {
+        Integer number = contractRepository.getNumberContractBySale(email, status);
+        if (number == null || number == 0) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Number contract not exist", false, null);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Number contract exist", false, number);
+    }
 
 
 }

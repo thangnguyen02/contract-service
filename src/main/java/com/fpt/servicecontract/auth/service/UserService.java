@@ -9,6 +9,7 @@ import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.auth.repository.UserRepository;
+import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.service.CloudinaryService;
 import com.fpt.servicecontract.utils.*;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
+    private final MailService mailService;
 
     @Transactional(rollbackOn = Exception.class)
     public BaseResponse delete(String id) {
@@ -156,4 +159,19 @@ public class UserService {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, null);
     }
 
+    public BaseResponse resetPass(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if(user.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "user not found", true, null);
+        }
+        int passReset = new Random().nextInt(999999);
+        user.get().setPassword(passwordEncoder.encode(String.valueOf(passReset)));
+        String[] to = new String[]{email};
+        try {
+            mailService.sendNewMail(to, null, "Password Reset", "<h1>Your pass after reset: <h1>" + passReset, null);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Found user", true, null);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
+        }
+    }
 }

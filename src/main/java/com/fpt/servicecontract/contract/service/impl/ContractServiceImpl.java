@@ -150,6 +150,7 @@ public class ContractServiceImpl implements ContractService {
                     .isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString()))
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
+                    .customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
                     .canSend(true)
                     .canApprove(false)
                     .canSign(true)

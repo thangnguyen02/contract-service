@@ -30,12 +30,10 @@ public class SecurityConfig {
         .authorizeHttpRequests(req -> req
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/notification/**").permitAll()
                 .requestMatchers("/contract/public/**").permitAll()
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/api-docs/**").permitAll()
             .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
-                .requestMatchers("/api/**").permitAll()
 
 //            .requestMatchers("/manager/**").hasAnyRole(ADMIN.name(), MANAGER.name())
             .anyRequest().authenticated()).sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

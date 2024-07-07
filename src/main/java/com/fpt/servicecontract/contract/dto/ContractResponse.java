@@ -26,4 +26,5 @@ public class ContractResponse {
     private boolean canDelete ;
     private boolean canUpdateContractRecieve;
     private boolean canApprove;
+    private String customer;
 }

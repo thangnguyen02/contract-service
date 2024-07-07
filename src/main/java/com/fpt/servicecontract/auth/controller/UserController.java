@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -64,4 +65,9 @@ public class UserController {
     public BaseResponse getAll(@RequestParam("permission") String permission, Pageable pageable) {
         return service.getUserByPermission(permission, pageable);
     }
+    @PostMapping("/reset-password")
+    public ResponseEntity<BaseResponse> resetPassword(@RequestParam String email) {
+        return ResponseEntity.ok(service.resetPass(email));
+    }
+
 }

@@ -7,4 +7,6 @@ import java.util.Date;
 
 public interface DashboardService {
     BaseResponse numberNewContract(Date fromDate, Date toDate, String signStatus);
+    BaseResponse getNumberSale(String email, String status);
+
 }
