@@ -12,4 +12,5 @@ public class NotificationContractNumberDto {
     private Integer waitApprovedCount;
     private Integer waitSignBCount;
     private Integer successCount;
+    private Integer signedCount;
 }
