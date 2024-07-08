@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, String> {
@@ -149,12 +150,34 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
                  WHERE
                      c.mark_deleted = 0
-                     AND (c.created_by = :email)
+                     AND (c.created_by = :email OR c.id IN (:ids))
                      AND (ls.status = :statusCurrentSearch)
-                 ORDER BY
-                     c.is_urgent DESC,
-                     c.created_date DESC;
                     \s""", nativeQuery = true)
-    Integer getNumberContractBySale(String email ,String statusCurrentSearch);
+    Integer getNumberContractBySale(String email , List<String> ids, String statusCurrentSearch);
+
+
+    @Query(value = """
+            WITH  latest_status AS (
+                SELECT 
+                    cs.contract_id,
+                    cs.status,
+                    ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
+                FROM
+                    contract_status cs
+            )
+            SELECT
+                SUM(CASE WHEN ls.status = 'APPROVED' THEN 1 ELSE 0 END) AS approved_count, 
+                SUM(CASE WHEN ls.status = 'WAIT_APPROVE' THEN 1 ELSE 0 END) AS wait_approve_count,
+                SUM(CASE WHEN ls.status = 'WAIT_SIGN_B' THEN 1 ELSE 0 END) AS wait_sign_b_count,
+                SUM(CASE WHEN ls.status = 'SUCCESS' THEN 1 ELSE 0 END) AS done_count
+            FROM
+                contract c
+            LEFT JOIN
+                latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
+            WHERE
+                c.mark_deleted = 0
+                AND (c.created_by = :email OR c.id IN (:ids))
+    """, nativeQuery = true)
+    String[] getNotificationContractNumber(String email , List<String> ids);
 
 }

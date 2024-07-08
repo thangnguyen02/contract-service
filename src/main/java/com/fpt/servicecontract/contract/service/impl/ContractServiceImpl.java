@@ -250,7 +250,7 @@ public class ContractServiceImpl implements ContractService {
             statusListSearch.add(SignContractStatus.SIGN_A_FAIL.name());
             statusListSearch.add(SignContractStatus.SIGN_A_OK.name());
             statusListSearch.add(SignContractStatus.SIGN_B_OK.name());
-            statusListSearch.add(SignContractStatus.DONE.name());
+            statusListSearch.add(SignContractStatus.SUCCESS.name());
         }
 
         if(SignContractStatus.MANAGER_CONTRACT.name().equals(statusSearch)) {
@@ -535,6 +535,26 @@ public class ContractServiceImpl implements ContractService {
             throw new RuntimeException(e);
         }
         return signContractResponse;
+    }
+
+    @Override
+    public BaseResponse getNotificationContractNumber(String email) {
+        List<String> ids = contractStatusRepository.findAll().stream()
+                .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
+                .map(ContractStatus::getContractId)
+                .toList();
+
+        String[] statical = contractRepository.getNotificationContractNumber(email, ids);
+
+        String[] parts = statical[0].split(",");
+        NotificationContractNumberDto notificationContractNumberDto = NotificationContractNumberDto.builder()
+                .approvedCount(Integer.parseInt(parts[0]))
+                .waitApprovedCount(Integer.parseInt(parts[1]))
+                .waitSignBCount(Integer.parseInt(parts[2]))
+                .successCount(Integer.parseInt(parts[3]))
+                .build();
+
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, notificationContractNumberDto);
     }
 
 }

@@ -326,7 +326,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             statusListSearch.add(SignContractStatus.SIGN_A_FAIL.name());
             statusListSearch.add(SignContractStatus.SIGN_A_OK.name());
             statusListSearch.add(SignContractStatus.SIGN_B_OK.name());
-            statusListSearch.add(SignContractStatus.DONE.name());
+            statusListSearch.add(SignContractStatus.SUCCESS.name());
         }
 
         if(SignContractStatus.MANAGER_CONTRACT.name().equals(statusSearch)) {

@@ -153,4 +153,10 @@ public class ContractController {
         mailService.sendNewMail(to, cc, subject, htmlContent, null);
         return signContractResponse;
     }
+
+    @GetMapping("/getNumberContractNoti")
+    public ResponseEntity<BaseResponse> getNotificationContractNumber(@RequestHeader("Authorization") String bearerToken) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(contractService.getNotificationContractNumber(email));
+    }
 }
