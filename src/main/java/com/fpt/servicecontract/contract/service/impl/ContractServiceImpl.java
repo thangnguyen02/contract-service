@@ -1,5 +1,8 @@
 package com.fpt.servicecontract.contract.service.impl;
 
+import com.fpt.servicecontract.auth.model.Permission;
+import com.fpt.servicecontract.auth.model.User;
+import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.*;
@@ -46,7 +49,7 @@ public class ContractServiceImpl implements ContractService {
     private final NotificationService notificationService;
     private final JwtService jwtService;
     private final MailService mailService;
-
+    private final UserRepository userRepository;
 
 
     @Override
@@ -215,9 +218,10 @@ public class ContractServiceImpl implements ContractService {
             ) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
+                response.setCanSign(false);
             }
 
-            if (SignContractStatus.SIGN_B_OK.name().equals(status)) {
+            if (SignContractStatus.SIGN_B_OK.name().equals(status) ) {
                 response.setCanSign(false);
             }
             responses.add(response);
@@ -543,8 +547,23 @@ public class ContractServiceImpl implements ContractService {
                 .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
+        var userEmail = userRepository.findByEmail(email);
 
-        String[] statical = contractRepository.getNotificationContractNumber(email, ids);
+        if(userEmail.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Email not exist ", true, null);
+        }
+
+        System.out.println(userEmail.get());
+
+        User user = userEmail.get();
+        String signedStatus = "";
+        if(user.getPermissions().contains(Permission.MANAGER)) {
+            signedStatus = "SIGN_B_OK";
+        } else if(user.getPermissions().contains(Permission.OFFICE_ADMIN) || user.getPermissions().contains(Permission.SALE)) {
+            signedStatus = "SIGN_A_OK";
+        }
+
+        String[] statical = contractRepository.getNotificationContractNumber(signedStatus, email, ids);
 
         String[] parts = statical[0].split(",");
         NotificationContractNumberDto notificationContractNumberDto = NotificationContractNumberDto.builder()
@@ -552,6 +571,7 @@ public class ContractServiceImpl implements ContractService {
                 .waitApprovedCount(Integer.parseInt(parts[1]))
                 .waitSignBCount(Integer.parseInt(parts[2]))
                 .successCount(Integer.parseInt(parts[3]))
+                .signedCount(Integer.parseInt(parts[4]))
                 .build();
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, notificationContractNumberDto);
