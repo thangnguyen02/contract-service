@@ -218,9 +218,10 @@ public class ContractServiceImpl implements ContractService {
             ) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
+                response.setCanSign(false);
             }
 
-            if (SignContractStatus.SIGN_B_OK.name().equals(status)) {
+            if (SignContractStatus.SIGN_B_OK.name().equals(status) ) {
                 response.setCanSign(false);
             }
             responses.add(response);
