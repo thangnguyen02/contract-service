@@ -14,6 +14,7 @@ public interface ContractTemplateRepository extends JpaRepository<ContractTempla
                    business_number,bank_id,bank_name,bank_acc_ower,email, created_date, updated_date from contract_template
                    where 1=1
                    and mark_deleted = false
+                   and (LOWER(name_contract) like LOWER(:nameContract) or :nameContract is null)
             """, nativeQuery = true)
-    Page<Object[]> findAllContractTemplate(Pageable p);
+    Page<Object[]> findAllContractTemplate(Pageable p, String nameContract);
 }

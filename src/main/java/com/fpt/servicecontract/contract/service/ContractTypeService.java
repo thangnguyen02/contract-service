@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ContractTypeService {
-    Page<ContractType> getAllContractTypes(int page, int size) ;
+    Page<ContractType> getAllContractTypes(int page, int size, String name);
 
     Optional<ContractType> getContractTypeById(String id);
 
