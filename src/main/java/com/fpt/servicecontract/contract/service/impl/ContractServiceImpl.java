@@ -154,6 +154,7 @@ public class ContractServiceImpl implements ContractService {
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
+                    .contractAppendicesId(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
                     .canSend(true)
                     .canApprove(false)
                     .canSign(true)

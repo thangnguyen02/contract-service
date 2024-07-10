@@ -37,7 +37,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.approved_by,
                      ls.status AS statusCurrent,
                      pt.email,
-                     c.mark_deleted
+                     c.mark_deleted,
+                    (select id from fpt_company.contract_appendices ca where c.id =ca.contract_id  )
                  FROM
                      contract c
                  JOIN 

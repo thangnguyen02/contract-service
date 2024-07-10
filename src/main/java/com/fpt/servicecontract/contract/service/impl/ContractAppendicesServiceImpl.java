@@ -1,40 +1,41 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
+import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.ContractResponse;
 import com.fpt.servicecontract.contract.dto.SignContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
-import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.ContractAppendicesRepository;
+import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
-import com.fpt.servicecontract.contract.service.ContractAppendicesService;
-import com.fpt.servicecontract.contract.service.ContractHistoryService;
-import com.fpt.servicecontract.contract.service.ContractStatusService;
-import com.fpt.servicecontract.contract.service.NotificationService;
+import com.fpt.servicecontract.contract.repository.PartyRepository;
+import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
-import com.fpt.servicecontract.utils.QueryUtils;
+import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.context.Context;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ContractAppendicesServiceImpl implements ContractAppendicesService {
 
     private final ContractAppendicesRepository contractAppendicesRepository;
@@ -44,7 +45,12 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     private final ContractStatusService contractStatusService;
     private final ContractHistoryService contractHistoryService;
     private final ContractStatusRepository contractStatusRepository;
-
+    private final ContractRepository contractRepository;
+    private final PartyRepository partyRepository;
+    private final PdfUtils pdfUtils;
+    private final CloudinaryService cloudinaryService;
+    private final UserRepository userRepository;
+    private final ContractService contractService;
 
 
     public BaseResponse getAll(Pageable p, String email, String statusSearch) {
@@ -149,13 +155,46 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "Not found", true, null);
     }
 
-    public BaseResponse save(ContractAppendices contractAppendices) {
-        try {
-             contractAppendicesRepository.save(contractAppendices);
-             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Save successfully", true, null);
-        } catch (Exception ex) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Save failed", true, null);
+    public BaseResponse save(ContractAppendices contractAppendices, String email) throws Exception {
+        ContractAppendices appendices = ContractAppendices
+                .builder()
+                .id(contractAppendices.getId())
+                .contractId(contractAppendices.getContractId())
+                .name(contractAppendices.getName())
+                .number(contractAppendices.getNumber())
+                .rule(contractAppendices.getRule())
+                .term(contractAppendices.getTerm())
+                .createdBy(email)
+                .createdDate(LocalDateTime.now())
+                .updatedDate(LocalDateTime.now())
+                .status(Constants.STATUS.NEW)
+                .build();
+
+//        get contract to get party
+        ContractRequest contractRequest = contractService.findById(contractAppendices.getContractId());
+        Context context = new Context();
+        context.setVariable("partyA", contractRequest.getPartyA());
+        context.setVariable("partyB", contractRequest.getPartyB());
+        context.setVariable("info", appendices);
+        context.setVariable("date", LocalDateTime.now().toLocalDate());
+
+        String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
+        File file = pdfUtils.generatePdf(html, contractAppendices.getName() + "_" + UUID.randomUUID());
+        contractAppendices.setFile(cloudinaryService.uploadPdf(file));
+        if (file.exists() && file.isFile()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+            }
         }
+//        if (contractRequest.getId() == null) {
+//            contract.setStatus(Constants.STATUS.NEW);
+//            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.NEW);
+//        } else {
+//            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
+//        }
+        ContractAppendices result = contractAppendicesRepository.save(contractAppendices);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, result);
     }
 
     public BaseResponse deleteById(String id) {

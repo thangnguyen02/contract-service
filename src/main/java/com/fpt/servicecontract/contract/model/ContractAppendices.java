@@ -21,8 +21,7 @@ public class ContractAppendices {
     @Id
     @UuidGenerator
     private String id;
-    private String contract_id;
-    private String appendix_number;
+    private String contractId;
     private String name;
     private String number;
     @Column(columnDefinition="LONGTEXT")

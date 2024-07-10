@@ -27,4 +27,5 @@ public class ContractResponse {
     private boolean canUpdateContractRecieve;
     private boolean canApprove;
     private String customer;
+    private String contractAppendicesId;
 }

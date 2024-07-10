@@ -103,14 +103,208 @@
 <h1 style="padding-top: 9pt;padding-left: 15pt;text-indent: 0pt;text-align: center;">Độc lập - Tự do - Hạnh phúc</h1>
 <p style="text-indent: 0pt;text-align: left;"></p>
 <br/>
-<p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;">PHỤ LỤC HỢP ĐỒNG</p>
+<p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;">HỢP ĐỒNG</p>
 <p style="padding-top: 2pt;text-indent: 0pt;text-align: left;"></p>
 <p class="s1" style="padding-left: 15pt;text-indent: 0pt;text-align: center;" th:text="${info.name}">PHẦN MỀM QUẢN LÝ
     BÁN HÀNG ONLINE VIVA</p>
-<span>Phụ lục hợp đồng số: </span><span style="padding-top: 10pt;padding-left: 178pt;text-indent: 0pt;text-align: left;"
+<span>Hợp đồng số: </span><span style="padding-top: 10pt;padding-left: 178pt;text-indent: 0pt;text-align: left;"
                                 th:text="${info.number}"></span>
 <br/>
-<div th:utext="${info.rule}"></div>
+<div th:utext="${info.rule}"/>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<br/>
+<span>Hôm nay,</span><span style="padding-left: 7pt;text-indent: 0pt;text-align: left;" th:text="${date}"></span><span>, Chúng tôi gồm:</span>
+<br/>
+<p style="padding-top: 1pt;text-indent: 0pt;text-align: left;"></p>
+<br/>
+<span>Bên A: </span>
+<p class="s1" style="padding-bottom: 2pt;padding-left: 7pt;text-indent: 0pt;line-height: 109%;text-align: left;"
+   th:text="${partyA.name}">Bên A: CHI NHÁNH HỢP TÁC XÃ ĐẦU TƯ XÂY DỰNG QUẢN LÝ VÀ KHAI THÁC CHỢ HẢI AN TẠI QUẾ VÕ-BẮC
+    NINH.</p>
+<table style="border-collapse:collapse;margin-left:9.924pt" cellspacing="0">
+    <tr style="height:18pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Địa chỉ</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;"
+               th:text="${partyA.address}">Thôn Đỉnh, TT.Phố Mới, Quế Võ, Bắc Ninh</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Email</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 16pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyA.email}">(+0241) 3 633 986</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Mã số thuế</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyA.taxNumber}">……….</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Đại diện</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s4" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyA.presenter}">Bà Nguyễn Thị Nhi</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Chức vụ</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyA.position}">Giám đốc</p>
+        </td>
+    </tr>
+    <tr style="height:43pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">ĐKKD Số</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3"
+               style="padding-top: 1pt;padding-left: 13pt;text-indent: 0pt;line-height: 18pt;text-align: left;"
+               th:text="${partyA.businessNumber}">2107C00124 do UBND huyện Quế Võ cấp Đăng ký thay đổi lần thứ nhất ngày
+                28/11/2014</p>
+        </td>
+    </tr>
+    <tr style="height:23pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 4pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tài khoản số</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 4pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyA.bankId}">………..</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tại ngân
+                hàng</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyA.bankName}">Ngân hàng TMCP Công thương Việt Nam chi nhánh Bắc Giang.</p>
+        </td>
+    </tr>
+    <tr style="height:18pt">
+        <td style="width:84pt">
+            <p class="s3"
+               style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Chủ tài
+                khoản</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3"
+               style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;"
+               th:text="${partyA.bankAccOwer}">HTX Đầu tư xây dựng, quản lý và khai thác chợ Hải An</p>
+        </td>
+    </tr>
+</table>
+<br/>
+<span>Bên B: </span>
+<p class="s1" style="padding-top: 8pt;padding-left: 7pt;text-indent: 0pt;text-align: left;" th:text="${partyB.name}">Bên
+    B: CÔNG TY TNHH CÔNG NGHỆ ỨNG DỤNG VÀ TRUYỀN THÔNG DTC</p>
+<p style="text-indent: 0pt;text-align: left;"></p>
+<table style="border-collapse:collapse;margin-left:9.924pt" cellspacing="0">
+    <tr style="height:18pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Địa chỉ</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;"
+               th:text="${partyB.address}">Thôn Đỉnh, TT.Phố Mới, Quế Võ, Bắc Ninh</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyB.email}">Email</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 16pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyB.email}">(+0241) 3 633 986</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Mã số thuế</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyB.taxNumber}">……….</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Đại diện</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s4" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyB.presenter}">Bà Nguyễn Thị Nhi</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Chức vụ</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyB.position}">Giám đốc</p>
+        </td>
+    </tr>
+    <tr style="height:43pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">ĐKKD Số</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3"
+               style="padding-top: 1pt;padding-left: 13pt;text-indent: 0pt;line-height: 18pt;text-align: left;"
+               th:text="${partyB.businessNumber}">2107C00124 do UBND huyện Quế Võ cấp Đăng ký thay đổi lần thứ nhất ngày
+                28/11/2014</p>
+        </td>
+    </tr>
+    <tr style="height:23pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 4pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tài khoản số</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 4pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyB.bankId}">………..</p>
+        </td>
+    </tr>
+    <tr style="height:22pt">
+        <td style="width:84pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Tại ngân
+                hàng</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3" style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"
+               th:text="${partyB.bankName}">Ngân hàng TMCP Công thương Việt Nam chi nhánh Bắc Giang.</p>
+        </td>
+    </tr>
+    <tr style="height:18pt">
+        <td style="width:84pt">
+            <p class="s3"
+               style="padding-top: 3pt;padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Chủ tài
+                khoản</p>
+        </td>
+        <td style="width:347pt">
+            <p class="s3"
+               style="padding-top: 3pt;padding-left: 13pt;text-indent: 0pt;line-height: 13pt;text-align: left;"
+               th:text="${partyB.bankAccOwer}">HTX Đầu tư xây dựng, quản lý và khai thác chợ Hải An</p>
+        </td>
+    </tr>
+</table>
 <br/>
 <p style="padding-top: 7pt;padding-left: 7pt;text-indent: 0pt;text-align: left;">Hai bên thống nhất ký kết hợp đồng với
     các điều khoản sau đây:</p><br/>

@@ -5,12 +5,10 @@ import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.SignContractResponse;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.contract.service.ContractAppendicesService;
-import com.fpt.servicecontract.contract.service.ContractService;
 import com.fpt.servicecontract.contract.service.ContractStatusService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/contract-appendices")
@@ -47,8 +44,9 @@ public class ContractAppendicesController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> create(@RequestBody ContractAppendices contractAppendices) {
-        return ResponseEntity.ok(service.save(contractAppendices));
+    public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken, @RequestBody ContractAppendices contractAppendices) throws Exception {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(service.save(contractAppendices,email));
     }
 
     @PutMapping("/{id}")

@@ -1,6 +1,5 @@
 package com.fpt.servicecontract.contract.controller;
 
-import com.fpt.servicecontract.contract.dto.StatisticalRequest;
 import com.fpt.servicecontract.contract.service.DashboardService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;

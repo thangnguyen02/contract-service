@@ -11,7 +11,7 @@ public interface ContractAppendicesService {
 
     BaseResponse getById(String id);
 
-    BaseResponse save(ContractAppendices contractAppendices);
+    BaseResponse save(ContractAppendices contractAppendices, String email) throws Exception;
 
     BaseResponse deleteById(String id);
 
