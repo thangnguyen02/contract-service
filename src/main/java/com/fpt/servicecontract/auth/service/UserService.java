@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -61,6 +63,7 @@ public class UserService {
         user.setPermissions(request.getPermissions());
         user.setIdentificationNumber(request.getIdentificationNumber());
         user.setDob(DateUltil.stringToDate(request.getDob(), "yyyy-MM-dd"));
+        user.setCreatedDate(new Date());
         try {
             userRepository.save(user);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user);

@@ -30,6 +30,7 @@ public class UserController {
     {
         return service.delete(id);
     }
+
     @PostMapping("/register-for-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BaseResponse register(@RequestBody RegisterRequest request) {

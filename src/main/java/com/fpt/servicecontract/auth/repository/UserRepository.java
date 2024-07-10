@@ -46,7 +46,7 @@ public interface UserRepository extends JpaRepository<User, String> {
                                            and (lower(u.role) like lower(:role) or :role is null)
                            GROUP BY u.id, u.name, u.email, u.address,
                                     u.identification_number, u.status, u.department, u.phone, u.position
-                           
+                           order by u.created_date desc
             """
             , nativeQuery = true)
     Page<UserInterface> search(@Param("name") String name,
