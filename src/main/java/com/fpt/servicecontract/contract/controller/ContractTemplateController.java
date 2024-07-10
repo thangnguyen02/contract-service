@@ -17,9 +17,9 @@ public class ContractTemplateController {
     private final ContractTemplateService contractTemplateService;
 
     @GetMapping("/{page}/{size}")
-    public BaseResponse findAll(@PathVariable int page, @PathVariable int size) {
+    public BaseResponse findAll(@PathVariable int page, @PathVariable int size, @RequestParam(required = false) String contractName) {
         Pageable p = PageRequest.of(page, size);
-        return contractTemplateService.finAllTemplates(p);
+        return contractTemplateService.finAllTemplates(p, contractName);
     }
 
     @PostMapping()

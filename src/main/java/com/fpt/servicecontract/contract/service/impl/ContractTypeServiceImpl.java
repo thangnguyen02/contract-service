@@ -3,6 +3,7 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.contract.model.ContractType;
 import com.fpt.servicecontract.contract.repository.ContractTypeRepository;
 import com.fpt.servicecontract.contract.service.ContractTypeService;
+import com.fpt.servicecontract.utils.QueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,9 +19,9 @@ public class ContractTypeServiceImpl implements ContractTypeService {
     private ContractTypeRepository contractTypeRepository;
 
     @Override
-    public Page<ContractType> getAllContractTypes(int page, int size) {
+    public Page<ContractType> getAllContractTypes(int page, int size, String name) {
         Pageable pageable = PageRequest.of(page, size);
-        return contractTypeRepository.findAll(pageable);
+        return contractTypeRepository.findByTitle(pageable, QueryUtils.appendPercent(name));
     }
 
     public Optional<ContractType> getContractTypeById(String id) {

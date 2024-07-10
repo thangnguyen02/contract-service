@@ -22,8 +22,10 @@ public class ContractTypeController {
     @GetMapping
     public ResponseEntity<Page<ContractType>> getAllContractTypes(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<ContractType> contractTypes = contractTypeService.getAllContractTypes(page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String title
+            ) {
+        Page<ContractType> contractTypes = contractTypeService.getAllContractTypes(page, size, title);
         return ResponseEntity.ok(contractTypes);
     }
     @GetMapping("/{id}")

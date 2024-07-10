@@ -10,6 +10,7 @@ import com.fpt.servicecontract.contract.service.ContractTemplateService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.DataUtil;
+import com.fpt.servicecontract.utils.QueryUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,8 +29,8 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
     private final ContractTemplateRepository contractTemplateRepository;
 
     @Override
-    public BaseResponse finAllTemplates(Pageable p) {
-        Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(p);
+    public BaseResponse finAllTemplates(Pageable p, String contractName) {
+        Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(p, QueryUtils.appendPercent(contractName));
         List<ContractTemplateDto> responses = new ArrayList<>();
         for (Object[] obj : page) {
             responses.add(ContractTemplateDto.builder()

@@ -7,7 +7,7 @@ import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface ContractTemplateService {
-    BaseResponse finAllTemplates(Pageable pageable);
+    BaseResponse finAllTemplates(Pageable pageable, String contractName);
 
     BaseResponse createContract(ContractTemplateRequest contractRequest);
 
