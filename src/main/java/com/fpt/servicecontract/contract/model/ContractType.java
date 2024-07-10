@@ -20,6 +20,8 @@ public class ContractType {
 
     private String title;
 
+    private String description;
+
     private Boolean markDeleted;
 
 }

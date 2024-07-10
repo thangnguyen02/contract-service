@@ -37,6 +37,7 @@ public class ContractTypeServiceImpl implements ContractTypeService {
         if (contractTypeOptional.isPresent()) {
             ContractType contractType = contractTypeOptional.get();
             contractType.setTitle(contractTypeDetails.getTitle());
+            contractType.setDescription(contractTypeDetails.getDescription());
             contractType.setMarkDeleted(contractTypeDetails.getMarkDeleted());
             return contractTypeRepository.save(contractType);
         } else {
