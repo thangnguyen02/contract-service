@@ -32,7 +32,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = """
         SELECT u.id,u.name, u.email, u.address,
                                   u.identification_number as identificationNumber, u.status, u.department, u.phone, u.position, u.avatar,
-                                  CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions
+                                  CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions, u.dob
                            FROM users u
                            JOIN user_permissions up ON u.id = up.user_id where
                                            (lower(u.name) like lower(:name) or :name is null)
