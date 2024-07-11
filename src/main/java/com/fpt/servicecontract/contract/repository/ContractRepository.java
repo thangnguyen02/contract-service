@@ -38,7 +38,11 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      ls.status AS statusCurrent,
                      pt.email,
                      c.mark_deleted,
-                    (select id from fpt_company.contract_appendices ca where c.id =ca.contract_id  )
+                    (
+                         SELECT CONCAT('[', GROUP_CONCAT(id SEPARATOR ','), ']')
+                         FROM fpt_company.contract_appendices ca
+                         WHERE c.id = ca.contract_id
+                     ) AS appendices
                  FROM
                      contract c
                  JOIN 
