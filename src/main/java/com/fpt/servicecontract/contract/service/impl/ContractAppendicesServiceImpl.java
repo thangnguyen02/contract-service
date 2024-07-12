@@ -352,8 +352,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
     @Override
-    public BaseResponse getByContractId(String contractId) {
-        var contract = contractAppendicesRepository.findByContractId(contractId);
+    public BaseResponse getByContractId(String contractId, int page, int size) {
+        var contract = contractAppendicesRepository.findByContractId(contractId, Pageable.ofSize(size).withPage(page));
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contract);
     }
 

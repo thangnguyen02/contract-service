@@ -19,5 +19,5 @@ public interface ContractAppendicesService {
 
     SignContractResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description);
 
-    BaseResponse getByContractId(String contractId);
+    BaseResponse getByContractId(String contractId, int page, int size);
 }

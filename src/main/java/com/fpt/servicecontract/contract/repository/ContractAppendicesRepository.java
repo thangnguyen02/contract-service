@@ -45,5 +45,5 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                     \s""", nativeQuery = true)
     Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch);
 
-    List<ContractAppendices> findByContractId(String contractId);
+    Page<ContractAppendices> findByContractId(String contractId, Pageable pageable);
 }
