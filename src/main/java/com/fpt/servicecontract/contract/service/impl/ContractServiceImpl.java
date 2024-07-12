@@ -1,5 +1,8 @@
 package com.fpt.servicecontract.contract.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fpt.servicecontract.auth.model.Permission;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
@@ -134,7 +137,8 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) {
+    public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         List<String> ids = contractStatusRepository.findAll().stream()
                 .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
@@ -154,7 +158,7 @@ public class ContractServiceImpl implements ContractService {
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
-                    .contractAppendicesId(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
+                    .contractAppendicesId(Objects.nonNull(obj[11]) ? objectMapper.readValue(obj[11].toString(), new TypeReference<List<String>>() {})  : null)
                     .canSend(true)
                     .canApprove(false)
                     .canSign(true)

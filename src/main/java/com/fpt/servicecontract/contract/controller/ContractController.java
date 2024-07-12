@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.*;
@@ -78,7 +79,7 @@ public class ContractController {
     public ResponseEntity<BaseResponse> findAll(@RequestHeader("Authorization") String bearerToken,
                                                 @RequestParam(required = false) String status,
                                                 @RequestParam(required = false) String search,
-                                                @PathVariable int page, @PathVariable int size) {
+                                                @PathVariable int page, @PathVariable int size) throws JsonProcessingException {
         Pageable p = PageRequest.of(page, size);
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(contractService.findAll(p, email, status, search));

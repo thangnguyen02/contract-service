@@ -39,10 +39,10 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      pt.email,
                      c.mark_deleted,
                     (
-                         SELECT CONCAT('[', GROUP_CONCAT(id SEPARATOR ','), ']')
-                         FROM fpt_company.contract_appendices ca
-                         WHERE c.id = ca.contract_id
-                     ) AS appendices
+                       SELECT JSON_ARRAYAGG(ca.id) AS appendices
+                       FROM fpt_company.contract_appendices ca
+                       WHERE ca.contract_id = c.id
+                    ) AS appendices
                  FROM
                      contract c
                  JOIN 

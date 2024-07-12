@@ -2,6 +2,8 @@ package com.fpt.servicecontract.contract.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -27,5 +29,5 @@ public class ContractResponse {
     private boolean canUpdateContractRecieve;
     private boolean canApprove;
     private String customer;
-    private String contractAppendicesId;
+    private List<String> contractAppendicesId;
 }

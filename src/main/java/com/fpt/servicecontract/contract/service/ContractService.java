@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fpt.servicecontract.contract.dto.ContractRequest;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.dto.SignContractResponse;
@@ -13,7 +14,7 @@ public interface ContractService {
 
     BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception;
 
-    BaseResponse findAll(Pageable p, String email, String status, String search);
+    BaseResponse findAll(Pageable p, String email, String status, String search) throws JsonProcessingException;
 
     ContractRequest findById(String id);
 
