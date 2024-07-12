@@ -35,6 +35,7 @@ public class SecurityConfig {
             .requestMatchers("/api-docs/**").permitAll()
             .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
                 .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
 
 
 

@@ -351,6 +351,12 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         return signContractResponse;
     }
 
+    @Override
+    public BaseResponse getByContractId(String contractId) {
+        var contract = contractAppendicesRepository.findByContractId(contractId);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contract);
+    }
+
     private static List<String> getListStatusSearch(String statusSearch) {
         List<String> statusListSearch = new ArrayList<>();
 

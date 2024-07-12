@@ -59,6 +59,10 @@ public class ContractAppendicesController {
         return ResponseEntity.ok(service.deleteById(id));
     }
 
+    @GetMapping("/contractId/{id}")
+    public ResponseEntity<BaseResponse> getContractById(@PathVariable String id) {
+        return ResponseEntity.ok(service.getByContractId(id));
+    }
     @PostMapping("/send-mail")
     public ResponseEntity<SignContractResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
                                                          @RequestParam String[] to,

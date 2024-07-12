@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ContractAppendicesRepository extends JpaRepository<ContractAppendices, String> {
@@ -44,4 +45,5 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                     \s""", nativeQuery = true)
     Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch);
 
+    List<ContractAppendices> findByContractId(String contractId);
 }

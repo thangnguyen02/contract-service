@@ -18,4 +18,6 @@ public interface ContractAppendicesService {
     BaseResponse update(String id, ContractAppendices contractAppendices);
 
     SignContractResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description);
+
+    BaseResponse getByContractId(String contractId);
 }
