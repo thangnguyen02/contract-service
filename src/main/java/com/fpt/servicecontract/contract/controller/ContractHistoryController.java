@@ -15,8 +15,10 @@ public class ContractHistoryController {
     private final ContractHistoryService contractHistoryService;
 
     @GetMapping()
-    public ResponseEntity<BaseResponse> getContractHistory(@RequestParam String contract){
-        return ResponseEntity.ok(contractHistoryService.getContractHistory(contract));
+    public ResponseEntity<BaseResponse> getContractHistory(
+            @RequestParam String contract,
+            @RequestParam String createdBy){
+        return ResponseEntity.ok(contractHistoryService.getContractHistory(contract, createdBy));
     }
 
 }

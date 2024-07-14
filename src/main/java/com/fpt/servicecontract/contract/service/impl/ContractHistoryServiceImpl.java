@@ -33,8 +33,8 @@ public class ContractHistoryServiceImpl implements ContractHistoryService {
     }
 
     @Override
-    public BaseResponse getContractHistory(String contractId) {
-        List<Object[]> result = repository.getContractHistoriesByContractId(contractId);
+    public BaseResponse getContractHistory(String contractId, String createdBy) {
+        List<Object[]> result = repository.getContractHistoriesByContractId(contractId, createdBy);
         if (result.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "The history is empty", true, null);
         }

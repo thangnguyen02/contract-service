@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("ALL")
 @Repository
 public interface ContractAppendicesRepository extends JpaRepository<ContractAppendices, String> {
     @Query(value = """
@@ -45,5 +46,6 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                     \s""", nativeQuery = true)
     Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch);
 
+    @Query(value = "select * from contract_appendices where mark_deleted = 0", nativeQuery = true)
     Page<ContractAppendices> findByContractId(String contractId, Pageable pageable);
 }

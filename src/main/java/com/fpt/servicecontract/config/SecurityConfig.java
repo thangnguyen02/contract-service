@@ -36,7 +36,7 @@ public class SecurityConfig {
             .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
                 .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
                 .requestMatchers("/api/**").permitAll()
-
+                .requestMatchers("api/contract-appendices/**").permitAll()
 
 
 //            .requestMatchers("/manager/**").hasAnyRole(ADMIN.name(), MANAGER.name())

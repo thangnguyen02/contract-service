@@ -7,5 +7,5 @@ public interface ContractHistoryService {
 
     void createContractHistory(String contractId,String contractName, String createdBy, String comment, String status);
 
-    BaseResponse getContractHistory(String contractId);
+    BaseResponse getContractHistory(String contractId, String createdBy);
 }

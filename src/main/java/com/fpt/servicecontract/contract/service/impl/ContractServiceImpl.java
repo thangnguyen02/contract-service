@@ -205,18 +205,13 @@ public class ContractServiceImpl implements ContractService {
             && SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
+                response.setCanSend(true);
             }
 
             if(SignContractStatus.WAIT_SIGN_B.name().equals(status)
                     && SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
-            }
-
-            if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)
-            ) {
-                response.setCanSend(true);
             }
 
             if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.equals(status)
@@ -563,9 +558,9 @@ public class ContractServiceImpl implements ContractService {
         User user = userEmail.get();
         String signedStatus = "";
         if(user.getPermissions().contains(Permission.MANAGER)) {
-            signedStatus = "SIGN_B_OK";
-        } else if(user.getPermissions().contains(Permission.OFFICE_ADMIN) || user.getPermissions().contains(Permission.SALE)) {
             signedStatus = "SIGN_A_OK";
+        } else if(user.getPermissions().contains(Permission.OFFICE_ADMIN) || user.getPermissions().contains(Permission.SALE)) {
+            signedStatus = "SIGN_B_OK";
         }
 
         String[] statical = contractRepository.getNotificationContractNumber(signedStatus, email, ids);
@@ -574,9 +569,10 @@ public class ContractServiceImpl implements ContractService {
         NotificationContractNumberDto notificationContractNumberDto = NotificationContractNumberDto.builder()
                 .approvedCount(Integer.parseInt(parts[0]))
                 .waitApprovedCount(Integer.parseInt(parts[1]))
-                .waitSignBCount(Integer.parseInt(parts[2]))
+                .waitSignACount(Integer.parseInt(parts[2]))
                 .successCount(Integer.parseInt(parts[3]))
                 .signedCount(Integer.parseInt(parts[4]))
+                .waitSignBCount(Integer.parseInt(parts[5]))
                 .build();
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, notificationContractNumberDto);

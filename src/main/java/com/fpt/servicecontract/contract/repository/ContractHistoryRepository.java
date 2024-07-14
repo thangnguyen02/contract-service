@@ -11,7 +11,7 @@ public interface ContractHistoryRepository extends JpaRepository<ContractHistory
 
     @Query(value = """
         select u.id, u.contract_id, u.created_by, u.created_date, u.status ,u.contract_name from contract_history
-        u where 1=1 and u.contract_id = :contractId
+        u where 1=1 and u.contract_id = :contractId and u.created_by = :createdBy
     """, nativeQuery = true)
-    List<Object[]> getContractHistoriesByContractId(@Param("contractId") String contractId);
+    List<Object[]> getContractHistoriesByContractId(@Param("contractId") String contractId, @Param("createdBy") String createdBy);
 }
