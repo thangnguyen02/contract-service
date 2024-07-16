@@ -10,7 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    @Value("${cloudinary.cloud-name}")
+    @Value("${fe.endpoint}")
     private String feEndpoint;
 
     @Override
