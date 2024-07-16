@@ -26,21 +26,19 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(req -> req
-                .requestMatchers("/public/**").permitAll()
-                .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/contract/public/**").permitAll()
-            .requestMatchers("/swagger-ui/**").permitAll()
-            .requestMatchers("/api-docs/**").permitAll()
-            .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
-                .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
-                .requestMatchers("/api/**").permitAll()
-                .requestMatchers("api/contract-appendices/**").permitAll()
-
-
-//            .requestMatchers("/manager/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-            .anyRequest().authenticated()).sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(req -> req
+                    .requestMatchers("/public/**").permitAll()
+                    .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/contract/public/**").permitAll()
+                    .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
+                    .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
+                    .requestMatchers("/api/**").permitAll()
+                    .requestMatchers("api/contract-appendices/**").permitAll()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/api-docs/**").permitAll()
+                    .anyRequest().authenticated())
+            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
