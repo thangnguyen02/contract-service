@@ -37,7 +37,6 @@ public class SecurityConfig {
                     .requestMatchers("api/contract-appendices/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/api-docs/**").permitAll()
-                    .requestMatchers("/notification/**").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 
