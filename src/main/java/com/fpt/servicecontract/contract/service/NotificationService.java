@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.service;
 
 import com.fpt.servicecontract.contract.model.Notification;
+import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,7 +12,7 @@ public interface NotificationService {
 
     boolean deleteNotificationById(String id);
 
-    Page<Notification> findAllNotifications(Pageable pageable, String email);
+    BaseResponse findAllNotifications(Pageable pageable, String email);
 
     String create(Notification message);
 

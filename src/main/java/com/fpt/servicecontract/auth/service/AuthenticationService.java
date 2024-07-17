@@ -8,6 +8,8 @@ import com.fpt.servicecontract.auth.model.UserStatus;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
+import com.fpt.servicecontract.utils.BaseResponse;
+import com.fpt.servicecontract.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,6 +39,9 @@ public class AuthenticationService {
     var user = repository.findByEmail(request.getEmail())
         .orElseThrow();
 
+    user.setTokenDevice(request.getTokenDevice() == null ? user.getTokenDevice() : request.getTokenDevice());
+    repository.save(user);
+
     if(user.getStatus() != UserStatus.ACTIVE) {
       throw new AuthenticationServiceException("Account is not active");
     }
@@ -49,5 +54,14 @@ public class AuthenticationService {
 //    authenticationResponse.setRefreshToken(refreshToken);
     authenticationResponse.setUser(user);
     return authenticationResponse;
+  }
+
+  public BaseResponse logout(String email) {
+    var userOptional = repository.findByEmail(email);
+    if(userOptional.isEmpty()) {
+      return new BaseResponse(Constants.ResponseCode.SUCCESS, "User not valid", true, null);
+    }
+    userOptional.get().setTokenDevice(null);
+    return new BaseResponse(Constants.ResponseCode.SUCCESS, "User successfully logged out", true, null);
   }
 }

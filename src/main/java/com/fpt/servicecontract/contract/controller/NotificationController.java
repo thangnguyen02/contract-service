@@ -3,6 +3,7 @@ package com.fpt.servicecontract.contract.controller;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.service.NotificationService;
+import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class NotificationController {
     private final NotificationService notificationService;
     private final JwtService jwtService;
+
     @PostMapping()
     public String testNotifyAll(@RequestBody Notification message) {
         message.setSender("salesep490@gmail.com");
@@ -29,13 +31,12 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Notification>> getAllNotifications(@RequestHeader("Authorization") String bearerToken,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<BaseResponse> getAllNotifications(@RequestHeader("Authorization") String bearerToken,
+                                                            @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size) {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         Pageable pageable = PageRequest.of(page, size);
-        Page<Notification> notifications = notificationService.findAllNotifications(pageable,email);
-        return ResponseEntity.ok(notifications);
+        return ResponseEntity.ok(notificationService.findAllNotifications(pageable, email));
     }
 
     @GetMapping("/unread")

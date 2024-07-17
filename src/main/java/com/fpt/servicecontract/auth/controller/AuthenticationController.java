@@ -3,13 +3,11 @@ package com.fpt.servicecontract.auth.controller;
 import com.fpt.servicecontract.auth.dto.AuthenticationRequest;
 import com.fpt.servicecontract.auth.dto.AuthenticationResponse;
 import com.fpt.servicecontract.auth.service.AuthenticationService;
+import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -27,4 +25,9 @@ public class AuthenticationController {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
+  @GetMapping("/logout")
+  public ResponseEntity<BaseResponse> logout(@RequestParam String email) {
+    return ResponseEntity.ok(service.logout(email));
+
+  }
 }
