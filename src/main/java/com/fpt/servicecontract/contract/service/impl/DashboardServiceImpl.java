@@ -42,7 +42,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .toList();
         Integer number = contractRepository.getNumberContractBySale(email, ids, status);
         if (number == null || number == 0) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Number contract not exist", false, null);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any contract", false, 0);
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Number contract exist", false, number);
     }

@@ -64,7 +64,7 @@ public class NotificationServiceImpl implements NotificationService {
         int startItem = currentPage * pageSize;
         int endItem = Math.min(startItem + pageSize, filteredNotifications.size());
         List<Notification> pagedNotifications = filteredNotifications.subList(startItem, endItem);
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "User successfully logged out", true, NotificationDto.builder()
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Get Success Notification", true, NotificationDto.builder()
                 .notification(new PageImpl<>(pagedNotifications, pageable, filteredNotifications.size()))
                 .tokenDevice(userOptional.get().getTokenDevice())
                 .build());
