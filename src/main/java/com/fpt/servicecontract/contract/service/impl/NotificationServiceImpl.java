@@ -2,13 +2,11 @@ package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
-import com.fpt.servicecontract.contract.dto.NotificationDto;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.NotificationRepository;
 import com.fpt.servicecontract.contract.service.NotificationService;
-import com.fpt.servicecontract.utils.BaseResponse;
-import com.fpt.servicecontract.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
