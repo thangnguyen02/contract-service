@@ -12,7 +12,7 @@ public interface NotificationService {
 
     boolean deleteNotificationById(String id);
 
-    BaseResponse findAllNotifications(Pageable pageable, String email);
+    Page<Notification> findAllNotifications(Pageable pageable, String email);
 
     String create(Notification message);
 
