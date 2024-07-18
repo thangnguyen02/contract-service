@@ -31,7 +31,7 @@ public class NotificationController {
     }
 
     @GetMapping
-    public ResponseEntity<BaseResponse> getAllNotifications(@RequestHeader("Authorization") String bearerToken,
+    public ResponseEntity<Page<Notification>> getAllNotifications(@RequestHeader("Authorization") String bearerToken,
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size) {
         String email = jwtService.extractUsername(bearerToken.substring(7));

@@ -48,11 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public BaseResponse findAllNotifications(Pageable pageable, String email) {
-        var userOptional = userRepository.findByEmail(email);
-        if (userOptional.isEmpty()) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "User not valid", true, null);
-        }
+    public Page<Notification> findAllNotifications(Pageable pageable, String email) {
         List<Notification> notifications = notificationRepository.findAllByMarkedDeletedFalse();
         List<Notification> filteredNotifications = notifications.stream()
                 .filter(notification -> notification.getReceivers().contains(email))
@@ -63,10 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
         int startItem = currentPage * pageSize;
         int endItem = Math.min(startItem + pageSize, filteredNotifications.size());
         List<Notification> pagedNotifications = filteredNotifications.subList(startItem, endItem);
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Get Success Notification", true, NotificationDto.builder()
-                .notification(new PageImpl<>(pagedNotifications, pageable, filteredNotifications.size()))
-                .tokenDevice(userOptional.get().getTokenDevice())
-                .build());
+        return new PageImpl<>(pagedNotifications, pageable, filteredNotifications.size());
     }
 
     @Override
