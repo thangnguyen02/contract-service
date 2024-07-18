@@ -1,7 +1,7 @@
 package com.fpt.servicecontract.contract.service.impl;
 
+import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
-import com.fpt.servicecontract.auth.service.UserService;
 import com.fpt.servicecontract.contract.dto.NotificationDto;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.NotificationRepository;
@@ -9,19 +9,18 @@ import com.fpt.servicecontract.contract.service.NotificationService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
-
+    private final RestTemplate restTemplate;
     @Override
     public Optional<Notification> findNotificationById(String id) {
         return notificationRepository.findByIdAndMarkedDeletedFalse(id);
@@ -77,10 +76,31 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setMarkRead(false);
         notification.getReceivers().forEach(f -> {
             messagingTemplate.convertAndSend("/topic/notifications/" + f, notificationRepository.save(notification));
+            Optional<User> user = userRepository.findByEmail(f);
+            sendPushNotification(user.get().getTokenDevice(), notification.getTitle(), notification.getMessage());
         });
         return "Notification ok! ";
     }
 
+    public void sendPushNotification(String tokenDevice, String title, String content) {
+        String url = "https://exp.host/--/api/v2/push/send";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("to", tokenDevice);
+        body.put("sound", "default");
+        body.put("title", title);
+        body.put("body", content);
+        Map<String, String> data = new HashMap<>();
+        data.put("screen", "/(tabs)/explore");
+        body.put("data", data);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        restTemplate.postForObject(url, request, String.class);
+    }
     @Override
     public void readNotificationById(String id, boolean isRead) {
         Optional<Notification> notificationOptional = notificationRepository.findById(id);
