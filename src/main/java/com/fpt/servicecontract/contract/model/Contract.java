@@ -42,4 +42,5 @@ public class Contract {
     private boolean isUrgent;
     private String approvedBy;
     private String contractTypeId;
+    private Double value;
 }
