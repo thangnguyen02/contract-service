@@ -62,6 +62,7 @@ public class AuthenticationService {
       return new BaseResponse(Constants.ResponseCode.SUCCESS, "User not valid", true, null);
     }
     userOptional.get().setTokenDevice(null);
+    repository.save(userOptional.get());
     return new BaseResponse(Constants.ResponseCode.SUCCESS, "User successfully logged out", true, null);
   }
 }
