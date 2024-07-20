@@ -3,7 +3,6 @@ package com.fpt.servicecontract.contract.controller;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.service.NotificationService;
-import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
