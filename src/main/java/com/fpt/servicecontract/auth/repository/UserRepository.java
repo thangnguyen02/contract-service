@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@SuppressWarnings("ALL")
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
@@ -71,4 +72,34 @@ public interface UserRepository extends JpaRepository<User, String> {
     Page<UserInterface> getUserWithPermission(
                                @Param("permission") String permission,
                                Pageable pageable);
+
+
+    @Query(value = """
+        SELECT u.email, CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions
+                           FROM users u
+                           JOIN user_permissions up ON u.id = up.user_id where
+                                        (permissions like lower(:permission) or :permission is null)
+                           GROUP BY u.email
+            """
+            , nativeQuery = true)
+    List<UserInterface> getUserWithPermissionList(
+            @Param("permission") String permission);
+
+    @Query(value = """
+                    SELECT c.created_by,
+                        SUM(c.value) AS numberSales,
+                        DATE_FORMAT(CURDATE(), '%Y-%m-01') AS first_date,
+                        LAST_DAY(CURDATE()) AS last_date
+                    FROM
+                        contract c
+                    RIGHT JOIN 
+                        users us on us.email = c.created_by
+                    WHERE
+                        c.mark_deleted = 0
+                        AND c.created_by IN (:emails) 
+                        AND c.created_date between first_date and last_date
+                        AND c.status = 'SUCCESS'
+                    GROUP BY c.created_by
+            """, nativeQuery = true)
+    List<Object[]> getSaleAndNumberSales(List<String> emails);
 }

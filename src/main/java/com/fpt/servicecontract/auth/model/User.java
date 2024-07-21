@@ -66,6 +66,8 @@ public class User implements UserDetails {
 
   private String tokenDevice;
 
+  private Double numberSales;
+
 //  DELETE FROM `fpt_company`.`user_permissions` WHERE (`user_id` = '7802448b-ef4a-49a4-a358-d67ed7c510ba')
 
   @Override
