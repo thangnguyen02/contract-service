@@ -490,8 +490,11 @@ public class ContractServiceImpl implements ContractService {
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
+            contract.get().setStatus(Constants.STATUS.SUCCESS);
+            contractRepository.save(contract.get());
             if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
+
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + "đã kí hợp đồng thành công")
@@ -509,6 +512,8 @@ public class ContractServiceImpl implements ContractService {
             signContractResponse.setCanSendForMng(false);
             if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                contractRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + "đã kí hợp đồng thành công")

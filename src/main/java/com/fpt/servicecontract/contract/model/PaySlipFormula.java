@@ -6,28 +6,23 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDate;
-
 @Entity
-@Table(name = "pay_slip")
+@Table(name = "pay_slip_formula")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaySlip {
-
+public class PaySlipFormula {
     @Id
     @UuidGenerator
     private String id;
-    private String email;
+    private Double fromValueContract;
+    private Double toValueContract;
     private Double commissionPercentage;
-    private Double totalValueContract;
     private Double baseSalary;
     private Double clientDeploymentPercentage;
     private Double bonusReachesThreshold;
     private Double foodAllowance;
     private Double transportationOrPhoneAllowance;
-    private Double totalSalary;
-    private LocalDate createdDate;
 }

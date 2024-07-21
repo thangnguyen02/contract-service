@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.repository;
 
+import com.fpt.servicecontract.auth.dto.UserInterface;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Page;
@@ -66,7 +67,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.is_urgent DESC,
                      c.created_date DESC;
                     \s""", nativeQuery = true)
-    Page<Object[]>  findAllContract(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch, String search);
+    Page<Object[]> findAllContract(Pageable p, String email, List<String> ids, List<String> statusCurrentSearch, String search);
 
     @Query(value = """
             SELECT\s
@@ -122,10 +123,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                  created_date between :fromDate and :toDate
                  and mark_deleted = 0
                  """, nativeQuery = true)
-    Integer  staticalNewContract(
-            @Param("fromDate") Date fromDate,
-            @Param("toDate") Date toDate
-    );
+    Integer staticalNewContract(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 
     @Query(value = """
             SELECT
@@ -134,9 +132,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                  mark_deleted = 0
                  and (status = :status or :status is null)
                  """, nativeQuery = true)
-    Integer  statisticSignStatus(
-            @Param("status") String status
-    );
+    Integer statisticSignStatus(@Param("status") String status);
 
 
     @Query(value = """
@@ -159,33 +155,36 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      AND (c.created_by = :email OR c.id IN (:ids))
                      AND (ls.status = :statusCurrentSearch)
                     \s""", nativeQuery = true)
-    Integer getNumberContractBySale(String email , List<String> ids, String statusCurrentSearch);
+    Integer getNumberContractBySale(String email, List<String> ids, String statusCurrentSearch);
 
 
     @Query(value = """
-            WITH  latest_status AS (
-                SELECT 
-                    cs.contract_id,
-                    cs.status,
-                    ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
-                FROM
-                    contract_status cs
-            )
-            SELECT
-                SUM(CASE WHEN ls.status = 'APPROVED' THEN 1 ELSE 0 END) AS approved_count, 
-                SUM(CASE WHEN ls.status = 'WAIT_APPROVE' THEN 1 ELSE 0 END) AS wait_approve_count,
-                SUM(CASE WHEN ls.status = 'WAIT_SIGN_A' THEN 1 ELSE 0 END) AS wait_sign_a_count,
-                SUM(CASE WHEN ls.status = 'SUCCESS' THEN 1 ELSE 0 END) AS done_count,
-                SUM(CASE WHEN ls.status = :signedStatus THEN 1 ELSE 0 END) AS signed_count,
-                SUM(CASE WHEN ls.status = 'WAIT_SIGN_B' THEN 1 ELSE 0 END) AS wait_sign_b_count
-            FROM
-                contract c
-            LEFT JOIN
-                latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
-            WHERE
-                c.mark_deleted = 0
-                AND (c.created_by = :email OR c.id IN (:ids))
-    """, nativeQuery = true)
-    String[] getNotificationContractNumber(String signedStatus, String email , List<String> ids);
+                    WITH  latest_status AS (
+                        SELECT 
+                            cs.contract_id,
+                            cs.status,
+                            ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
+                        FROM
+                            contract_status cs
+                    )
+                    SELECT
+                        SUM(CASE WHEN ls.status = 'APPROVED' THEN 1 ELSE 0 END) AS approved_count, 
+                        SUM(CASE WHEN ls.status = 'WAIT_APPROVE' THEN 1 ELSE 0 END) AS wait_approve_count,
+                        SUM(CASE WHEN ls.status = 'WAIT_SIGN_A' THEN 1 ELSE 0 END) AS wait_sign_a_count,
+                        SUM(CASE WHEN ls.status = 'SUCCESS' THEN 1 ELSE 0 END) AS done_count,
+                        SUM(CASE WHEN ls.status = :signedStatus THEN 1 ELSE 0 END) AS signed_count,
+                        SUM(CASE WHEN ls.status = 'WAIT_SIGN_B' THEN 1 ELSE 0 END) AS wait_sign_b_count
+                    FROM
+                        contract c
+                    LEFT JOIN
+                        latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
+                    WHERE
+                        c.mark_deleted = 0
+                        AND (c.created_by = :email OR c.id IN (:ids))
+            """, nativeQuery = true)
+    String[] getNotificationContractNumber(String signedStatus, String email, List<String> ids);
+
+
+
 
 }
