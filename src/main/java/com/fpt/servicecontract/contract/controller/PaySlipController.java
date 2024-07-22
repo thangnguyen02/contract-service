@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -36,5 +33,15 @@ public class PaySlipController {
     public ResponseEntity<BaseResponse> calculatePaySlip(
     ) {
         return ResponseEntity.ok(paySlipService.CalculateAllPaySlip());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BaseResponse> paySlipById(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDate,
+            @RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate toDate,
+            @PathVariable String id) {
+        return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), fromDate, toDate, id));
     }
 }

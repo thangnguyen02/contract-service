@@ -22,4 +22,17 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, String> {
                         created_date between :fromDate and :toDate
             """, nativeQuery = true)
     Page<Object[]> getAllPaySlip(Pageable pageable, LocalDate fromDate, LocalDate toDate);
+
+    @Query(value = """
+                    select id, email, commission_percentage, total_value_contract,
+                           base_salary, client_deployment_percentage, bonus_reaches_threshold, food_allowance,
+                           transportation_or_phone_allowance, total_salary, created_date
+                    FROM
+                        pay_slip
+                    WHERE
+                        created_date between :fromDate and :toDate
+                        and email = :email 
+                        order by created_date desc
+        """, nativeQuery = true)
+    Page<Object[]> getPaySlipByEmail(Pageable pageable, LocalDate fromDate, LocalDate toDate, String email);
 }

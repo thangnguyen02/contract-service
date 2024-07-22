@@ -102,4 +102,30 @@ public class PaySlipServiceImpl implements PaySlipService {
                 paySlips.getTotalElements()));
     }
 
+    @Override
+    public BaseResponse GetPaySlipById(Pageable pageable, LocalDate fromDate, LocalDate toDate, String email) {
+        Page<Object[]> paySlips = paySlipRepository.getPaySlipByEmail(pageable, fromDate, toDate, email);
+        if (paySlips.getTotalElements() == 0) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "No paySlips found", true, null);
+        }
+        List<PaySlip> paySlipList = new ArrayList<>();
+        for (Object[] obj : paySlips) {
+            paySlipList.add(PaySlip.builder()
+                    .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
+                    .email(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
+                    .commissionPercentage(Objects.nonNull(obj[2]) ? Double.parseDouble(obj[2].toString()) : null)
+                    .totalValueContract(Objects.nonNull(obj[3]) ? Double.parseDouble(obj[3].toString()) : null)
+                    .baseSalary(Objects.nonNull(obj[4]) ? Double.parseDouble(obj[4].toString()) : null)
+                    .clientDeploymentPercentage(Objects.nonNull(obj[5]) ? Double.parseDouble(obj[5].toString()) : null)
+                    .bonusReachesThreshold(Objects.nonNull(obj[6]) ? Double.parseDouble(obj[6].toString()) : null)
+                    .foodAllowance(Objects.nonNull(obj[7]) ? Double.parseDouble(obj[7].toString()) : null)
+                    .transportationOrPhoneAllowance(Objects.nonNull(obj[8]) ? Double.parseDouble(obj[8].toString()) : null)
+                    .totalSalary(Objects.nonNull(obj[9]) ? Double.parseDouble(obj[9].toString()) : null)
+                    .createdDate(Objects.nonNull(obj[10]) ? LocalDate.parse(obj[10].toString()) : null)
+                    .build());
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month", true, new PageImpl<>(paySlipList, pageable,
+                paySlips.getTotalElements()));
+    }
+
 }

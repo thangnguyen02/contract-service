@@ -8,4 +8,5 @@ import java.time.LocalDate;
 public interface PaySlipService {
     BaseResponse CalculateAllPaySlip();
     BaseResponse GetAllPaySlip(Pageable pageable, LocalDate fromDate, LocalDate toDate);
+    BaseResponse GetPaySlipById(Pageable pageable, LocalDate fromDate, LocalDate toDate, String email);
 }
