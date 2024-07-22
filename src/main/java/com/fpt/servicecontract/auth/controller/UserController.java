@@ -70,9 +70,4 @@ public class UserController {
     public ResponseEntity<BaseResponse> resetPassword(@RequestParam String email) {
         return ResponseEntity.ok(service.resetPass(email));
     }
-
-    @GetMapping("/pay-slip")
-    public BaseResponse paySlip() {
-        return ResponseEntity<>
-    }
 }

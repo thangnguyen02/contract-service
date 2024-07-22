@@ -10,7 +10,11 @@ import com.fpt.servicecontract.contract.repository.PaySlipRepository;
 import com.fpt.servicecontract.contract.service.PaySlipService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
+import com.fpt.servicecontract.utils.DataUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,11 +35,15 @@ public class PaySlipServiceImpl implements PaySlipService {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
         }
         List<String> saleEmails = userRepository.getUserWithPermissionList(Permission.SALE.name()).stream().map(UserInterface::getEmail).toList();
-        List<Object[]> saleAndNumberSales = userRepository.getSaleAndNumberSales(saleEmails);
+        List<Object[]> saleAndNumberSalesHaveCommission = userRepository.getSaleAndNumberSales(saleEmails);
+        Map<String, Double> saleAndNumberSalesAll = new HashMap<>();
+        for (Object[] saleAndNumber : saleAndNumberSalesHaveCommission) {
+            saleAndNumberSalesAll.put((String) saleAndNumber[0], (Double) saleAndNumber[1]);
+        }
         List<PaySlip> paySlips = new ArrayList<>();
-        for (Object[] saleAndNumber : saleAndNumberSales) {
-            String saler = (String) saleAndNumber[0];
-            Double numberSale = (Double) saleAndNumber[1];
+
+        for (String email : saleEmails) {
+            Double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(email)) ? 0 : saleAndNumberSalesAll.get(email);
             Optional<PaySlipFormula> formulaOptional = paySlipFormulas.stream().filter(e ->
                  numberSale >= e.getFromValueContract() && numberSale <= e.getToValueContract()
             ).findFirst();
@@ -52,7 +60,7 @@ public class PaySlipServiceImpl implements PaySlipService {
                 PaySlip paySlip = PaySlip.builder()
                         .baseSalary(baseSalary)
                         .totalValueContract(numberSale)
-                        .email(saler)
+                        .email(email)
                         .commissionPercentage(commissionPercentage)
                         .clientDeploymentPercentage(clientDeploymentPercentage)
                         .bonusReachesThreshold(bonusReachesThreshold)
@@ -69,8 +77,11 @@ public class PaySlipServiceImpl implements PaySlipService {
     }
 
     @Override
-    public BaseResponse GetAllPaySlip() {
-        List<Object[]> paySlips = paySlipRepository.getAllPaySlip();
+    public BaseResponse GetAllPaySlip(Pageable pageable, LocalDate fromDate, LocalDate toDate) {
+        Page<Object[]> paySlips = paySlipRepository.getAllPaySlip(pageable, fromDate, toDate);
+        if (paySlips.getTotalElements() == 0) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "No paySlips found", true, null);
+        }
         List<PaySlip> paySlipList = new ArrayList<>();
         for (Object[] obj : paySlips) {
             paySlipList.add(PaySlip.builder()
@@ -79,9 +90,16 @@ public class PaySlipServiceImpl implements PaySlipService {
                             .commissionPercentage(Objects.nonNull(obj[2]) ? Double.parseDouble(obj[2].toString()) : null)
                             .totalValueContract(Objects.nonNull(obj[3]) ? Double.parseDouble(obj[3].toString()) : null)
                             .baseSalary(Objects.nonNull(obj[4]) ? Double.parseDouble(obj[4].toString()) : null)
+                            .clientDeploymentPercentage(Objects.nonNull(obj[5]) ? Double.parseDouble(obj[5].toString()) : null)
+                            .bonusReachesThreshold(Objects.nonNull(obj[6]) ? Double.parseDouble(obj[6].toString()) : null)
+                            .foodAllowance(Objects.nonNull(obj[7]) ? Double.parseDouble(obj[7].toString()) : null)
+                            .transportationOrPhoneAllowance(Objects.nonNull(obj[8]) ? Double.parseDouble(obj[8].toString()) : null)
+                            .totalSalary(Objects.nonNull(obj[9]) ? Double.parseDouble(obj[9].toString()) : null)
+                            .createdDate(Objects.nonNull(obj[10]) ? LocalDate.parse(obj[10].toString()) : null)
                     .build());
         }
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month", true, paySlipRepository.findAll());
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month", true, new PageImpl<>(paySlipList, pageable,
+                paySlips.getTotalElements()));
     }
 
 }

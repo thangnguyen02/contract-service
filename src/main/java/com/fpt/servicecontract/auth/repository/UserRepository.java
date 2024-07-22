@@ -31,24 +31,24 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmailAndStatus(String email, String status);
 
     @Query(value = """
-        SELECT u.id,u.name, u.email, u.address,
-                                  u.identification_number as identificationNumber, u.status, u.department, u.phone, u.position, u.avatar,
-                                  CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions, u.dob
-                           FROM users u
-                           JOIN user_permissions up ON u.id = up.user_id where
-                                           (lower(u.name) like lower(:name) or :name is null)
-                                           and (lower(u.email) like lower(:email) or :email is null)
-                                           and (lower(u.address) like lower(:address) or :address is null)
-                                           and (lower(u.identification_number) like lower(:identificationNumber) or :identificationNumber is null)
-                                           and (lower(u.status) = :status or :status is null)
-                                           and (lower(u.department) like lower(:department) or :department is null)
-                                           and (lower(u.phone) like lower(:phoneNumber) or :department is null)
-                                           and (lower(u.position) like lower(:position) or :department is null)
-                                           and (lower(u.role) like lower(:role) or :role is null)
-                           GROUP BY u.id, u.name, u.email, u.address,
-                                    u.identification_number, u.status, u.department, u.phone, u.position
-                           order by u.created_date desc
-            """
+            SELECT u.id,u.name, u.email, u.address,
+                                      u.identification_number as identificationNumber, u.status, u.department, u.phone, u.position, u.avatar,
+                                      CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions, u.dob
+                               FROM users u
+                               JOIN user_permissions up ON u.id = up.user_id where
+                                               (lower(u.name) like lower(:name) or :name is null)
+                                               and (lower(u.email) like lower(:email) or :email is null)
+                                               and (lower(u.address) like lower(:address) or :address is null)
+                                               and (lower(u.identification_number) like lower(:identificationNumber) or :identificationNumber is null)
+                                               and (lower(u.status) = :status or :status is null)
+                                               and (lower(u.department) like lower(:department) or :department is null)
+                                               and (lower(u.phone) like lower(:phoneNumber) or :department is null)
+                                               and (lower(u.position) like lower(:position) or :department is null)
+                                               and (lower(u.role) like lower(:role) or :role is null)
+                               GROUP BY u.id, u.name, u.email, u.address,
+                                        u.identification_number, u.status, u.department, u.phone, u.position
+                               order by u.created_date desc
+                """
             , nativeQuery = true)
     Page<UserInterface> search(@Param("name") String name,
                                @Param("email") String email,
@@ -62,43 +62,38 @@ public interface UserRepository extends JpaRepository<User, String> {
                                Pageable pageable);
 
     @Query(value = """
-        SELECT u.name, u.email, CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions
-                           FROM users u
-                           JOIN user_permissions up ON u.id = up.user_id where
-                                        (permissions like lower(:permission) or :permission is null)
-                           GROUP BY u.name, u.email
-            """
+            SELECT u.name, u.email, CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions
+                               FROM users u
+                               JOIN user_permissions up ON u.id = up.user_id where
+                                            (permissions like lower(:permission) or :permission is null)
+                               GROUP BY u.name, u.email
+                """
             , nativeQuery = true)
     Page<UserInterface> getUserWithPermission(
-                               @Param("permission") String permission,
-                               Pageable pageable);
+            @Param("permission") String permission,
+            Pageable pageable);
 
 
     @Query(value = """
-        SELECT u.email, CONCAT('[', GROUP_CONCAT(up.permissions SEPARATOR ','), ']') AS permissions
-                           FROM users u
-                           JOIN user_permissions up ON u.id = up.user_id where
-                                        (permissions like lower(:permission) or :permission is null)
-                           GROUP BY u.email
-            """
+            SELECT u.email, CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions
+                               FROM users u
+                               JOIN user_permissions up ON u.id = up.user_id where
+                                            (permissions like lower(:permission) or :permission is null)
+                               GROUP BY u.email
+                """
             , nativeQuery = true)
     List<UserInterface> getUserWithPermissionList(
             @Param("permission") String permission);
 
     @Query(value = """
-                    SELECT c.created_by,
-                        SUM(c.value) AS numberSales,
-                        DATE_FORMAT(CURDATE(), '%Y-%m-01') AS first_date,
-                        LAST_DAY(CURDATE()) AS last_date
-                    FROM
-                        contract c
-                    RIGHT JOIN 
-                        users us on us.email = c.created_by
+                    SELECT c.created_by, SUM(c.value) AS numberSales
+                        FROM
+                            contract c
                     WHERE
                         c.mark_deleted = 0
-                        AND c.created_by IN (:emails) 
-                        AND c.created_date between first_date and last_date
-                        AND c.status = 'SUCCESS'
+                        AND (c.created_by in (:emails))
+                        AND (c.created_date between DATE_FORMAT(CURDATE(), '%Y-%m-01') and LAST_DAY(CURDATE()))
+                        AND (c.status = 'SUCCESS')
                     GROUP BY c.created_by
             """, nativeQuery = true)
     List<Object[]> getSaleAndNumberSales(List<String> emails);

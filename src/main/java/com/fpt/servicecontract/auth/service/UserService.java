@@ -104,6 +104,7 @@ public class UserService {
             UserDto userDto = UserDto.builder()
                     .name(user.getName())
                     .id(user.getId())
+                    .email(user.getEmail())
                     .status(user.getStatus())
                     .department(user.getDepartment())
                     .identificationNumber(user.getIdentificationNumber())
