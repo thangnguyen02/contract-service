@@ -202,19 +202,19 @@ public class ContractServiceImpl implements ContractService {
             }
 
             if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
-            && SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+            || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
             }
 
             if(SignContractStatus.WAIT_SIGN_B.name().equals(status)
-                    && SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+               || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
             }
 
-            if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.equals(status)
+            if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.name().equals(status)
             ) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
