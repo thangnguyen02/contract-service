@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.contract.service.PaySlipService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class PaySlipController {
     private final PaySlipService paySlipService;
+    private final JwtService jwtService;
 
     @GetMapping
     public ResponseEntity<BaseResponse> paySlip(
@@ -35,13 +37,14 @@ public class PaySlipController {
         return ResponseEntity.ok(paySlipService.CalculateAllPaySlip());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{email}")
     public ResponseEntity<BaseResponse> paySlipById(
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDate,
             @RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate toDate,
-            @PathVariable String id) {
-        return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), fromDate, toDate, id));
+            @RequestHeader("Authorization") String bearerToken) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), fromDate, toDate, email));
     }
 }
