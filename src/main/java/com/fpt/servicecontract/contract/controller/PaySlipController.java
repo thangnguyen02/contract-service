@@ -37,7 +37,7 @@ public class PaySlipController {
         return ResponseEntity.ok(paySlipService.CalculateAllPaySlip());
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/findByMail")
     public ResponseEntity<BaseResponse> paySlipById(
             @RequestParam int page,
             @RequestParam int size,
