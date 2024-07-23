@@ -37,8 +37,8 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, String> {
                     WHERE
                         (month(pl.created_date) = :monthSearch or :monthSearch is null)
                         and (year(pl.created_date) = :yearSearch or :yearSearch is null)
-                        and email = :email
-                        order by created_date desc
+                        and pl.email = :email
+                        order by pl.created_date desc
         """, nativeQuery = true)
     Page<Object[]> getPaySlipByEmail(Pageable pageable, Integer monthSearch, Integer yearSearch, String email);
 }
