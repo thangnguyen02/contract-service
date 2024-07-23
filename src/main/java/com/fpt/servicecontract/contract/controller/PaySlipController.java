@@ -25,10 +25,10 @@ public class PaySlipController {
     public ResponseEntity<BaseResponse> paySlip(
             @RequestParam int page,
             @RequestParam int size,
-            @RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDate,
-            @RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate toDate
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year
     ) {
-        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), fromDate, toDate));
+        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year));
     }
 
     @GetMapping("/calculate")
@@ -41,10 +41,10 @@ public class PaySlipController {
     public ResponseEntity<BaseResponse> paySlipById(
             @RequestParam int page,
             @RequestParam int size,
-            @RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDate,
-            @RequestParam(value = "toDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate toDate,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year,
             @RequestHeader("Authorization") String bearerToken) {
         String email = jwtService.extractUsername(bearerToken.substring(7));
-        return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), fromDate, toDate, email));
+        return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), month, year, email));
     }
 }

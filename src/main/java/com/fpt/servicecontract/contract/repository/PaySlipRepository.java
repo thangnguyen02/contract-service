@@ -7,32 +7,38 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.List;
 
 @Repository
 public interface PaySlipRepository extends JpaRepository<PaySlip, String> {
     @Query(value = """
-                    SELECT id, email, commission_percentage, total_value_contract,
+                    SELECT pl.id, pl.email, commission_percentage, total_value_contract,
                            base_salary, client_deployment_percentage, bonus_reaches_threshold, food_allowance,
-                           transportation_or_phone_allowance, total_salary, created_date
+                           transportation_or_phone_allowance, total_salary, pl.created_date,
+                           u.name, u.phone, u.department, u.position, u.address
                     FROM
-                        pay_slip
+                        pay_slip pl
+                    join
+                        users u on pl.email = u.email
                     WHERE
-                        created_date between :fromDate and :toDate
+                        (month(pl.created_date) = :monthSearch or :monthSearch is null)
+                        and (year(pl.created_date) = :yearSearch or :yearSearch is null)
             """, nativeQuery = true)
-    Page<Object[]> getAllPaySlip(Pageable pageable, LocalDate fromDate, LocalDate toDate);
+    Page<Object[]> getAllPaySlip(Pageable pageable, Integer monthSearch, Integer yearSearch);
 
     @Query(value = """
-                    select id, email, commission_percentage, total_value_contract,
+                    select pl.id, pl.email, commission_percentage, total_value_contract,
                            base_salary, client_deployment_percentage, bonus_reaches_threshold, food_allowance,
-                           transportation_or_phone_allowance, total_salary, created_date
+                           transportation_or_phone_allowance, total_salary, pl.created_date,
+                    u.name, u.phone, u.department, u.position, u.address
                     FROM
-                        pay_slip
+                        pay_slip pl
+                    join
+                        users u on pl.email = u.email
                     WHERE
-                        created_date between :fromDate and :toDate
+                        (month(pl.created_date) = :monthSearch or :monthSearch is null)
+                        and (year(pl.created_date) = :yearSearch or :yearSearch is null)
                         and email = :email
                         order by created_date desc
         """, nativeQuery = true)
-    Page<Object[]> getPaySlipByEmail(Pageable pageable, LocalDate fromDate, LocalDate toDate, String email);
+    Page<Object[]> getPaySlipByEmail(Pageable pageable, Integer monthSearch, Integer yearSearch, String email);
 }
