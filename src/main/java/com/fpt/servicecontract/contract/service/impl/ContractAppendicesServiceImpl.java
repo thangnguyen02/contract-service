@@ -94,7 +94,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             //officer-admin reject
             if(SignContractStatus.APPROVE_FAIL.name().equals(status)) {
                 response.setCanResend(true);
-                response.setCanApprove(true);
+                response.setCanApprove(false);
                 response.setCanSign(false);
             }
 
@@ -117,12 +117,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     && SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
-            }
-
-            if(SignContractStatus.WAIT_SIGN_B.name().equals(status)
-                    && SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
-                response.setCanUpdate(false);
-                response.setCanDelete(false);
             }
 
             if(SignContractStatus.SIGN_B_FAIL.name().equals(status)

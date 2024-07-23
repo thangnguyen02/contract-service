@@ -38,7 +38,7 @@ public class PaySlipController {
     }
 
     @GetMapping("/findByMail")
-    public ResponseEntity<BaseResponse> paySlipById(
+    public ResponseEntity<BaseResponse> paySlipByEmail(
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(value = "fromDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDate,
@@ -47,4 +47,6 @@ public class PaySlipController {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), fromDate, toDate, email));
     }
+
+
 }
