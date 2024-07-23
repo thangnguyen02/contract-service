@@ -31,7 +31,7 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, String> {
                         pay_slip
                     WHERE
                         created_date between :fromDate and :toDate
-                        and email = :email 
+                        and email = :email
                         order by created_date desc
         """, nativeQuery = true)
     Page<Object[]> getPaySlipByEmail(Pageable pageable, LocalDate fromDate, LocalDate toDate, String email);

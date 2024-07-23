@@ -43,9 +43,9 @@ public class PaySlipServiceImpl implements PaySlipService {
         List<PaySlip> paySlips = new ArrayList<>();
 
         for (String email : saleEmails) {
-            Double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(email)) ? 0 : saleAndNumberSalesAll.get(email);
+            double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(email)) ? 0 : saleAndNumberSalesAll.get(email);
             Optional<PaySlipFormula> formulaOptional = paySlipFormulas.stream().filter(e ->
-                 numberSale >= e.getFromValueContract() && numberSale <= e.getToValueContract()
+                 numberSale >= e.getFromValueContract() && numberSale < e.getToValueContract()
             ).findFirst();
             if (formulaOptional.isPresent()) {
                 PaySlipFormula formula = formulaOptional.get();
