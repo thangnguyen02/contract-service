@@ -38,7 +38,7 @@ public class PaySlipController {
     }
 
     @GetMapping("/findByMail")
-    public ResponseEntity<BaseResponse> paySlipById(
+    public ResponseEntity<BaseResponse> paySlipByEmail(
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(required = false) Integer month,
@@ -47,4 +47,6 @@ public class PaySlipController {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), month, year, email));
     }
+
+
 }
