@@ -111,6 +111,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
+                response.setCanSign(true);
             }
 
             if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
@@ -128,7 +129,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.equals(status)
             ) {
                 response.setCanSend(false);
-                response.setCanSendForMng(false);
             }
 
             if (SignContractStatus.SIGN_B_OK.name().equals(status)) {

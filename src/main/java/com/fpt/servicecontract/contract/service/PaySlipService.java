@@ -9,4 +9,5 @@ public interface PaySlipService {
     BaseResponse CalculateAllPaySlip();
     BaseResponse GetAllPaySlip(Pageable pageable, Integer month, Integer year);
     BaseResponse GetPaySlipById(Pageable pageable, Integer month, Integer year, String email);
+    BaseResponse GetCommission();
 }
