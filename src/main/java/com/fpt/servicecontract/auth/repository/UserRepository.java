@@ -75,11 +75,12 @@ public interface UserRepository extends JpaRepository<User, String> {
 
 
     @Query(value = """
-            SELECT u.email, CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions
+            SELECT u.email, CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions,
+                   u.id, u.name, u.address, u.phone, u.position, u.identification_number as identificationNumber, u.department
                                FROM users u
                                JOIN user_permissions up ON u.id = up.user_id where
                                             (permissions like lower(:permission) or :permission is null)
-                               GROUP BY u.email
+                               GROUP BY u.email, u.id, u.name, u.address, u.phone, u.position, u.identification_number, u.department
                 """
             , nativeQuery = true)
     List<UserInterface> getUserWithPermissionList(
