@@ -1,4 +1,4 @@
-package com.fpt.servicecontract.contract.dto;
+package com.fpt.servicecontract.contract.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
-import com.fpt.servicecontract.contract.dto.VerifyEmailCodeRequest;
+import com.fpt.servicecontract.contract.dto.request.VerifyEmailCodeRequest;
 import com.fpt.servicecontract.contract.service.MailAuthenCodeService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;

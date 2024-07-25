@@ -2,7 +2,7 @@ package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
-import com.fpt.servicecontract.contract.dto.SignContractResponse;
+import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.contract.service.ContractAppendicesService;
 import com.fpt.servicecontract.contract.service.ContractStatusService;

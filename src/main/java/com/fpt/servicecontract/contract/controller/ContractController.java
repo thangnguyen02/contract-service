@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.*;
+import com.fpt.servicecontract.contract.dto.request.ContractRequest;
+import com.fpt.servicecontract.contract.dto.request.SearchRequestBody;
+import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
@@ -36,14 +39,14 @@ public class ContractController {
 
     @PostMapping("/send-mail")
     public ResponseEntity<SignContractResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
-                                         @RequestParam String[] to,
-                                         @RequestParam(required = false) String[] cc,
-                                         @RequestParam String subject,
-                                         @RequestParam String htmlContent,
-                                         @RequestParam(required = false) MultipartFile[] attachments,
-                                         @RequestParam String contractId,
-                                         @RequestParam String status,
-                                         @RequestParam String description
+                                                         @RequestParam String[] to,
+                                                         @RequestParam(required = false) String[] cc,
+                                                         @RequestParam String subject,
+                                                         @RequestParam String htmlContent,
+                                                         @RequestParam(required = false) MultipartFile[] attachments,
+                                                         @RequestParam String contractId,
+                                                         @RequestParam String status,
+                                                         @RequestParam String description
     ) throws MessagingException {
         return ResponseEntity.ok(contractService.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractId, status, description));
     }

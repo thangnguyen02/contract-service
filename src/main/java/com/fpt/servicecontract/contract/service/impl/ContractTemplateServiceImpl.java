@@ -1,9 +1,7 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fpt.servicecontract.auth.model.UserStatus;
-import com.fpt.servicecontract.contract.dto.ContractResponse;
 import com.fpt.servicecontract.contract.dto.ContractTemplateDto;
-import com.fpt.servicecontract.contract.dto.ContractTemplateRequest;
+import com.fpt.servicecontract.contract.dto.request.ContractTemplateRequest;
 import com.fpt.servicecontract.contract.model.ContractTemplate;
 import com.fpt.servicecontract.contract.repository.ContractTemplateRepository;
 import com.fpt.servicecontract.contract.service.ContractTemplateService;

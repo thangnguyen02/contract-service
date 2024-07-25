@@ -1,8 +1,7 @@
 package com.fpt.servicecontract.contract.service;
 
 
-import co.elastic.clients.elasticsearch.xpack.usage.Base;
-import com.fpt.servicecontract.contract.dto.ContractTemplateRequest;
+import com.fpt.servicecontract.contract.dto.request.ContractTemplateRequest;
 import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Pageable;
 

@@ -1,10 +1,9 @@
 package com.fpt.servicecontract.contract.controller;
 
 
-import com.fpt.servicecontract.contract.dto.SmsRequest;
+import com.fpt.servicecontract.contract.dto.request.SmsRequest;
 import com.fpt.servicecontract.contract.service.SmsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
