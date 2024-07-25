@@ -1,6 +1,6 @@
 package com.fpt.servicecontract.contract.service;
 
-import com.fpt.servicecontract.contract.dto.SignContractResponse;
+import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Pageable;

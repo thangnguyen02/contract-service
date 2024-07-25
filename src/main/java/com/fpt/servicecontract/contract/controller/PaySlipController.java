@@ -6,12 +6,9 @@ import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Date;
 
 @Slf4j
 @RestController
@@ -26,9 +23,10 @@ public class PaySlipController {
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(required = false) Integer month,
-            @RequestParam(required = false) Integer year
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) String type
     ) {
-        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year));
+        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year, type));
     }
 
     @GetMapping("/calculate")
@@ -46,6 +44,11 @@ public class PaySlipController {
             @RequestHeader("Authorization") String bearerToken) {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), month, year, email));
+    }
+
+    @GetMapping("/commission")
+    public ResponseEntity<BaseResponse> getCommission() {
+        return ResponseEntity.ok(paySlipService.GetCommission());
     }
 
 

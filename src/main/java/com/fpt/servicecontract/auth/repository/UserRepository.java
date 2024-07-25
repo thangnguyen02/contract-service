@@ -1,11 +1,7 @@
 package com.fpt.servicecontract.auth.repository;
 
 import com.fpt.servicecontract.auth.dto.UserInterface;
-import com.fpt.servicecontract.auth.model.Permission;
-import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.model.User;
-import com.fpt.servicecontract.auth.model.UserStatus;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @SuppressWarnings("ALL")
 @Repository
@@ -75,11 +70,12 @@ public interface UserRepository extends JpaRepository<User, String> {
 
 
     @Query(value = """
-            SELECT u.email, CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions
+            SELECT u.email, CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions,
+                   u.id, u.name, u.address, u.phone, u.position, u.identification_number as identificationNumber, u.department
                                FROM users u
                                JOIN user_permissions up ON u.id = up.user_id where
                                             (permissions like lower(:permission) or :permission is null)
-                               GROUP BY u.email
+                               GROUP BY u.email, u.id, u.name, u.address, u.phone, u.position, u.identification_number, u.department
                 """
             , nativeQuery = true)
     List<UserInterface> getUserWithPermissionList(
@@ -97,4 +93,16 @@ public interface UserRepository extends JpaRepository<User, String> {
                     GROUP BY c.created_by
             """, nativeQuery = true)
     List<Object[]> getSaleAndNumberSales(List<String> emails);
+
+
+    @Query(value = """
+                    SELECT SUM(c.value) AS numberSales
+                        FROM
+                            contract c
+                    WHERE
+                        c.mark_deleted = 0
+                        AND (c.created_date between DATE_FORMAT(CURDATE(), '%Y-%m-01') and LAST_DAY(CURDATE()))
+                        AND (c.status = 'SUCCESS')
+            """, nativeQuery = true)
+    Double getTotalNumberSales();
 }

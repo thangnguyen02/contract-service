@@ -25,4 +25,5 @@ public class PaySlipFormula {
     private Double bonusReachesThreshold;
     private Double foodAllowance;
     private Double transportationOrPhoneAllowance;
+    private String type;
 }

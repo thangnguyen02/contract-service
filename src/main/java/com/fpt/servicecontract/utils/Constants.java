@@ -26,4 +26,9 @@ public interface Constants {
         final public static String SUCCESS = "SUCCESS";
     }
 
+    public static interface POSITION {
+        final public static String SALE = "SALE";
+        final public static String LEADER_SALE = "LEADER_SALE";
+    }
+
 }

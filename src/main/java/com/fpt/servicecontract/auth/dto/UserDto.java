@@ -1,14 +1,10 @@
 package com.fpt.servicecontract.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fpt.servicecontract.auth.model.Permission;
 import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.model.UserStatus;
-import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
 
-import java.util.Date;
 import java.util.Set;
 
 @NoArgsConstructor

@@ -1,6 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
-import com.fpt.servicecontract.contract.dto.ContractTemplateRequest;
+import com.fpt.servicecontract.contract.dto.request.ContractTemplateRequest;
 import com.fpt.servicecontract.contract.service.ContractTemplateService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;

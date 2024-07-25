@@ -6,7 +6,6 @@ import com.fpt.servicecontract.auth.model.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 import java.util.Set;

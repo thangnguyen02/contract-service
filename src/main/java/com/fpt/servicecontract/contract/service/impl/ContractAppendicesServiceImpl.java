@@ -3,9 +3,9 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
-import com.fpt.servicecontract.contract.dto.ContractRequest;
-import com.fpt.servicecontract.contract.dto.ContractResponse;
-import com.fpt.servicecontract.contract.dto.SignContractResponse;
+import com.fpt.servicecontract.contract.dto.request.ContractRequest;
+import com.fpt.servicecontract.contract.dto.response.ContractResponse;
+import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.contract.model.ContractStatus;
@@ -111,6 +111,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
+                response.setCanSign(true);
             }
 
             if(SignContractStatus.SIGN_B_FAIL.name().equals(status)
@@ -128,7 +129,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             if(SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.equals(status)
             ) {
                 response.setCanSend(false);
-                response.setCanSendForMng(false);
             }
 
             if (SignContractStatus.SIGN_B_OK.name().equals(status)) {

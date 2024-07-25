@@ -16,8 +16,7 @@ import java.util.Optional;
 @RequestMapping("/contract-type")
 @RequiredArgsConstructor
 public class ContractTypeController {
-    @Autowired
-    private ContractTypeService contractTypeService;
+    private final ContractTypeService contractTypeService;
 
     @GetMapping
     public ResponseEntity<Page<ContractType>> getAllContractTypes(

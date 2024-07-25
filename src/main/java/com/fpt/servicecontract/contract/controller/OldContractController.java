@@ -1,8 +1,7 @@
 package com.fpt.servicecontract.contract.controller;
 
-import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
-import com.fpt.servicecontract.contract.dto.SearchRequestBody;
+import com.fpt.servicecontract.contract.dto.request.SearchRequestBody;
 import com.fpt.servicecontract.contract.model.OldContract;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;
 import com.fpt.servicecontract.contract.service.OldContractService;
@@ -21,7 +20,6 @@ import java.io.IOException;
 @RequestMapping("/old-contract")
 @RequiredArgsConstructor
 public class OldContractController {
-    private final MailService mailService;
     private final OldContractService oldContractService;
     private final ElasticSearchService elasticSearchService;
     @GetMapping()
