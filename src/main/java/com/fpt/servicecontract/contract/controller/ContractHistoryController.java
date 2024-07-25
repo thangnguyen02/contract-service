@@ -17,7 +17,7 @@ public class ContractHistoryController {
     @GetMapping()
     public ResponseEntity<BaseResponse> getContractHistory(
             @RequestParam String contract,
-            @RequestParam String createdBy){
+            @RequestParam(required = false) String createdBy){
         return ResponseEntity.ok(contractHistoryService.getContractHistory(contract, createdBy));
     }
 

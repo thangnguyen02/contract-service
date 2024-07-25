@@ -33,7 +33,7 @@ public class SecurityConfig {
                     .requestMatchers("/contract/public/**").permitAll()
                     .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
                     .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
-                    .requestMatchers("/api/**").permitAll()
+                    .requestMatchers("/contract-history/**").permitAll()
                     .requestMatchers("api/contract-appendices/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/api-docs/**").permitAll()
