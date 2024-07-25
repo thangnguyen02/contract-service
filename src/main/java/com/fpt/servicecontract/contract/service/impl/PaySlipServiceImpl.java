@@ -208,12 +208,12 @@ public class PaySlipServiceImpl implements PaySlipService {
         }
 
         Double baseSalary = paySlipFormula.getBaseSalary();
-        Double commissionValueBonus = saleAndNumberSalesHaveCommission / 100 * paySlipFormula.getCommissionPercentage();
+        Double commissionValueBonus = saleAndNumberSalesHaveCommission / 100 * paySlipFormula.getBonusReachesThreshold();
         Double totalSalary = baseSalary + commissionValueBonus;
         PaySlip paySlip = PaySlip.builder()
                 .baseSalary(baseSalary)
                 .totalValueContract(saleAndNumberSalesHaveCommission)
-                .commissionPercentage(commissionValueBonus)
+                .bonusReachesThreshold(commissionValueBonus)
                 .totalSalary(totalSalary)
                 .email("leaderSale@gmail.com")
                 .build();
