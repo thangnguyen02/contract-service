@@ -110,6 +110,7 @@ public class ContractServiceImpl implements ContractService {
                 .status(Constants.STATUS.NEW)
                 .isUrgent(contractRequest.isUrgent())
                 .contractTypeId(contractRequest.getContractTypeId())
+                .value(contractRequest.getValue())
                 .build();
         Context context = new Context();
         context.setVariable("partyA", partyA);
