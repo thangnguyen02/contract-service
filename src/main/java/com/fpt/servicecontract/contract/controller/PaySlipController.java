@@ -23,9 +23,10 @@ public class PaySlipController {
             @RequestParam int page,
             @RequestParam int size,
             @RequestParam(required = false) Integer month,
-            @RequestParam(required = false) Integer year
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) String type
     ) {
-        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year));
+        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year, type));
     }
 
     @GetMapping("/calculate")

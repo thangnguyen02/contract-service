@@ -34,7 +34,7 @@ public class PaySlipServiceImpl implements PaySlipService {
 
     @Override
     public BaseResponse CalculateAllPaySlip() {
-        List<PaySlipFormula> paySlipFormulas = paySlipFormulaRepository.findAll();
+        List<PaySlipFormula> paySlipFormulas = paySlipFormulaRepository.findAll().stream().filter(e -> Constants.POSITION.SALE.equals(e.getType())).toList();
         if (paySlipFormulas.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
         }
@@ -80,10 +80,12 @@ public class PaySlipServiceImpl implements PaySlipService {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month calculated", true, null);
     }
 
-    @Override
-    public BaseResponse GetAllPaySlip(Pageable pageable, Integer month, Integer year) {
 
-        Page<Object[]> paySlips = paySlipRepository.getAllPaySlip(pageable, month, year);
+
+    @Override
+    public BaseResponse GetAllPaySlip(Pageable pageable, Integer month, Integer year, String type) {
+
+        Page<Object[]> paySlips = paySlipRepository.getAllPaySlip(pageable, month, year, type);
         if (paySlips.getTotalElements() == 0) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "No paySlips found", true, null);
         }
@@ -186,5 +188,43 @@ public class PaySlipServiceImpl implements PaySlipService {
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month", true, commissionDtoList);
     }
+
+    @Override
+    public BaseResponse CalculateLeaderSalePaySlip() {
+        List<PaySlipFormula> paySlipFormulas = paySlipFormulaRepository.findAll().stream().filter(e -> Constants.POSITION.LEADER_SALE.equals(e.getType())).toList();
+        if (paySlipFormulas.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
+        }
+
+        List<String> saleEmails = userRepository.getUserWithPermissionList(Permission.SALE.name()).stream().map(UserInterface::getEmail).toList();
+        Double saleAndNumberSalesHaveCommission = userRepository.getTotalNumberSales() == null ? 0 : userRepository.getTotalNumberSales();
+
+//        Double averageNumberSale = saleAndNumberSalesHaveCommission / saleEmails.size();
+
+        PaySlipFormula paySlipFormula = paySlipFormulas.stream().filter(e -> saleAndNumberSalesHaveCommission >= e.getFromValueContract() && saleAndNumberSalesHaveCommission < e.getToValueContract()).findFirst().get();
+
+        if (paySlipFormula == null) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission value  contract not valid", true, null);
+        }
+
+        Double baseSalary = paySlipFormula.getBaseSalary();
+        Double commissionValueBonus = saleAndNumberSalesHaveCommission / 100 * paySlipFormula.getCommissionPercentage();
+        Double totalSalary = baseSalary + commissionValueBonus;
+        PaySlip paySlip = PaySlip.builder()
+                .baseSalary(baseSalary)
+                .totalValueContract(saleAndNumberSalesHaveCommission)
+                .commissionPercentage(commissionValueBonus)
+                .totalSalary(totalSalary)
+                .email("leaderSale@gmail.com")
+                .build();
+        paySlipRepository.save(paySlip);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Calculate successfully", true, paySlip);
+    }
+
+    @Override
+    public BaseResponse BonusAfter1YearCalculation() {
+        return null;
+    }
+
 
 }

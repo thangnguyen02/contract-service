@@ -30,4 +30,6 @@ public class PaySlip {
     private Double transportationOrPhoneAllowance;
     private Double totalSalary;
     private LocalDate createdDate;
+    private String type;
+    private Integer numberSaleManage;
 }

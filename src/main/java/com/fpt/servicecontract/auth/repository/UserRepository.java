@@ -93,4 +93,16 @@ public interface UserRepository extends JpaRepository<User, String> {
                     GROUP BY c.created_by
             """, nativeQuery = true)
     List<Object[]> getSaleAndNumberSales(List<String> emails);
+
+
+    @Query(value = """
+                    SELECT SUM(c.value) AS numberSales
+                        FROM
+                            contract c
+                    WHERE
+                        c.mark_deleted = 0
+                        AND (c.created_date between DATE_FORMAT(CURDATE(), '%Y-%m-01') and LAST_DAY(CURDATE()))
+                        AND (c.status = 'SUCCESS')
+            """, nativeQuery = true)
+    Double getTotalNumberSales();
 }
