@@ -13,7 +13,7 @@ public interface ContractTypeRepository  extends PagingAndSortingRepository<Cont
 
     ContractType save(ContractType contractType);
 
-    @Query(value = "select id, title, description, mark_deleted from contract_type where lower(title) like lower(:title) or :title is null", nativeQuery = true)
+    @Query(value = "select id, title, description, mark_deleted from contract_type where lower(title) like lower(:title) or :title is null order by created_date desc", nativeQuery = true)
     Page<ContractType> findByTitle(Pageable pageable,  String title);
 
     void deleteById(String id);

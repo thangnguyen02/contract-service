@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -29,6 +30,7 @@ public class ContractTypeServiceImpl implements ContractTypeService {
     }
 
     public ContractType createContractType(ContractType contractType) {
+        contractType.setCreatedDate(LocalDate.now());
         return contractTypeRepository.save(contractType);
     }
 
