@@ -30,7 +30,6 @@ public class ContractTypeServiceImpl implements ContractTypeService {
     }
 
     public ContractType createContractType(ContractType contractType) {
-        contractType.setCreatedDate(LocalDate.now());
         return contractTypeRepository.save(contractType);
     }
 

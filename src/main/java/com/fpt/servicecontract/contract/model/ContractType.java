@@ -27,6 +27,4 @@ public class ContractType {
 
     private Boolean markDeleted;
 
-    @Column(name = "created_date")
-    private LocalDate createdDate;
 }

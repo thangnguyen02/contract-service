@@ -34,9 +34,10 @@ public class SecurityConfig {
                     .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
                     .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
                     .requestMatchers("/contract-history/**").permitAll()
-                    .requestMatchers("api/contract-appendices/**").permitAll()
+                    .requestMatchers("/api/contract-appendices/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/api-docs/**").permitAll()
+                    .requestMatchers("/contract-type/**").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 
