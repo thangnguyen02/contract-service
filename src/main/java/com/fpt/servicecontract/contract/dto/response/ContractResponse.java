@@ -30,4 +30,5 @@ public class ContractResponse {
     private boolean canApprove;
     private String customer;
     private List<String> contractAppendicesId;
+    private Double value;
 }

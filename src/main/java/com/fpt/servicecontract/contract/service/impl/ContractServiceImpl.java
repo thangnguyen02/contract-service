@@ -164,6 +164,7 @@ public class ContractServiceImpl implements ContractService {
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
                     .contractAppendicesId(Objects.nonNull(obj[11]) ? objectMapper.readValue(obj[11].toString(), new TypeReference<List<String>>() {})  : null)
+                    .value(Objects.nonNull(obj[12]) ? (Double) obj[12] : null)
                     .canSend(true)
                     .canApprove(false)
                     .canSign(true)
