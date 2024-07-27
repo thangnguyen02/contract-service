@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.Set;
 @Import({SwaggerUiConfigParameters.class})
 @EnableCaching
 @EnableAsync
+@EnableScheduling
 public class ServiceContractApplication {
 	private final UserRepository userRepository;
 
