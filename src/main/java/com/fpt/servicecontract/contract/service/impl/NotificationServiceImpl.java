@@ -66,7 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.getReceivers().forEach(f -> {
             messagingTemplate.convertAndSend("/topic/notifications/" + f, notificationRepository.save(notification));
             Optional<User> user = userRepository.findByEmail(f);
-            sendPushNotification(user.get().getTokenDevice(), notification.getTitle(), notification.getMessage());
+            user.ifPresent(value -> sendPushNotification(value.getTokenDevice(), notification.getTitle(), notification.getMessage()));
         });
         return "Notification ok! ";
     }
