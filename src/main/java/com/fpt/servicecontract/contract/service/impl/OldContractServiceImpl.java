@@ -1,7 +1,7 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.config.JwtService;
-import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
+import com.fpt.servicecontract.contract.dto.request.CreateUpdateOldContract;
 import com.fpt.servicecontract.contract.dto.OldContractDto;
 import com.fpt.servicecontract.contract.model.OldContract;
 import com.fpt.servicecontract.contract.repository.OldContractRepository;

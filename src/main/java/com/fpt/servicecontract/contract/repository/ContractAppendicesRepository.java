@@ -31,7 +31,8 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                      c.status,
                      c.approved_by,
                      ls.status AS statusCurrent,
-                     c.mark_deleted
+                     c.mark_deleted,
+                     c.value
                  FROM
                      contract_appendices c
                  LEFT JOIN
@@ -48,4 +49,18 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
 
     @Query(value = "select * from contract_appendices where mark_deleted = 0", nativeQuery = true)
     Page<ContractAppendices> findByContractId(String contractId, Pageable pageable);
+
+    @Query(value = """
+                    SELECT c.created_by, SUM(c.value) AS numberSales
+                        FROM
+                            contract_appendices ca
+                    WHERE
+                        c.mark_deleted = 0
+                        AND (c.created_by in (:emails))
+                        and (month(pl.created_date) = :monthSearch or :monthSearch is null)
+                        and (year(pl.created_date) = :yearSearch or :yearSearch is null)
+                        AND (c.status = 'SUCCESS')
+                    GROUP BY c.created_by
+            """, nativeQuery = true)
+    List<Object[]> getSaleAndNumberSales(List<String> emails, Integer monthSearch, Integer yearSearch);
 }

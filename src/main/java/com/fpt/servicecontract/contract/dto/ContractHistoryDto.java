@@ -15,4 +15,5 @@ public class ContractHistoryDto {
     private String time;
     private String status;
     private String contractName;
+    private String comment;
 }

@@ -22,24 +22,10 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, String> {
                     WHERE
                         (month(pl.created_date) = :monthSearch or :monthSearch is null)
                         and (year(pl.created_date) = :yearSearch or :yearSearch is null)
-                        and (pl.type = :type or :type is null) 
-            """, nativeQuery = true)
-    Page<Object[]> getAllPaySlip(Pageable pageable, Integer monthSearch, Integer yearSearch, String type);
-
-    @Query(value = """
-                    select pl.id, pl.email, commission_percentage, total_value_contract,
-                           base_salary, client_deployment_percentage, bonus_reaches_threshold, food_allowance,
-                           transportation_or_phone_allowance, total_salary, pl.created_date,
-                    u.name, u.phone, u.department, u.position, u.address
-                    FROM
-                        pay_slip pl
-                    join
-                        users u on pl.email = u.email
-                    WHERE
-                        (month(pl.created_date) = :monthSearch or :monthSearch is null)
-                        and (year(pl.created_date) = :yearSearch or :yearSearch is null)
-                        and pl.email = :email
+                        and (pl.type = :type or :type is null)
+                        and (pl.email = :email or :email is null)
                         order by pl.created_date desc
-        """, nativeQuery = true)
-    Page<Object[]> getPaySlipByEmail(Pageable pageable, Integer monthSearch, Integer yearSearch, String email);
+            """, nativeQuery = true)
+    Page<Object[]> getAllPaySlip(Pageable pageable, Integer monthSearch, Integer yearSearch, String type, String email);
+
 }

@@ -14,16 +14,16 @@ import java.util.Date;
 @Repository
 public interface OldContractRepository extends JpaRepository<OldContract, String> {
 
-    @Query(value = "select * from old_contract where is_deleted = 0", nativeQuery = true)
+    @Query(value = "select * from old_contract where is_deleted = 0 order by created_date desc", nativeQuery = true)
     Page<OldContract> findAll(Pageable pageable);
 
     @Query(value = """
             SELECT
                  count(id)
-                 from old_contract  where 
+                 from old_contract  where
                  created_date between :fromDate and :toDate
                  and is_deleted = 0
-                 """, nativeQuery = true)
+            """, nativeQuery = true)
     Integer  staticalOldContract(
             @Param("fromDate") Date fromDate,
             @Param("toDate") Date toDate

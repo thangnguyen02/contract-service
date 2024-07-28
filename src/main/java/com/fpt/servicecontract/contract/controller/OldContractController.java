@@ -1,6 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
-import com.fpt.servicecontract.contract.dto.CreateUpdateOldContract;
+import com.fpt.servicecontract.contract.dto.request.CreateUpdateOldContract;
 import com.fpt.servicecontract.contract.dto.request.SearchRequestBody;
 import com.fpt.servicecontract.contract.model.OldContract;
 import com.fpt.servicecontract.contract.service.ElasticSearchService;

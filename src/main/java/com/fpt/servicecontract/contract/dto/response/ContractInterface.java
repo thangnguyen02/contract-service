@@ -1,4 +1,4 @@
-package com.fpt.servicecontract.contract.dto;
+package com.fpt.servicecontract.contract.dto.response;
 
 import java.time.LocalDateTime;
 

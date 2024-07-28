@@ -65,7 +65,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      
                  ORDER BY
                      c.is_urgent DESC,
-                     c.created_date DESC;
+                     c.updated_date DESC;
                     \s""", nativeQuery = true)
     Page<Object[]> findAllContract(Pageable p, String email, List<String> ids, List<String> statusCurrentSearch, String search);
 
@@ -170,10 +170,9 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                     SELECT
                         SUM(CASE WHEN ls.status = 'APPROVED' THEN 1 ELSE 0 END) AS approved_count, 
                         SUM(CASE WHEN ls.status = 'WAIT_APPROVE' THEN 1 ELSE 0 END) AS wait_approve_count,
-                        SUM(CASE WHEN ls.status = 'WAIT_SIGN_A' THEN 1 ELSE 0 END) AS wait_sign_a_count,
                         SUM(CASE WHEN ls.status = 'SUCCESS' THEN 1 ELSE 0 END) AS done_count,
                         SUM(CASE WHEN ls.status = :signedStatus THEN 1 ELSE 0 END) AS signed_count,
-                        SUM(CASE WHEN ls.status = 'WAIT_SIGN_B' THEN 1 ELSE 0 END) AS wait_sign_b_count
+                        SUM(CASE WHEN ls.status = :waitSignStatus THEN 1 ELSE 0 END) AS wait_sign
                     FROM
                         contract c
                     LEFT JOIN
@@ -182,7 +181,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                         c.mark_deleted = 0
                         AND (c.created_by = :email OR c.id IN (:ids))
             """, nativeQuery = true)
-    String[] getNotificationContractNumber(String signedStatus, String email, List<String> ids);
+    String[] getNotificationContractNumber(String signedStatus, String waitSignStatus, String email, List<String> ids);
 
 
 

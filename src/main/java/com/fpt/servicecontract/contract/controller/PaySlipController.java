@@ -26,7 +26,7 @@ public class PaySlipController {
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String type
     ) {
-        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year, type));
+        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year, type, null));
     }
 
     @GetMapping("/calculate")
@@ -43,7 +43,7 @@ public class PaySlipController {
             @RequestParam(required = false) Integer year,
             @RequestHeader("Authorization") String bearerToken) {
         String email = jwtService.extractUsername(bearerToken.substring(7));
-        return ResponseEntity.ok(paySlipService.GetPaySlipById(Pageable.ofSize(size).withPage(page), month, year, email));
+        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year, null, email));
     }
 
     @GetMapping("/commission")

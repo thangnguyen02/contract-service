@@ -26,4 +26,5 @@ public class PaySlipFormula {
     private Double foodAllowance;
     private Double transportationOrPhoneAllowance;
     private String type;
+    private Double bonusAfter1Year;
 }

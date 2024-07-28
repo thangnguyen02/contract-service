@@ -10,8 +10,7 @@ import lombok.Setter;
 public class NotificationContractNumberDto {
     private Integer approvedCount;
     private Integer waitApprovedCount;
-    private Integer waitSignACount;
+    private Integer waitSignCount;
     private Integer successCount;
     private Integer signedCount;
-    private Integer waitSignBCount;
 }

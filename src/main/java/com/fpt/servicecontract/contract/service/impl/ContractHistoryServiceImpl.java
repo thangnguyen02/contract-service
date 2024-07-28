@@ -47,6 +47,7 @@ public class ContractHistoryServiceImpl implements ContractHistoryService {
                     .time(row[3].toString())
                     .status(row[4].toString())
                     .contractName(row[5].toString())
+                    .comment(row[6].toString())
                     .build());
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, response);

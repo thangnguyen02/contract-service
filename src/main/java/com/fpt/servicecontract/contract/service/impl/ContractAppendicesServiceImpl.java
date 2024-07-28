@@ -74,6 +74,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .canSend(true)
                     .canApprove(false)
                     .canSign(true)
+                    .value(Objects.nonNull(obj[9]) ? (Double) obj[9] : null)
                     .build();
             String status = response.getStatusCurrent();
 //            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
