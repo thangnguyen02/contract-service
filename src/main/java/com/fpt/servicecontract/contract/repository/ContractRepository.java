@@ -44,7 +44,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                        SELECT JSON_ARRAYAGG(ca.id) AS appendices
                        FROM fpt_company.contract_appendices ca
                        WHERE ca.contract_id = c.id
-                    ) AS appendices
+                    ) AS appendices,
+                     c.value
                  FROM
                      contract c
                  JOIN 
@@ -104,7 +105,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.created_by,
                      c.approved_by,
                      c.is_urgent,
-                     c.contract_type_id
+                     c.contract_type_id,
+                     c.value
                  FROM
                      fpt_company.contract c
                          LEFT JOIN

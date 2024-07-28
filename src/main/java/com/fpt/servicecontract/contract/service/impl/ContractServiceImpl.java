@@ -332,6 +332,7 @@ public class ContractServiceImpl implements ContractService {
                     .approvedBy(Objects.nonNull(obj[31]) ? obj[31].toString() : null)
                     .isUrgent(Objects.nonNull(obj[32]) ? Boolean.parseBoolean(obj[32].toString()) : null)
                     .contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null)
+                    .value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null)
                     .build();
         }
         return contractRequest;
@@ -492,7 +493,7 @@ public class ContractServiceImpl implements ContractService {
 
         // site a or b reject with reseon
         if (status.equals(SignContractStatus.SIGN_B_FAIL.name())
-            || status.equals(SignContractStatus.SIGN_A_FAIL.name())
+                || status.equals(SignContractStatus.SIGN_A_FAIL.name())
         ) {
             signContractResponse.setCanSend(true);
             signContractResponse.setCanSendForMng(false);
@@ -508,11 +509,11 @@ public class ContractServiceImpl implements ContractService {
 
         if (status.equals(SignContractStatus.SIGN_A_OK.name())
         ) {
+            signContractResponse.setCanSend(false);
+            signContractResponse.setCanSendForMng(false);
+            contract.get().setStatus(Constants.STATUS.SUCCESS);
+            contractRepository.save(contract.get());
             if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
-                signContractResponse.setCanSend(false);
-                signContractResponse.setCanSendForMng(false);
-                contract.get().setStatus(Constants.STATUS.SUCCESS);
-                contractRepository.save(contract.get());
                 status = SignContractStatus.SUCCESS.name();
 
                 notificationService.create(Notification.builder()
@@ -574,7 +575,7 @@ public class ContractServiceImpl implements ContractService {
                 .toList();
         var userEmail = userRepository.findByEmail(email);
 
-        if (userEmail.isEmpty()) {
+        if(userEmail.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Email not exist ", true, null);
         }
 
