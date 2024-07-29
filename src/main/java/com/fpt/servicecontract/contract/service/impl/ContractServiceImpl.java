@@ -135,7 +135,6 @@ public class ContractServiceImpl implements ContractService {
             contract.setUpdatedDate(LocalDateTime.now());
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
             result = contractRepository.save(contract);
-//            contractStatusService.create(email, null, result.getId(), Constants.STATUS.UPDATE, "modify contract");
             String[] emails = new String[] { email };
             mailService.sendNewMail(emails, null, "Contract Update", "<h1>The contract have been updated<h1>", null);
         }
@@ -202,6 +201,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSign(false);
                 response.setCanUpdateContractRecieve(true);
                 response.setCanSendForCustomer(false);
+                response.setRejectedBy(Objects.nonNull(obj[12]) ? obj[12].toString() : null);
             }
 
             //send office_admin
@@ -511,9 +511,9 @@ public class ContractServiceImpl implements ContractService {
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
-            contract.get().setStatus(Constants.STATUS.SUCCESS);
-            contractRepository.save(contract.get());
-            if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
+            if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                contractRepository.save(contract.get());
                 status = SignContractStatus.SUCCESS.name();
 
                 notificationService.create(Notification.builder()
@@ -531,17 +531,17 @@ public class ContractServiceImpl implements ContractService {
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
-            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
+            if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(email + "đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(email)
-                        .build());
+//                notificationService.create(Notification.builder()
+//                        .title(contract.get().getName())
+//                        .message(email + "đã kí hợp đồng thành công")
+//                        .typeNotification("CONTRACT")
+//                        .receivers(receivers)
+//                        .sender(email)
+//                        .build());
             }
 
         }

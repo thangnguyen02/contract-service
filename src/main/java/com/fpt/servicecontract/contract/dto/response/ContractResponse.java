@@ -32,4 +32,5 @@ public class ContractResponse {
     private List<String> contractAppendicesId;
     private boolean canSendForCustomer;
     private Double value;
+    private String rejectedBy;
 }

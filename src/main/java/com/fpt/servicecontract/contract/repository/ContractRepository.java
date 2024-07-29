@@ -24,6 +24,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                        SELECT
                          cs.contract_id,
                          cs.status,
+                         cs.sender,
                          ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
                      FROM
                          contract_status cs
@@ -45,7 +46,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                        FROM fpt_company.contract_appendices ca
                        WHERE ca.contract_id = c.id
                     ) AS appendices,
-                     c.value
+                     c.value,
+                     latest_status.sender
                  FROM
                      contract c
                  JOIN 
