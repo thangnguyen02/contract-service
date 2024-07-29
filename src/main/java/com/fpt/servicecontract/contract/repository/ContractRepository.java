@@ -47,7 +47,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                        WHERE ca.contract_id = c.id
                     ) AS appendices,
                      c.value,
-                     latest_status.sender
+                     ls.sender
                  FROM
                      contract c
                  JOIN 
