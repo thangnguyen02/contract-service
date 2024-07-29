@@ -32,6 +32,7 @@ public class PaySlipController {
     @GetMapping("/calculate")
     public ResponseEntity<BaseResponse> calculatePaySlip(
     ) {
+        paySlipService.CalculateLeaderSalePaySlip();
         return ResponseEntity.ok(paySlipService.CalculateAllPaySlip());
     }
 

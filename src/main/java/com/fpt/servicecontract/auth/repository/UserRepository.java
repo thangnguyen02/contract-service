@@ -101,8 +101,8 @@ public interface UserRepository extends JpaRepository<User, String> {
                             contract c
                     WHERE
                         c.mark_deleted = 0
-                        and (month(pl.created_date) = :monthSearch or :monthSearch is null)
-                        and (year(pl.created_date) = :yearSearch or :yearSearch is null)
+                        and (month(c.created_date) = :monthSearch or :monthSearch is null)
+                        and (year(c.created_date) = :yearSearch or :yearSearch is null)
                         AND (c.status = 'SUCCESS')
             """, nativeQuery = true)
     Double getTotalNumberSales(Integer monthSearch, Integer yearSearch);

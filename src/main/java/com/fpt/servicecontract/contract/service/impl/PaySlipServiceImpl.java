@@ -176,8 +176,8 @@ public class PaySlipServiceImpl implements PaySlipService {
 
         List<String> saleEmails = userRepository.getUserWithPermissionList(Permission.SALE.name()).stream().map(UserInterface::getEmail).toList();
         double saleAndNumberSalesHaveCommission = userRepository.getTotalNumberSales(LocalDate.now().getMonthValue(), LocalDate.now().getYear()) == null ? 0 : userRepository.getTotalNumberSales(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
-
-        double averageNumberSale = saleAndNumberSalesHaveCommission / saleEmails.size();
+        double saleContractAppendices = contractAppendicesRepository.getTotalValue(LocalDate.now().getMonthValue(), LocalDate.now().getYear()) == null ? 0 : contractAppendicesRepository.getTotalValue(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
+        double averageNumberSale = saleAndNumberSalesHaveCommission + saleContractAppendices / saleEmails.size();
 
         var paySlipFormula = paySlipFormulas.stream().
                 filter(e -> averageNumberSale >= e.getFromValueContract()

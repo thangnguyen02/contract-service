@@ -53,7 +53,7 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
     @Query(value = """
                     SELECT c.created_by, SUM(c.value) AS numberSales
                         FROM
-                            contract_appendices ca
+                            contract_appendices c
                     WHERE
                         c.mark_deleted = 0
                         AND (c.created_by in (:emails))
@@ -63,4 +63,17 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                     GROUP BY c.created_by
             """, nativeQuery = true)
     List<Object[]> getSaleAndNumberSales(List<String> emails, Integer monthSearch, Integer yearSearch);
+
+    @Query(value = """
+                    SELECT SUM(ca.value) AS numberSales
+                        FROM
+                            contract_appendices ca
+                    WHERE
+                        ca.mark_deleted = 0
+                        and (month(ca.created_date) = :monthSearch or :monthSearch is null)
+                        and (year(ca.created_date) = :yearSearch or :yearSearch is null)
+                        AND (ca.status = 'SUCCESS')
+                    GROUP BY ca.created_by
+            """, nativeQuery = true)
+    Double getTotalValue(Integer monthSearch, Integer yearSearch);
 }
