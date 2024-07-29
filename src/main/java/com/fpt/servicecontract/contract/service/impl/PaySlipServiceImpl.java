@@ -208,9 +208,14 @@ public class PaySlipServiceImpl implements PaySlipService {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
         }
 
+
         List<String> saleEmails = userRepository.getUserWithPermissionList(Permission.SALE.name()).stream().map(UserInterface::getEmail).toList();
         double saleAndNumberSalesHaveCommission = userRepository.getTotalNumberSales(null, LocalDate.now().getYear()) == null ? 0 : userRepository.getTotalNumberSales(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
-        double averageNumberSale = saleAndNumberSalesHaveCommission / saleEmails.size();
+        double saleContractAppendices = contractAppendicesRepository.getTotalValue(LocalDate.now().getMonthValue(), LocalDate.now().getYear()) == null ? 0 : contractAppendicesRepository.getTotalValue(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
+
+        double averageNumberSale = saleAndNumberSalesHaveCommission + saleContractAppendices / saleEmails.size();
+//        double totalValueContractOneYear =
+
         var paySlipFormula = paySlipFormulas.stream().
                 filter(e -> averageNumberSale >= e.getFromValueContract()
                             && averageNumberSale < e.getToValueContract()).findFirst();
@@ -218,7 +223,7 @@ public class PaySlipServiceImpl implements PaySlipService {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission value  contract not valid", true, null);
         }
         Double bonusAfter1Year = averageNumberSale / 100 * paySlipFormula.get().getBonusAfter1Year();
-
+//
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Calculate successfully", true, bonusAfter1Year);
     }
 
