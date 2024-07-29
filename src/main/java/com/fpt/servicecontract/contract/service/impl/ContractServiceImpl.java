@@ -26,6 +26,7 @@ import com.fpt.servicecontract.utils.*;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -135,7 +136,7 @@ public class ContractServiceImpl implements ContractService {
             contract.setUpdatedDate(LocalDateTime.now());
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
             result = contractRepository.save(contract);
-            String[] emails = new String[] { email };
+            String[] emails = new String[]{email};
             mailService.sendNewMail(emails, null, "Contract Update", "<h1>The contract have been updated<h1>", null);
         }
         contractRequest.setId(result.getId());
@@ -150,7 +151,7 @@ public class ContractServiceImpl implements ContractService {
     public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
+                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
@@ -216,20 +217,20 @@ public class ContractServiceImpl implements ContractService {
             }
 
             if (SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
-                SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
+                    SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
             }
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
             }
 
             if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
-                || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+                    || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
             }
@@ -575,7 +576,7 @@ public class ContractServiceImpl implements ContractService {
                 .toList();
         var userEmail = userRepository.findByEmail(email);
 
-        if(userEmail.isEmpty()) {
+        if (userEmail.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Email not exist ", true, null);
         }
 
