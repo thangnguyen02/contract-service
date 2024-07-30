@@ -35,10 +35,9 @@ public interface PaySlipRepository extends JpaRepository<PaySlip, String> {
                 select count(pl.id), sum(pl.total_value_contract)
                 from pay_slip pl
                 WHERE
-                        (month(pl.created_date) = :monthSearch or :monthSearch is null)
-                        and (year(pl.created_date) = :yearSearch or :yearSearch is null)
+                        (year(pl.created_date) = :yearSearch or :yearSearch is null)
                         AND pl.type = :type
             """, nativeQuery = true)
-    Optional<Object[]> getTotalValueContractOneYear(Integer monthSearch, Integer yearSearch, String type);
+    Optional<Object[]> getTotalValueContractOneYear(Integer yearSearch, String type);
 
 }

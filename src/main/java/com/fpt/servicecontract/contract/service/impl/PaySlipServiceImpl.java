@@ -87,7 +87,8 @@ public class PaySlipServiceImpl implements PaySlipService {
             contractAppendicesMap.put((String) saleAndNumber[0], (Double) saleAndNumber[1]);
         }
         for (Object[] saleAndNumber : saleAndNumberSalesHaveCommission) {
-            saleAndNumberSalesAll.put((String) saleAndNumber[0], (Double) saleAndNumber[1] + contractAppendicesMap.get((String) saleAndNumber[0]));
+            double append = contractAppendicesMap.get((String) saleAndNumber[0]) == null ? 0 : contractAppendicesMap.get((String) saleAndNumber[0]);
+            saleAndNumberSalesAll.put((String) saleAndNumber[0], (Double) saleAndNumber[1] + append);
         }
         return saleAndNumberSalesAll;
     }
@@ -208,22 +209,27 @@ public class PaySlipServiceImpl implements PaySlipService {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
         }
 
-
-        List<String> saleEmails = userRepository.getUserWithPermissionList(Permission.SALE.name()).stream().map(UserInterface::getEmail).toList();
-        double saleAndNumberSalesHaveCommission = userRepository.getTotalNumberSales(null, LocalDate.now().getYear()) == null ? 0 : userRepository.getTotalNumberSales(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
-        double saleContractAppendices = contractAppendicesRepository.getTotalValue(LocalDate.now().getMonthValue(), LocalDate.now().getYear()) == null ? 0 : contractAppendicesRepository.getTotalValue(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
-
-        double averageNumberSale = saleAndNumberSalesHaveCommission + saleContractAppendices / saleEmails.size();
-//        double totalValueContractOneYear =
-
+        var totalValueContractOneYearAvg = paySlipRepository.getTotalValueContractOneYear(LocalDate.now().getYear(), Constants.POSITION.LEADER_SALE);
+        var totalValueContractOneYear = paySlipRepository.getTotalValueContractOneYear(LocalDate.now().getYear(), Constants.POSITION.SALE);
+        if (totalValueContractOneYearAvg.isEmpty() || totalValueContractOneYear.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission value  contract not valid", true, null);
+        }
+        var averageNumberSale = totalValueContractOneYearAvg.get()[1] == null ? 0 : (double) totalValueContractOneYearAvg.get()[1]  / ( totalValueContractOneYearAvg.get()[0] == null ? 1 : (Integer) totalValueContractOneYearAvg.get()[0]);
+        var totalNumberSale = totalValueContractOneYear.get()[1] == null ? 0 : (double) totalValueContractOneYear.get()[1]  ;
         var paySlipFormula = paySlipFormulas.stream().
                 filter(e -> averageNumberSale >= e.getFromValueContract()
-                            && averageNumberSale < e.getToValueContract()).findFirst();
+                        && averageNumberSale < e.getToValueContract()).findFirst();
+
         if (paySlipFormula.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission value  contract not valid", true, null);
         }
-        Double bonusAfter1Year = averageNumberSale / 100 * paySlipFormula.get().getBonusAfter1Year();
-//
+
+        Double bonusAfter1Year = totalNumberSale / 100 * paySlipFormula.get().getBonusAfter1Year();
+
+        paySlipRepository.save(PaySlip.builder()
+                        .email("leaderSale@gmail.com")
+                        .totalSalary(bonusAfter1Year)
+                .build());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Calculate successfully", true, bonusAfter1Year);
     }
 
