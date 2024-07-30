@@ -278,6 +278,15 @@ public class ContractServiceImpl implements ContractService {
             statusListSearch.add(SignContractStatus.SUCCESS.name());
         }
 
+
+        if (SignContractStatus.WAIT_SIGN.name().equals(statusSearch)) {
+            statusListSearch.add(SignContractStatus.WAIT_SIGN_A.name());
+            statusListSearch.add(SignContractStatus.WAIT_SIGN_B.name());
+        }
+        if (SignContractStatus.SIGN_OK.name().equals(statusSearch)) {
+            statusListSearch.add(SignContractStatus.SIGN_A_OK.name());
+            statusListSearch.add(SignContractStatus.SIGN_B_OK.name());
+        }
         if (SignContractStatus.MANAGER_CONTRACT.name().equals(statusSearch)) {
             statusListSearch.add(SignContractStatus.NEW.name());
             statusListSearch.add(SignContractStatus.APPROVE_FAIL.name());

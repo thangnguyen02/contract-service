@@ -14,7 +14,9 @@ public enum SignContractStatus {
     SIGN_A_OK("SIGN_A_OK"),
     SIGN_B_OK("SIGN_B_OK"),
     MANAGER_CONTRACT("MANAGER_CONTRACT"),
-    ALL("ALL")
+    ALL("ALL"),
+    WAIT_SIGN("WAIT_SIGN"),
+    SIGN_OK("SIGN_OK")
     ;
 
     private final String signContractStatus;
