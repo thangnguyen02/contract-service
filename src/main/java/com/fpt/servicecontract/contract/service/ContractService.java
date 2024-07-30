@@ -12,9 +12,9 @@ import java.io.IOException;
 
 public interface ContractService {
 
-    BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception;
+    BaseResponse createContract(ContractRequest contractRequest, String email);
 
-    BaseResponse findAll(Pageable p, String email, String status, String search) throws JsonProcessingException;
+    BaseResponse findAll(Pageable p, String email, String status, String search);
 
     ContractRequest findById(String id);
 
@@ -24,11 +24,11 @@ public interface ContractService {
 
     Void sync();
 
-    String signContract(SignContractDTO signContractDTO) throws Exception;
+    BaseResponse signContract(SignContractDTO signContractDTO);
 
     BaseResponse getContractSignById(String id);
 
-    SignContractResponse sendMail(String bearerToken,String[] to,String[] cc,String subject,String htmlContent, MultipartFile[] attachments, String contractId, String status, String description);
+    BaseResponse sendMail(String bearerToken,String[] to,String[] cc,String subject,String htmlContent, MultipartFile[] attachments, String contractId, String status, String description);
 
     BaseResponse getNotificationContractNumber(String email);
 }

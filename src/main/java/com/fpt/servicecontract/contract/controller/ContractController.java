@@ -38,16 +38,16 @@ public class ContractController {
 
 
     @PostMapping("/send-mail")
-    public ResponseEntity<SignContractResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
-                                                         @RequestParam String[] to,
-                                                         @RequestParam(required = false) String[] cc,
-                                                         @RequestParam String subject,
-                                                         @RequestParam String htmlContent,
-                                                         @RequestParam(required = false) MultipartFile[] attachments,
-                                                         @RequestParam String contractId,
-                                                         @RequestParam String status,
-                                                         @RequestParam String description
-    ) throws MessagingException {
+    public ResponseEntity<BaseResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
+                                                 @RequestParam String[] to,
+                                                 @RequestParam(required = false) String[] cc,
+                                                 @RequestParam String subject,
+                                                 @RequestParam String htmlContent,
+                                                 @RequestParam(required = false) MultipartFile[] attachments,
+                                                 @RequestParam String contractId,
+                                                 @RequestParam String status,
+                                                 @RequestParam String description
+    ) {
         return ResponseEntity.ok(contractService.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractId, status, description));
     }
 
@@ -90,7 +90,7 @@ public class ContractController {
 
     @PostMapping()
     public ResponseEntity<BaseResponse> createContract(@RequestHeader("Authorization") String bearerToken,
-                                                       @RequestBody ContractRequest contractRequest) throws Exception {
+                                                       @RequestBody ContractRequest contractRequest) {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(contractService.createContract(contractRequest, email));
     }
@@ -107,14 +107,13 @@ public class ContractController {
     }
 
     @GetMapping("/public/sign-contract/{id}")
-    public ResponseEntity<BaseResponse> getContractSignById(@PathVariable String id) throws Exception {
+    public ResponseEntity<BaseResponse> getContractSignById(@PathVariable String id) {
         return ResponseEntity.ok(contractService.getContractSignById(id));
     }
 
     @PostMapping("/public/sign-contract")
-    public ResponseEntity<BaseResponse> signContract(@RequestBody SignContractDTO signContractDTO) throws Exception {
-        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
-                "Successfully", true, contractService.signContract(signContractDTO)));
+    public ResponseEntity<BaseResponse> signContract(@RequestBody SignContractDTO signContractDTO) {
+        return ResponseEntity.ok(contractService.signContract(signContractDTO));
     }
 
     @PostMapping("/reject-contract")

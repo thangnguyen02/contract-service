@@ -93,8 +93,12 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "the contract template not exist", true, null);
         }
         template.get().setMarkDeleted(true);
-        contractTemplateRepository.save(template.get());
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successfully", true, null);
+        try {
+            contractTemplateRepository.save(template.get());
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Delete Successfully", true, null);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
     }
 
     @Override

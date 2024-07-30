@@ -1,7 +1,5 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fpt.servicecontract.auth.model.Permission;
 import com.fpt.servicecontract.auth.model.User;
@@ -61,7 +59,7 @@ public class ContractServiceImpl implements ContractService {
 
 
     @Override
-    public BaseResponse createContract(ContractRequest contractRequest, String email) throws Exception {
+    public BaseResponse createContract(ContractRequest contractRequest, String email) {
         Party partyA = Party
                 .builder()
                 .id(contractRequest.getPartyA().getId())
@@ -117,8 +115,17 @@ public class ContractServiceImpl implements ContractService {
         context.setVariable("info", contract);
         context.setVariable("date", LocalDateTime.now().toLocalDate());
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
-        File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
-        contract.setFile(cloudinaryService.uploadPdf(file));
+        File file = null;
+        try {
+            file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
+        try {
+            contract.setFile(cloudinaryService.uploadPdf(file));
+        } catch (IOException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
         if (file.exists() && file.isFile()) {
             boolean deleted = file.delete();
             if (!deleted) {
@@ -137,18 +144,26 @@ public class ContractServiceImpl implements ContractService {
             contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
             result = contractRepository.save(contract);
             String[] emails = new String[]{email};
-            mailService.sendNewMail(emails, null, "Contract Update", "<h1>The contract have been updated<h1>", null);
+            try {
+                mailService.sendNewMail(emails, null, "Contract Update", "<h1>The contract have been updated<h1>", null);
+            } catch (MessagingException e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+            }
         }
         contractRequest.setId(result.getId());
         contractRequest.setSignA("");
         contractRequest.setSignB("");
         contractRequest.setContractTypeId(contractTypeService.getContractTypeById(contractRequest.getContractTypeId()).get().getTitle());
-        elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
+        try {
+            elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
+        } catch (IOException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, contract);
     }
 
     @Override
-    public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) throws JsonProcessingException {
+    public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<String> ids = contractStatusRepository.findAll().stream()
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
@@ -169,8 +184,8 @@ public class ContractServiceImpl implements ContractService {
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
-                    .contractAppendicesId(Objects.nonNull(obj[11]) ? objectMapper.readValue(obj[11].toString(), new TypeReference<List<String>>() {
-                    }) : null)
+//                    .contractAppendicesId(Objects.nonNull(obj[11]) ? objectMapper.readValue(obj[11].toString(), new TypeReference<List<String>>() {
+//                    }) : null)
                     .canSend(true)
                     .canApprove(false)
                     .canSign(true)
@@ -350,9 +365,12 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse delete(String id) throws IOException {
-        Contract contract = contractRepository.findById(id).get();
-        contract.setMarkDeleted(true);
-        contractRepository.save(contract);
+        var contract = contractRepository.findById(id);
+        if (contract.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", true, null);
+        }
+        contract.get().setMarkDeleted(true);
+        contractRepository.save(contract.get());
         elasticSearchService.deleteDocumentById("contract", id);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, null);
     }
@@ -383,13 +401,13 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String signContract(SignContractDTO signContractDTO) throws Exception {
+    public BaseResponse signContract(SignContractDTO signContractDTO) {
         ContractRequest contractRequest = findById(signContractDTO.getContractId());
         Contract contract = contractRepository.findById(signContractDTO.getContractId()).orElse(null);
         Context context = new Context();
         if (contract != null) {
             if (contract.getSignB() != null && contract.getSignA() != null) {
-                return "Contract is successful" + contract.getContractSignDate();
+                return new BaseResponse(Constants.ResponseCode.SUCCESS, "Contract is successful" + contract.getContractSignDate(), true, null);
             }
             if (!signContractDTO.isCustomer()) {
                 contract.setSignA(signContractDTO.getSignImage());
@@ -419,18 +437,31 @@ public class ContractServiceImpl implements ContractService {
             context.setVariable("info", contract);
             context.setVariable("date", contract.getCreatedDate());
             String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
-            File file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
-            contract.setFile(cloudinaryService.uploadPdf(file));
+            File file = null;
+            try {
+                file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
+            } catch (Exception e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+            }
+            try {
+                contract.setFile(cloudinaryService.uploadPdf(file));
+            } catch (IOException e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+            }
             if (file.exists() && file.isFile()) {
                 boolean deleted = file.delete();
                 if (!deleted) {
                     log.warn("Failed to delete the file: {}", file.getAbsolutePath());
                 }
             }
-            contractRepository.save(contract);
-            return "Sign ok";
+            try{
+                contractRepository.save(contract);
+                return new BaseResponse(Constants.ResponseCode.SUCCESS, "Sign ok", true, null);
+            } catch (Exception e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+            }
         } else {
-            return "Failed";
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Sign Fail", true, null);
         }
     }
 
@@ -440,7 +471,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public SignContractResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
+    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
         SignContractResponse signContractResponse = new SignContractResponse();
         String email = jwtService.extractUsername(bearerToken.substring(7));
         //Contract status
@@ -545,13 +576,13 @@ public class ContractServiceImpl implements ContractService {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
-//                notificationService.create(Notification.builder()
-//                        .title(contract.get().getName())
-//                        .message(email + "đã kí hợp đồng thành công")
-//                        .typeNotification("CONTRACT")
-//                        .receivers(receivers)
-//                        .sender(email)
-//                        .build());
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(email + "đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(email)
+                        .build());
             }
 
         }
@@ -572,9 +603,9 @@ public class ContractServiceImpl implements ContractService {
         try {
             mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
         }
-        return signContractResponse;
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, signContractResponse);
     }
 
     @Override

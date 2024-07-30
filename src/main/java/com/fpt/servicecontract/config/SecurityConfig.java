@@ -38,6 +38,7 @@ public class SecurityConfig {
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/api-docs/**").permitAll()
                     .requestMatchers("/api/**").permitAll()
+                    .requestMatchers("/contract-templates/**").permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 
