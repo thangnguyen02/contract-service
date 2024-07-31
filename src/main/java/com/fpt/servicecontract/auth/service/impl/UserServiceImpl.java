@@ -166,6 +166,7 @@ public class UserServiceImpl implements UserService {
         }
         int passReset = new Random().nextInt(999999);
         user.get().setPassword(passwordEncoder.encode(String.valueOf(passReset)));
+        userRepository.save(user.get());
         String[] to = new String[]{email};
         try {
             mailService.sendNewMail(to, null, "Password Reset", "<h1>Your pass after reset: <h1>" + passReset, null);
