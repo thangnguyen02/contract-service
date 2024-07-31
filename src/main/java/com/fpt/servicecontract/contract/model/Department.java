@@ -6,6 +6,8 @@ import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
+
 @Entity
 @Table
 @Getter
@@ -23,4 +25,8 @@ public class Department {
     private String description;
 
     private Boolean markDeleted;
+
+    private LocalDate createdDate;
+
+    private LocalDate updatedDate;
 }
