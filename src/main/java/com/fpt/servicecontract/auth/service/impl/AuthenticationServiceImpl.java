@@ -69,8 +69,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (user.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "user not found", true, null);
         }
-        String oldPass = passwordEncoder.encode(request.getOldPassword());
-        if (!user.get().getPassword().equals(oldPass)) {
+        if (passwordEncoder.matches(request.getOldPassword(), user.get().getPassword())) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Old password wrong", true, null);
         }
         user.get().setPassword(passwordEncoder.encode(request.getNewPassword()));
