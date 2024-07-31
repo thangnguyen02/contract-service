@@ -252,6 +252,7 @@ public class ContractServiceImpl implements ContractService {
                     || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
+                response.setCanSend(false);
             }
 
             if (SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.name().equals(status)
