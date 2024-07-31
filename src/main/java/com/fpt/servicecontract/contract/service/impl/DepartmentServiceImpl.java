@@ -1,6 +1,5 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fpt.servicecontract.contract.dto.StatisticalDto;
 import com.fpt.servicecontract.contract.model.Department;
 import com.fpt.servicecontract.contract.repository.DepartmentRepository;
 import com.fpt.servicecontract.contract.service.DepartmentService;

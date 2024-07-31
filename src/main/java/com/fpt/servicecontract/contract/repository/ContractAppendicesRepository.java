@@ -57,8 +57,8 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                     WHERE
                         c.mark_deleted = 0
                         AND (c.created_by in (:emails))
-                        and (month(pl.created_date) = :monthSearch or :monthSearch is null)
-                        and (year(pl.created_date) = :yearSearch or :yearSearch is null)
+                        and (month(c.created_date) = :monthSearch or :monthSearch is null)
+                        and (year(c.created_date) = :yearSearch or :yearSearch is null)
                         AND (c.status = 'SUCCESS')
                     GROUP BY c.created_by
             """, nativeQuery = true)

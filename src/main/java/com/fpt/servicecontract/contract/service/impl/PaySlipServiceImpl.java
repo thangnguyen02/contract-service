@@ -140,11 +140,8 @@ public class PaySlipServiceImpl implements PaySlipService {
         List<String> saleEmails = userRepository.getUserWithPermissionList(Permission.SALE.name()).stream().map(UserInterface::getEmail).toList();
 
         List<Object[]> saleAndNumberSalesHaveCommission = userRepository.getSaleAndNumberSales(saleEmails);
-        Map<String, Double> saleAndNumberSalesAll = new HashMap<>();
-        for (Object[] saleAndNumber : saleAndNumberSalesHaveCommission) {
-            saleAndNumberSalesAll.put((String) saleAndNumber[0], (Double) saleAndNumber[1]);
-        }
-
+        List<Object[]> contractAppendices = contractAppendicesRepository.getSaleAndNumberSales(saleEmails, LocalDate.now().getMonthValue(), LocalDate.now().getYear());
+        Map<String, Double> saleAndNumberSalesAll = getStringDoubleMap(contractAppendices, saleAndNumberSalesHaveCommission);
         List<CommissionDto> commissionDtoList = new ArrayList<>();
 
         for (UserInterface sale : saleLst) {

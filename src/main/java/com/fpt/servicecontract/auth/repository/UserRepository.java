@@ -43,7 +43,7 @@ public interface UserRepository extends JpaRepository<User, String> {
                                GROUP BY u.id, u.name, u.email, u.address,
                                         u.identification_number, u.status, u.department, u.phone, u.position
                                order by u.created_date desc
-                """
+            """
             , nativeQuery = true)
     Page<UserInterface> search(@Param("name") String name,
                                @Param("email") String email,
@@ -62,7 +62,7 @@ public interface UserRepository extends JpaRepository<User, String> {
                                JOIN user_permissions up ON u.id = up.user_id where
                                             (permissions like lower(:permission) or :permission is null)
                                GROUP BY u.name, u.email
-                """
+            """
             , nativeQuery = true)
     Page<UserInterface> getUserWithPermission(
             @Param("permission") String permission,

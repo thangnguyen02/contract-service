@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
         if (result.getTotalElements() > 0) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, result);
         }
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Search Successful", true, null);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not Have any User", true, null);
     }
 
     public BaseResponse getUserById(String id) {
