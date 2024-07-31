@@ -65,7 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public BaseResponse changePassword(ChangePasswordRequest request) {
-        var user = repository.findByEmail(request.getEmail());
+        var user = repository.findByEmailAndStatus(request.getEmail(), UserStatus.ACTIVE);
         if (user.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "user not found", true, null);
         }

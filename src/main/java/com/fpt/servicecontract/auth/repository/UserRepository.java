@@ -2,6 +2,7 @@ package com.fpt.servicecontract.auth.repository;
 
 import com.fpt.servicecontract.auth.dto.UserInterface;
 import com.fpt.servicecontract.auth.model.User;
+import com.fpt.servicecontract.auth.model.UserStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "select * from users where id = :id", nativeQuery = true)
     User searchByUserId(@Param("id") String id);
 
-    Optional<User> findByEmailAndStatus(String email, String status);
+    Optional<User> findByEmailAndStatus(String email, UserStatus status);
 
     @Query(value = """
             SELECT u.id,u.name, u.email, u.address,
