@@ -174,4 +174,23 @@ public class UserServiceImpl implements UserService {
             return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
         }
     }
+
+    @Override
+    public BaseResponse changePassword(ChangePasswordRequest request) {
+        var user = userRepository.findByEmail(request.getEmail());
+        if (user.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "user not found", true, null);
+        }
+        String oldPass = passwordEncoder.encode(request.getOldPassword());
+        if (!user.get().equals(oldPass)) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Old password wrong", true, null);
+        }
+        user.get().setPassword(passwordEncoder.encode(request.getNewPassword()));
+        try {
+            userRepository.save(user.get());
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Change password successfully", true, null);
+    }
 }

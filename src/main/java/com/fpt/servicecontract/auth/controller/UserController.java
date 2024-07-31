@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.auth.controller;
 
+import com.fpt.servicecontract.auth.dto.ChangePasswordRequest;
 import com.fpt.servicecontract.auth.dto.RegisterRequest;
 import com.fpt.servicecontract.auth.dto.SearchUserRequest;
 import com.fpt.servicecontract.auth.dto.UpdateUserRequest;
@@ -69,5 +70,9 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<BaseResponse> resetPassword(@RequestParam String email) {
         return ResponseEntity.ok(service.resetPass(email));
+    }
+    @PostMapping("/change-password")
+    public ResponseEntity<BaseResponse> changePassword(@RequestBody ChangePasswordRequest authenticationRequest) {
+        return ResponseEntity.ok(service.changePassword(authenticationRequest));
     }
 }

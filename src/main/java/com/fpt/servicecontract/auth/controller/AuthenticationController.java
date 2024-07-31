@@ -28,6 +28,7 @@ public class AuthenticationController {
   @GetMapping("/logout")
   public ResponseEntity<BaseResponse> logout(@RequestParam String email) {
     return ResponseEntity.ok(service.logout(email));
-
   }
+
+
 }

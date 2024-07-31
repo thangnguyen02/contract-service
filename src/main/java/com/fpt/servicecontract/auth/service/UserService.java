@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.auth.service;
 
+import com.fpt.servicecontract.auth.dto.ChangePasswordRequest;
 import com.fpt.servicecontract.auth.dto.RegisterRequest;
 import com.fpt.servicecontract.auth.dto.SearchUserRequest;
 import com.fpt.servicecontract.auth.dto.UpdateUserRequest;
@@ -23,4 +24,5 @@ public interface UserService {
 
     BaseResponse resetPass(String email);
 
+    BaseResponse changePassword(ChangePasswordRequest request);
 }
