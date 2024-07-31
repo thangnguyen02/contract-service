@@ -2,6 +2,7 @@ package com.fpt.servicecontract.auth.controller;
 
 import com.fpt.servicecontract.auth.dto.AuthenticationRequest;
 import com.fpt.servicecontract.auth.dto.AuthenticationResponse;
+import com.fpt.servicecontract.auth.dto.ChangePasswordRequest;
 import com.fpt.servicecontract.auth.service.AuthenticationService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,8 @@ public class AuthenticationController {
     return ResponseEntity.ok(service.logout(email));
   }
 
-
+  @PostMapping("/change-password")
+  public ResponseEntity<BaseResponse> changePassword(@RequestBody ChangePasswordRequest authenticationRequest) {
+    return ResponseEntity.ok(service.changePassword(authenticationRequest));
+  }
 }

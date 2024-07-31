@@ -24,5 +24,4 @@ public interface UserService {
 
     BaseResponse resetPass(String email);
 
-    BaseResponse changePassword(ChangePasswordRequest request);
 }
