@@ -108,6 +108,8 @@ public class ContractServiceImpl implements ContractService {
                 .isUrgent(contractRequest.isUrgent())
                 .contractTypeId(contractRequest.getContractTypeId())
                 .value(contractRequest.getValue())
+                .updatedDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now())
                 .build();
         Context context = new Context();
         context.setVariable("partyA", partyA);
@@ -188,12 +190,9 @@ public class ContractServiceImpl implements ContractService {
                     .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
                     .customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
-//                    .contractAppendicesId(Objects.nonNull(obj[11]) ? objectMapper.readValue(obj[11].toString(), new TypeReference<List<String>>() {
-//                    }) : null)
                     .canSend(true)
                     .canApprove(false)
                     .canSign(true)
-                    .canUpdateContractRecieve(false)
                     .canSendForCustomer(true)
                     .build();
             String status = response.getStatusCurrent();
@@ -210,8 +209,9 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSend(false);
                 response.setCanApprove(true);
                 response.setCanSign(false);
-                response.setCanUpdateContractRecieve(true);
                 response.setCanSendForCustomer(false);
+                response.setCanUpdate(true);
+                response.setCanDelete(true);
             }
 
             //officer-admin reject
@@ -219,9 +219,10 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanResend(true);
                 response.setCanApprove(false);
                 response.setCanSign(false);
-                response.setCanUpdateContractRecieve(true);
                 response.setCanSendForCustomer(false);
                 response.setRejectedBy(Objects.nonNull(obj[12]) ? obj[12].toString() : null);
+                response.setCanUpdate(true);
+                response.setCanDelete(true);
             }
 
             //send office_admin
@@ -231,7 +232,6 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanDelete(true);
                 response.setCanApprove(true);
                 response.setCanSign(false);
-                response.setCanUpdateContractRecieve(true);
                 response.setCanSendForCustomer(false);
             }
 
@@ -239,6 +239,8 @@ public class ContractServiceImpl implements ContractService {
                     SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
                 response.setCanSend(false);
                 response.setCanSendForMng(false);
+                response.setCanSign(true);
+                response.setCanUpdate(false);
             }
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
@@ -253,6 +255,36 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
                 response.setCanSend(false);
+                response.setCanSendForCustomer(false);
+                response.setCanSendForMng(false);
+            }
+
+
+            List<String> statusDb = contractStatusService.checkDoneSign(response.getId());
+
+            if (status.equals(SignContractStatus.SIGN_A_OK.name())
+            ) {
+                response.setCanSend(false);
+                response.setCanSendForMng(false);
+                response.setCanUpdate(false);
+                if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+                    response.setStatus(Constants.STATUS.SUCCESS);
+                } else {
+                    response.setCanSendForCustomer(true);
+                }
+            }
+
+            if (status.equals(SignContractStatus.SIGN_B_OK.name())
+            ) {
+                response.setCanSend(false);
+                response.setCanSendForMng(false);
+                response.setCanUpdate(false);
+                if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
+                    status = SignContractStatus.SUCCESS.name();
+                } else {
+                    response.setCanSendForMng(true);
+                }
+
             }
 
             if (SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.name().equals(status)
@@ -262,9 +294,6 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSign(false);
             }
 
-            if (SignContractStatus.SIGN_B_OK.name().equals(status)) {
-                response.setCanSign(false);
-            }
             responses.add(response);
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,

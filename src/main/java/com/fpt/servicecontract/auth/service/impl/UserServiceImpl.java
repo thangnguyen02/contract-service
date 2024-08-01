@@ -60,6 +60,7 @@ public class UserServiceImpl implements UserService {
         user.setIdentificationNumber(request.getIdentificationNumber());
         user.setDob(DateUltil.stringToDate(request.getDob(), "yyyy-MM-dd"));
         user.setCreatedDate(new Date());
+
         try {
             userRepository.save(user);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create Successful", true, user);

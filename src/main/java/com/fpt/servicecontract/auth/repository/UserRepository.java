@@ -38,8 +38,8 @@ public interface UserRepository extends JpaRepository<User, String> {
                                                and (lower(u.identification_number) like lower(:identificationNumber) or :identificationNumber is null)
                                                and (lower(u.status) = :status or :status is null)
                                                and (lower(u.department) like lower(:department) or :department is null)
-                                               and (lower(u.phone) like lower(:phoneNumber) or :department is null)
-                                               and (lower(u.position) like lower(:position) or :department is null)
+                                               and (lower(u.phone) like lower(:phoneNumber) or :phoneNumber is null)
+                                               and (lower(u.position) like lower(:position) or :position is null)
                                                and (lower(u.role) like lower(:role) or :role is null)
                                GROUP BY u.id, u.name, u.email, u.address,
                                         u.identification_number, u.status, u.department, u.phone, u.position
