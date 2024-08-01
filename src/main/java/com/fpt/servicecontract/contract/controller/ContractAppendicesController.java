@@ -30,9 +30,8 @@ public class ContractAppendicesController {
 
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> getAll(@RequestHeader("Authorization") String bearerToken,
-                                           @RequestParam(required = false) String status,
-                                           @PathVariable int page, @PathVariable int size)
-    {
+                                               @RequestParam(required = false) String status,
+                                               @PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(service.getAll(p, email, status));
@@ -46,7 +45,7 @@ public class ContractAppendicesController {
     @PostMapping
     public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken, @RequestBody ContractAppendices contractAppendices) throws Exception {
         String email = jwtService.extractUsername(bearerToken.substring(7));
-        return ResponseEntity.ok(service.save(contractAppendices,email));
+        return ResponseEntity.ok(service.save(contractAppendices, email));
     }
 
     @PutMapping("/{id}")
@@ -64,9 +63,10 @@ public class ContractAppendicesController {
             @PathVariable String id,
             @PathVariable int page,
             @PathVariable int size
-            ) {
+    ) {
         return ResponseEntity.ok(service.getByContractId(id, page, size));
     }
+
     @PostMapping("/send-mail")
     public ResponseEntity<SignContractResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
                                                          @RequestParam String[] to,
