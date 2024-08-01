@@ -41,13 +41,14 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                      c.mark_deleted = 0
                      AND (c.created_by = :email OR c.id IN (:ids))
                      AND (ls.status in (:statusCurrentSearch))
-                     
                  ORDER BY
                      c.created_date DESC;
                     \s""", nativeQuery = true)
-    Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch);
+    Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch );
 
-    @Query(value = "select * from contract_appendices where mark_deleted = 0", nativeQuery = true)
+    @Query(value = """
+        select * from contract_appendices c where mark_deleted = 0 and c.contract_id = :contractId
+    """, nativeQuery = true)
     Page<ContractAppendices> findByContractId(String contractId, Pageable pageable);
 
     @Query(value = """
