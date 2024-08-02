@@ -11,14 +11,14 @@ import java.util.Optional;
 @Repository
 public interface PartyRepository extends JpaRepository<Party, String> {
     Optional<Party> findByTaxNumber(String id);
+
     Optional<Party> findByEmail(String email);
+
     @Query(value = """
-        select c.id, cp.email from party cp join contract c
-        where (cp.id = c.partyaid or cp.id = c.partybid)
-        and c.id = :contractId
-        and cp.email = :email
-    """, nativeQuery = true)
-    Object[] checkMailContractParty(
-            @Param("contractId") String contractId,
-            @Param("email") String  email);
+               select count(c.id) from party cp join contract c
+                               where (cp.id = c.partyaid or cp.id = c.partybid)
+                               and c.id = :contractId
+                               and cp.email = :email
+            """, nativeQuery = true)
+    int checkMailContractParty(String contractId, String email);
 }

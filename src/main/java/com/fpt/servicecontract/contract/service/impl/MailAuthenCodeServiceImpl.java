@@ -27,10 +27,10 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
     private final MailService mailService;
 
     public BaseResponse GetAuthenMailCode(String email, String contractId) {
-        var user = partyRepository.checkMailContractParty(email, contractId);
+        int user = partyRepository.checkMailContractParty(contractId, email);
         String[] emailList = new String[]{email};
-        if (user == null) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "user not found", true, null);
+        if (user == 0) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "user not found", true, null);
         }
         int code = new Random().nextInt(999999);
         var mailCode = mailAuthenCodeRepository.findByEmail(email);
@@ -65,14 +65,14 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
         var contractPartyObject = partyRepository.findByEmail(email);
         var mailAuthedCode = mailAuthenCodeRepository.findByEmail(email);
 
-        if(mailAuthedCode.isEmpty() || contractPartyObject.isEmpty()) {
+        if (mailAuthedCode.isEmpty() || contractPartyObject.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "User not exist", true, null);
         }
 
-        if(!Objects.equals(mailAuthedCode.get().getCode(), AuthenCode)) {
+        if (!Objects.equals(mailAuthedCode.get().getCode(), AuthenCode)) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Your code is invalid", true, null);
         }
-        if((mailAuthedCode.get().getExpiryTime().isBefore(LocalDateTime.now()))) {
+        if ((mailAuthedCode.get().getExpiryTime().isBefore(LocalDateTime.now()))) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Your code is expired", true, null);
         }
         Party party = contractPartyObject.get();
