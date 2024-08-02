@@ -639,7 +639,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public BaseResponse getNotificationContractNumber(String email) {
         List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
+                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
         var userEmail = userRepository.findByEmail(email);
