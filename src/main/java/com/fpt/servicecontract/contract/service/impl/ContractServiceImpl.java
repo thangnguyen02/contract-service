@@ -689,7 +689,7 @@ public class ContractServiceImpl implements ContractService {
         List<String> statusDb = contractStatusService.checkDoneSign(contractId);
         Optional<Contract> contract = contractRepository.findById(contractId);
         if (contract.isEmpty()) {
-            return null;
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
         }
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
