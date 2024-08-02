@@ -235,13 +235,6 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSendForCustomer(false);
             }
 
-            if (SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
-                    SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
-                response.setCanSend(false);
-                response.setCanSendForMng(false);
-                response.setCanSign(true);
-                response.setCanUpdate(false);
-            }
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
                     || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
@@ -257,6 +250,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSend(false);
                 response.setCanSendForCustomer(false);
                 response.setCanSendForMng(false);
+                response.setCanSign(true);
             }
 
 
