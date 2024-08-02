@@ -235,13 +235,6 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSendForCustomer(false);
             }
 
-            if (SignContractStatus.WAIT_SIGN_A.name().equals(status) ||
-                    SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
-                response.setCanSend(false);
-                response.setCanSendForMng(false);
-                response.setCanSign(true);
-                response.setCanUpdate(false);
-            }
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
                     || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
@@ -257,6 +250,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSend(false);
                 response.setCanSendForCustomer(false);
                 response.setCanSendForMng(false);
+                response.setCanSign(true);
             }
 
 
@@ -645,7 +639,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public BaseResponse getNotificationContractNumber(String email) {
         List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
+                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
         var userEmail = userRepository.findByEmail(email);

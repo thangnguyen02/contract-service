@@ -177,5 +177,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public BaseResponse retriverUser(String email) {
+        var user = userRepository.getUserByEmail(email);
+        if(user == null) {
+            return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "User not exist", true, null);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Retriver Successful", true, user);
+    }
+
 
 }

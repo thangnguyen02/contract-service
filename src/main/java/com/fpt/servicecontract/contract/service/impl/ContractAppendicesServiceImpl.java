@@ -126,14 +126,14 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             }
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
             }
 
             if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
-                || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+                    || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
                 response.setCanSend(false);
@@ -336,8 +336,11 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
-            if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
+            if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                contractAppendicesRepository.save(contract.get());
                 status = SignContractStatus.SUCCESS.name();
+
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + "đã kí hợp đồng thành công")
@@ -353,8 +356,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
-            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
+            if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
                 status = SignContractStatus.SUCCESS.name();
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + "đã kí hợp đồng thành công")
