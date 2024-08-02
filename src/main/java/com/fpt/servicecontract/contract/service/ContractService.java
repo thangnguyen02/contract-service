@@ -31,4 +31,6 @@ public interface ContractService {
     BaseResponse sendMail(String bearerToken,String[] to,String[] cc,String subject,String htmlContent, MultipartFile[] attachments, String contractId, String status, String description);
 
     BaseResponse getNotificationContractNumber(String email);
+
+    BaseResponse publicSendMail(String[] to,String[] cc,String subject,String htmlContent,String createdBy,String contractId,String status,String description);
 }

@@ -599,8 +599,8 @@ public class ContractServiceImpl implements ContractService {
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
             signContractResponse.setCanSend(false);
-            signContractResponse.setCanSendForMng(false);
             if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
+                signContractResponse.setCanSendForMng(true);
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
@@ -673,6 +673,65 @@ public class ContractServiceImpl implements ContractService {
                 .build();
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, notificationContractNumberDto);
+    }
+
+    @Override
+    public BaseResponse publicSendMail(String[] to,String[] cc,String subject,String htmlContent,String createdBy,String contractId,String status,String description) {
+        List<String> receivers = new ArrayList<>();
+        for (String recipient : to) {
+            receivers.add(recipient.trim());
+        }
+        if (cc != null) {
+            for (String recipient : cc) {
+                receivers.add(recipient.trim());
+            }
+        }
+        List<String> statusDb = contractStatusService.checkDoneSign(contractId);
+        Optional<Contract> contract = contractRepository.findById(contractId);
+        if (contract.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
+        }
+
+        if (status.equals(SignContractStatus.SIGN_B_OK.name())
+        ) {
+            if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
+                status = SignContractStatus.SUCCESS.name();
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                contractRepository.save(contract.get());
+//                notificationService.create(Notification.builder()
+//                        .title(contract.get().getName())
+//                        .message(createdBy + "đã kí hợp đồng thành công")
+//                        .typeNotification("CONTRACT")
+//                        .receivers(receivers)
+//                        .sender(createdBy)
+//                        .build());
+            }
+
+        }
+
+        if (status.equals(SignContractStatus.SIGN_A_OK.name())
+        ) {
+            if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                status = SignContractStatus.SUCCESS.name();
+                contractRepository.save(contract.get());
+//                notificationService.create(Notification.builder()
+//                        .title(contract.get().getName())
+//                        .message(email + "đã kí hợp đồng thành công")
+//                        .typeNotification("CONTRACT")
+//                        .receivers(receivers)
+//                        .sender(email)
+//                        .build());
+            }
+
+        }
+        try {
+            mailService.sendNewMail(to, cc, subject, htmlContent, null);
+        } catch (MessagingException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);
+        }
+        contractStatusService.create(createdBy, receivers, contractId, status, description);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, null);
     }
 
 }
