@@ -6,6 +6,7 @@ import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.NotificationRepository;
 import com.fpt.servicecontract.contract.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+
     @Override
     public Optional<Notification> findNotificationById(String id) {
         return notificationRepository.findByIdAndMarkedDeletedFalse(id);
@@ -72,24 +74,27 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     public void sendPushNotification(String tokenDevice, String title, String content) {
-        String url = "https://exp.host/--/api/v2/push/send";
+        if (!StringUtils.isBlank(tokenDevice)) {
+            String url = "https://exp.host/--/api/v2/push/send";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("to", tokenDevice);
-        body.put("sound", "default");
-        body.put("title", title);
-        body.put("body", content);
-        Map<String, String> data = new HashMap<>();
-        data.put("screen", "/(tabs)/explore");
-        body.put("data", data);
+            Map<String, Object> body = new HashMap<>();
+            body.put("to", tokenDevice);
+            body.put("sound", "default");
+            body.put("title", title);
+            body.put("body", content);
+            Map<String, String> data = new HashMap<>();
+            data.put("screen", "/(tabs)/explore");
+            body.put("data", data);
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-        restTemplate.postForObject(url, request, String.class);
+            restTemplate.postForObject(url, request, String.class);
+        }
     }
+
     @Override
     public void readNotificationById(String id, boolean isRead) {
         Optional<Notification> notificationOptional = notificationRepository.findById(id);
