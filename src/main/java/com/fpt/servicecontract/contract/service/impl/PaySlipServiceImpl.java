@@ -72,6 +72,7 @@ public class PaySlipServiceImpl implements PaySlipService {
                         .transportationOrPhoneAllowance(transportationOrPhoneAllowance)
                         .totalSalary(totalSalary)
                         .createdDate(LocalDate.now())
+                        .type(Constants.POSITION.SALE)
                         .build();
                 paySlips.add(paySlip);
             }
