@@ -7,6 +7,9 @@ import com.fpt.servicecontract.contract.dto.*;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.SearchRequestBody;
 import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
+import com.fpt.servicecontract.contract.enums.SignContractStatus;
+import com.fpt.servicecontract.contract.model.Contract;
+import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
@@ -23,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -124,7 +128,7 @@ public class ContractController {
 
 
     @PostMapping("/public/send-mail")
-    public SignContractResponse sendMail(
+    public ResponseEntity<BaseResponse> sendMail(
             @RequestParam String[] to,
             @RequestParam(required = false) String[] cc,
             @RequestParam String subject,
@@ -134,20 +138,8 @@ public class ContractController {
             @RequestParam String status,
             @RequestParam String description
     ) throws MessagingException {
-        SignContractResponse signContractResponse = new SignContractResponse();
         //Contract status
-        List<String> receivers = new ArrayList<>();
-        for (String recipient : to) {
-            receivers.add(recipient.trim());
-        }
-        if (cc != null) {
-            for (String recipient : cc) {
-                receivers.add(recipient.trim());
-            }
-        }
-        contractStatusService.create(createdBy, receivers, contractId, status, description);
-        mailService.sendNewMail(to, cc, subject, htmlContent, null);
-        return signContractResponse;
+        return ResponseEntity.ok(contractService.publicSendMail(to, cc, subject, htmlContent, createdBy, contractId, status, description));
     }
 
     @GetMapping("/getNumberContractNoti")
