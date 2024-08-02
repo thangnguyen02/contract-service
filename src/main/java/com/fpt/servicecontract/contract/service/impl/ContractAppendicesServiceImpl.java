@@ -330,8 +330,11 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
-            if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
+            if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                contractAppendicesRepository.save(contract.get());
                 status = SignContractStatus.SUCCESS.name();
+
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + "đã kí hợp đồng thành công")
@@ -347,8 +350,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         ) {
             signContractResponse.setCanSend(false);
             signContractResponse.setCanSendForMng(false);
-            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
+            if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
                 status = SignContractStatus.SUCCESS.name();
+                contract.get().setStatus(Constants.STATUS.SUCCESS);
+                contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + "đã kí hợp đồng thành công")
