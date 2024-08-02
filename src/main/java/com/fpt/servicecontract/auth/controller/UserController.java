@@ -6,6 +6,7 @@ import com.fpt.servicecontract.auth.dto.SearchUserRequest;
 import com.fpt.servicecontract.auth.dto.UpdateUserRequest;
 import com.fpt.servicecontract.auth.model.Role;
 import com.fpt.servicecontract.auth.service.UserService;
+import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService service;
+    private final JwtService jwtService;
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -71,5 +73,9 @@ public class UserController {
     public ResponseEntity<BaseResponse> resetPassword(@RequestParam String email) {
         return ResponseEntity.ok(service.resetPass(email));
     }
-
+    @PostMapping("/get-user")
+    public ResponseEntity<BaseResponse> retrieveUser(@RequestHeader("Authorization") String bearerToken) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(service.retriverUser(email));
+    }
 }
