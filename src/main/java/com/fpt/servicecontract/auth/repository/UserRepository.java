@@ -112,7 +112,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = """
             SELECT u.id,u.name, u.email, u.address,
                                       u.identification_number as identificationNumber, u.status, u.department, u.phone, u.position, u.avatar,
-                                      CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions, u.dob
+                                      CONCAT('[', GROUP_CONCAT(DISTINCT up.permissions SEPARATOR ','), ']') AS permissions, u.dob, u.role
                                FROM users u
                                JOIN user_permissions up ON u.id = up.user_id where
                                                 u.email = :email

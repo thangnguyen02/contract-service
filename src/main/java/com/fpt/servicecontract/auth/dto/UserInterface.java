@@ -15,4 +15,5 @@ public interface UserInterface {
     String getPermissions();
     String getAvatar();
     String getDob();
+    String getRole();
 }
