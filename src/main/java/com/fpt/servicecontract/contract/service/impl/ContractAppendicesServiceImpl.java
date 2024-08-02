@@ -91,7 +91,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 response.setCanSend(false);
                 response.setCanApprove(true);
                 response.setCanSign(false);
-                response.setCanUpdateContractRecieve(true);
                 response.setCanSendForCustomer(false);
             }
 
@@ -100,7 +99,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 response.setCanResend(true);
                 response.setCanApprove(false);
                 response.setCanSign(false);
-                response.setCanUpdateContractRecieve(true);
                 response.setCanSendForCustomer(false);
                 response.setRejectedBy(Objects.nonNull(obj[12]) ? obj[12].toString() : null);
             }
@@ -112,7 +110,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 response.setCanDelete(true);
                 response.setCanApprove(true);
                 response.setCanSign(false);
-                response.setCanUpdateContractRecieve(true);
                 response.setCanSendForCustomer(false);
             }
 
