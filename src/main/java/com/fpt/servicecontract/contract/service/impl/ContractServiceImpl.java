@@ -259,11 +259,8 @@ public class ContractServiceImpl implements ContractService {
             if (status.equals(SignContractStatus.SIGN_A_OK.name())
             ) {
                 response.setCanSend(false);
-                response.setCanSendForMng(false);
                 response.setCanUpdate(false);
-                if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
-                    response.setStatus(Constants.STATUS.SUCCESS);
-                } else {
+                if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForCustomer(true);
                 }
             }
@@ -271,21 +268,10 @@ public class ContractServiceImpl implements ContractService {
             if (status.equals(SignContractStatus.SIGN_B_OK.name())
             ) {
                 response.setCanSend(false);
-                response.setCanSendForMng(false);
                 response.setCanUpdate(false);
-                if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
-                    status = SignContractStatus.SUCCESS.name();
-                } else {
+                if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForMng(true);
                 }
-
-            }
-
-            if (SignContractStatus.SIGN_A_OK.name().equals(status) || SignContractStatus.SIGN_B_OK.name().equals(status)
-            ) {
-                response.setCanSend(false);
-                response.setCanSendForMng(false);
-                response.setCanSign(false);
             }
 
             responses.add(response);
