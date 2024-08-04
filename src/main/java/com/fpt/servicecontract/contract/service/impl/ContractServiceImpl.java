@@ -258,8 +258,9 @@ public class ContractServiceImpl implements ContractService {
 
             if (status.equals(SignContractStatus.SIGN_A_OK.name())
             ) {
-                response.setCanSend(false);
+                response.setCanSend(true);
                 response.setCanUpdate(false);
+                response.setCanDelete(false);
                 if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForCustomer(true);
                 }
@@ -267,8 +268,9 @@ public class ContractServiceImpl implements ContractService {
 
             if (status.equals(SignContractStatus.SIGN_B_OK.name())
             ) {
-                response.setCanSend(false);
+                response.setCanSend(true);
                 response.setCanUpdate(false);
+                response.setCanDelete(false);
                 if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForMng(true);
                 }

@@ -231,5 +231,41 @@ public class PaySlipServiceImpl implements PaySlipService {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Calculate successfully", true, bonusAfter1Year);
     }
 
-    
+
+    @Override
+    public BaseResponse GetCommissionByMail(String email) {
+        List<PaySlipFormula> paySlipFormulas = paySlipFormulaRepository.findAll();
+        if (paySlipFormulas.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
+        }
+        List<String> saleEmails = new ArrayList<>();
+        saleEmails.add(email);
+
+        List<Object[]> saleAndNumberSalesHaveCommission = userRepository.getSaleAndNumberSales(saleEmails);
+        List<Object[]> contractAppendices = contractAppendicesRepository.getSaleAndNumberSales(saleEmails, LocalDate.now().getMonthValue(), LocalDate.now().getYear());
+        Map<String, Double> saleAndNumberSalesAll = getStringDoubleMap(contractAppendices, saleAndNumberSalesHaveCommission);
+        List<CommissionDto> commissionDtoList = new ArrayList<>();
+
+//        for (UserInterface sale : saleLst) {
+//            double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(sale.getEmail())) ? 0 : saleAndNumberSalesAll.get(sale.getEmail());
+//            Optional<PaySlipFormula> formulaOptional = paySlipFormulas.stream().filter(e ->
+//                    numberSale >= e.getFromValueContract() && numberSale < e.getToValueContract()
+//            ).findFirst();
+//            double commission = 0;
+//            if (formulaOptional.isPresent()) {
+//                PaySlipFormula formula = formulaOptional.get();
+//                double commissionPercentage = numberSale / 100 * formula.getCommissionPercentage();
+//                double clientDeploymentPercentage = numberSale / 100 * formula.getClientDeploymentPercentage();
+//                commission = commissionPercentage + clientDeploymentPercentage;
+//            }
+//            commissionDtoList.add(CommissionDto.builder()
+//                    .user(sale)
+//                    .commission(commission)
+//                    .build());
+//        }
+
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month", true, commissionDtoList);
+
+
+    }
 }

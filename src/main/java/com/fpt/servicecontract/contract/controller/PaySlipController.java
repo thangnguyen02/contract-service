@@ -52,5 +52,9 @@ public class PaySlipController {
         return ResponseEntity.ok(paySlipService.GetCommission());
     }
 
+    @GetMapping("/commission")
+    public ResponseEntity<BaseResponse> getCommissionByMail() {
+        return ResponseEntity.ok(paySlipService.GetCommission());
+    }
 
 }

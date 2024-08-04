@@ -11,4 +11,5 @@ public interface PaySlipService {
     BaseResponse GetCommission();
     BaseResponse CalculateLeaderSalePaySlip();
     BaseResponse BonusAfter1YearCalculation();
+    BaseResponse GetCommissionByMail(String mail);
 }
