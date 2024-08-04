@@ -266,6 +266,6 @@ public class PaySlipServiceImpl implements PaySlipService {
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month", true, commissionDtoList);
 
-
     }
+
 }

@@ -263,6 +263,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanDelete(false);
                 if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForCustomer(true);
+                    response.setCanSendForMng(false);
                 }
             }
 
@@ -273,6 +274,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanDelete(false);
                 if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForMng(true);
+                    response.setCanSendForCustomer(false);
                 }
             }
 

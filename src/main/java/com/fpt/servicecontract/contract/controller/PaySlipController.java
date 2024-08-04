@@ -52,9 +52,10 @@ public class PaySlipController {
         return ResponseEntity.ok(paySlipService.GetCommission());
     }
 
-    @GetMapping("/commission")
-    public ResponseEntity<BaseResponse> getCommissionByMail() {
-        return ResponseEntity.ok(paySlipService.GetCommission());
+    @GetMapping("/commissionByMail")
+    public ResponseEntity<BaseResponse> getCommissionByMail(@RequestHeader("Authorization") String bearerToken) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(paySlipService.GetCommissionByMail(email));
     }
 
 }
