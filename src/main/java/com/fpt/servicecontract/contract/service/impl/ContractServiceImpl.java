@@ -216,7 +216,7 @@ public class ContractServiceImpl implements ContractService {
 
             //officer-admin reject
             if (SignContractStatus.APPROVE_FAIL.name().equals(status)) {
-                response.setCanResend(true);
+                response.setCanSend(true);
                 response.setCanApprove(false);
                 response.setCanSign(false);
                 response.setCanSendForCustomer(false);
