@@ -18,9 +18,10 @@ public class DepartmentController {
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> getAll(
             @PathVariable int page,
-            @PathVariable int size
+            @PathVariable int size,
+            @RequestParam(required = false) String name
     ) {
-        return ResponseEntity.ok(departmentService.getAllDepartments(page, size));
+        return ResponseEntity.ok(departmentService.getAllDepartments(page, size, name));
     }
 
     @PostMapping()

@@ -5,6 +5,7 @@ import com.fpt.servicecontract.contract.repository.DepartmentRepository;
 import com.fpt.servicecontract.contract.service.DepartmentService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
+import com.fpt.servicecontract.utils.QueryUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -60,8 +61,8 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public BaseResponse getAllDepartments(int page, int size) {
+    public BaseResponse getAllDepartments(int page, int size, String name) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Get All successfully", true, departmentRepository.findByMarkDeletedOrderByCreatedDateDesc( false, pageable));
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Get All successfully", true, departmentRepository.search(QueryUtils.appendPercent(name), pageable));
     }
 }

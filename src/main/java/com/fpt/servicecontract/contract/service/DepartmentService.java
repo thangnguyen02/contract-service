@@ -7,5 +7,5 @@ public interface DepartmentService {
     BaseResponse addDepartment(Department department);
     BaseResponse updateDepartment(Department department);
     BaseResponse deleteDepartment(String id);
-    BaseResponse getAllDepartments(int page, int size);
+    BaseResponse getAllDepartments(int page, int size, String name);
 }
