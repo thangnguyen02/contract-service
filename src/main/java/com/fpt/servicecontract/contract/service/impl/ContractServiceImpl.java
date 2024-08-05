@@ -652,9 +652,9 @@ public class ContractServiceImpl implements ContractService {
         NotificationContractNumberDto notificationContractNumberDto = NotificationContractNumberDto.builder()
                 .approvedCount(Integer.parseInt(parts[0]))
                 .waitApprovedCount(Integer.parseInt(parts[1]))
-                .successCount(Integer.parseInt(parts[3]))
-                .signedCount(Integer.parseInt(parts[4]))
-                .waitSignCount(Integer.parseInt(parts[5]))
+                .successCount(Integer.parseInt(parts[2]))
+                .signedCount(Integer.parseInt(parts[3]))
+                .waitSignCount(Integer.parseInt(parts[4]))
                 .build();
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, notificationContractNumberDto);
