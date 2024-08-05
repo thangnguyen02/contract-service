@@ -28,4 +28,14 @@ public interface ContractStatusRepository extends JpaRepository<ContractStatus, 
         ORDER BY send_date DESC
     """, nativeQuery = true)
     List<String> checkDoneSign(String contractId);
+
+    @Query(value = """
+        SELECT *
+        FROM contract_status
+        where contract_id = ?1
+        ORDER BY send_date DESC
+        LIMIT 1
+    """, nativeQuery = true)
+    ContractStatus findByContractLastStatusObject(String contractId);
+
 }
