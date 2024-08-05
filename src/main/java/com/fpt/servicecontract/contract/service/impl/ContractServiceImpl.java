@@ -170,7 +170,6 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) {
-        ObjectMapper objectMapper = new ObjectMapper();
         List<String> ids = contractStatusRepository.findAll().stream()
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
@@ -194,6 +193,8 @@ public class ContractServiceImpl implements ContractService {
                     .canApprove(false)
                     .canSign(true)
                     .canSendForCustomer(true)
+                    .value(Objects.nonNull(obj[12]) ? (Double) obj[12] : null)
+                    .canRejectSign(false)
                     .build();
             String status = response.getStatusCurrent();
 //            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
@@ -251,6 +252,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSendForCustomer(false);
                 response.setCanSendForMng(false);
                 response.setCanSign(true);
+                response.setCanRejectSign(true);
             }
 
 
