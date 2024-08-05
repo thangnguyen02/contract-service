@@ -1,14 +1,19 @@
 package com.fpt.servicecontract.contract.service.impl;
 
+import com.fpt.servicecontract.contract.dto.request.PaySlipFormulaUpdateRequest;
 import com.fpt.servicecontract.contract.model.PaySlipFormula;
 import com.fpt.servicecontract.contract.repository.PaySlipFormulaRepository;
 import com.fpt.servicecontract.contract.service.PaySlipFormulaService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,14 +50,21 @@ public class PaySlipFormulaServiceImpl implements PaySlipFormulaService {
     }
 
     @Override
-    public BaseResponse update(String id, PaySlipFormula paySlipFormula) {
-        var newPaySlipFormula = paySlipFormulaRepository.findById(id);
-        if (newPaySlipFormula.isEmpty()) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any pay slip formula", true, null);
+    public BaseResponse update(List<PaySlipFormulaUpdateRequest> paySlipFormula) {
+        List<String> deleteId = new ArrayList<>();
+        List<PaySlipFormula> createdOrUpdatedPaySlipFormulas = new ArrayList<>();
+        for (PaySlipFormulaUpdateRequest item : paySlipFormula) {
+            if ("INACTIVE".equals(item.getStatus())) {
+                deleteId.add(item.getId());
+            } else {
+                PaySlipFormula paySlipFormula1 = new PaySlipFormula();
+                BeanUtils.copyProperties(item, paySlipFormula1);
+                createdOrUpdatedPaySlipFormulas.add(paySlipFormula1);
+            }
         }
-        paySlipFormula.setId(id);
         try {
-            paySlipFormulaRepository.save(paySlipFormula);
+            paySlipFormulaRepository.saveAll(createdOrUpdatedPaySlipFormulas);
+            paySlipFormulaRepository.deleteAllById(deleteId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "update successfully", true, newPaySlipFormula);
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Can not update pay slip formula", true, null);

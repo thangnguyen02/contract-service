@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.fpt.servicecontract.contract.dto.request.PaySlipFormulaUpdateRequest;
 import com.fpt.servicecontract.contract.model.PaySlipFormula;
 import com.fpt.servicecontract.contract.service.PaySlipFormulaService;
 import com.fpt.servicecontract.utils.BaseResponse;
@@ -8,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -35,7 +38,7 @@ public class PaySlipFormulaController {
     @PutMapping("/{id}")
     public ResponseEntity<BaseResponse> updatePaySlipFormula(
             @PathVariable String id,
-            @RequestBody PaySlipFormula paySlipFormula
+            @RequestBody List<PaySlipFormulaUpdateRequest> paySlipFormula
     ) {
         return ResponseEntity.ok(paySlipFormulaService.update(id, paySlipFormula));
     }
