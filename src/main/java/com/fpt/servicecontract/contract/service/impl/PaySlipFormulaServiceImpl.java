@@ -63,7 +63,7 @@ public class PaySlipFormulaServiceImpl implements PaySlipFormulaService {
             }
         }
         try {
-            paySlipFormulaRepository.saveAll(createdOrUpdatedPaySlipFormulas);
+            List<PaySlipFormula> newPaySlipFormula = paySlipFormulaRepository.saveAll(createdOrUpdatedPaySlipFormulas);
             paySlipFormulaRepository.deleteAllById(deleteId);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "update successfully", true, newPaySlipFormula);
         } catch (Exception e) {

@@ -37,10 +37,9 @@ public class PaySlipFormulaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<BaseResponse> updatePaySlipFormula(
-            @PathVariable String id,
             @RequestBody List<PaySlipFormulaUpdateRequest> paySlipFormula
     ) {
-        return ResponseEntity.ok(paySlipFormulaService.update(id, paySlipFormula));
+        return ResponseEntity.ok(paySlipFormulaService.update(paySlipFormula));
     }
 
     @DeleteMapping("/{id}")
