@@ -234,10 +234,6 @@ public class PaySlipServiceImpl implements PaySlipService {
 
     @Override
     public BaseResponse GetCommissionByMail(String email) {
-        List<PaySlipFormula> paySlipFormulas = paySlipFormulaRepository.findAll();
-        if (paySlipFormulas.isEmpty()) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
-        }
         List<String> saleEmails = new ArrayList<>();
         saleEmails.add(email);
 
@@ -246,21 +242,11 @@ public class PaySlipServiceImpl implements PaySlipService {
         Map<String, Double> saleAndNumberSalesAll = getStringDoubleMap(contractAppendices, saleAndNumberSalesHaveCommission);
 
         double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(email)) ? 0 : saleAndNumberSalesAll.get(email);
-        Optional<PaySlipFormula> formulaOptional = paySlipFormulas.stream().filter(e ->
-                numberSale >= e.getFromValueContract() && numberSale < e.getToValueContract()
-        ).findFirst();
-        double commission = 0;
-        if (formulaOptional.isPresent()) {
-            PaySlipFormula formula = formulaOptional.get();
-            double commissionPercentage = numberSale / 100 * formula.getCommissionPercentage();
-            double clientDeploymentPercentage = numberSale / 100 * formula.getClientDeploymentPercentage();
-            commission = commissionPercentage + clientDeploymentPercentage;
-        }
+
         CommissionDto dto = CommissionDto.builder()
                 .user(email)
-                .commission(commission)
+                .commission(numberSale)
                 .build();
-
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission of people", true, dto);
     }
 

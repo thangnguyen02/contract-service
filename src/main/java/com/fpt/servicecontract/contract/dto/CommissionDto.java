@@ -11,5 +11,5 @@ import lombok.Setter;
 @Builder
 public class CommissionDto {
     private String user;
-    private double commission;
+    private Double commission;
 }
