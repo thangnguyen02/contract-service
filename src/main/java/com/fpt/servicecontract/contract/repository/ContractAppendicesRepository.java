@@ -52,7 +52,7 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
     Page<ContractAppendices> findByContractId(String contractId, Pageable pageable);
 
     @Query(value = """
-                    SELECT c.created_by, SUM(c.value) AS numberSales
+                    SELECT c.created_by, SUM(c.value), count(c.id) AS numberSales
                         FROM
                             contract_appendices c
                     WHERE

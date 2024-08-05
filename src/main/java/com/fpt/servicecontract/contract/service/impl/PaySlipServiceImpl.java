@@ -231,12 +231,20 @@ public class PaySlipServiceImpl implements PaySlipService {
         List<Object[]> saleAndNumberSalesHaveCommission = userRepository.getSaleAndNumberSales(saleEmails);
         List<Object[]> contractAppendices = contractAppendicesRepository.getSaleAndNumberSales(saleEmails, LocalDate.now().getMonthValue(), LocalDate.now().getYear());
         Map<String, Double> saleAndNumberSalesAll = getStringDoubleMap(contractAppendices, saleAndNumberSalesHaveCommission);
-
+        long contractNumber = 0l;
+        long appendNumber = 0l;
         double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(email)) ? 0 : saleAndNumberSalesAll.get(email);
-
+        if (saleAndNumberSalesAll.size() > 0) {
+            contractNumber = DataUtil.isNullObject(saleAndNumberSalesHaveCommission.get(0)[2]) ? 0 : (Long) saleAndNumberSalesHaveCommission.get(0)[2];
+        }
+        if (contractAppendices.size() > 0) {
+            appendNumber = DataUtil.isNullObject(contractAppendices.get(0)[2]) ? 0 : (Long) contractAppendices.get(0)[2];
+        }
         CommissionDto dto = CommissionDto.builder()
                 .user(email)
                 .commission(numberSale)
+                .numberContract(contractNumber)
+                .appendicesNumber(appendNumber)
                 .build();
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission of people", true, dto);
     }
