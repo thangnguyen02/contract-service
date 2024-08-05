@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, String> {
     @Query(value = """
-        select id, created_date, description, title, updated_date
+        select id, created_date, description, title, updated_date, mark_deleted
         from department
         where mark_deleted = 0
         and (lower(title) like lower(:title) or :title is null)
