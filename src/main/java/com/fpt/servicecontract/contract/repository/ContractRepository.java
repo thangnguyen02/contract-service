@@ -176,7 +176,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                         SUM(CASE WHEN ls.status = 'WAIT_APPROVE' THEN 1 ELSE 0 END) AS wait_approve_count,
                         SUM(CASE WHEN ls.status = 'SUCCESS' THEN 1 ELSE 0 END) AS done_count,
                         SUM(CASE WHEN (ls.status = 'SIGN_A_OK' or ls.status = 'SIGN_B_OK') THEN 1 ELSE 0 END) AS signed_count,
-                        SUM(CASE WHEN (ls.status = 'WAIT_SIGN_A' or ls.status = 'WAIT_SIGN_B') THEN 1 ELSE 0 END) AS wait_sign
+                        SUM(CASE WHEN (ls.status = 'WAIT_SIGN_A' or ls.status = 'WAIT_SIGN_B') THEN 1 ELSE 0 END) AS wait_sign,
+                        SUM(CASE WHEN (ls.status = 'NEW' or ls.status = 'APPROVE_FAIL' or ls.status = 'SIGN_B_FAIL' or ls.status = 'SIGN_A_FAIL') THEN 1 ELSE 0 END) AS manager_count
                     FROM
                         contract c
                     LEFT JOIN

@@ -633,7 +633,6 @@ public class ContractServiceImpl implements ContractService {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Email not exist ", true, null);
         }
 
-        System.out.println(userEmail.get());
 
 
         String[] statical = contractRepository.getNotificationContractNumber(email, ids);
@@ -645,6 +644,7 @@ public class ContractServiceImpl implements ContractService {
                 .successCount(Integer.parseInt(parts[2]))
                 .signedCount(Integer.parseInt(parts[3]))
                 .waitSignCount(Integer.parseInt(parts[4]))
+                .managerCount(Integer.parseInt(parts[5]))
                 .build();
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, notificationContractNumberDto);
