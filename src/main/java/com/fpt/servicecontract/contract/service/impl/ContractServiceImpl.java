@@ -635,18 +635,8 @@ public class ContractServiceImpl implements ContractService {
 
         System.out.println(userEmail.get());
 
-        User user = userEmail.get();
-        String signedStatus = "";
-        String waitSignStatus = "";
-        if (user.getPermissions().contains(Permission.MANAGER)) {
-            signedStatus = "SIGN_A_OK";
-            waitSignStatus = "WAIT_SIGN_A";
-        } else if (user.getPermissions().contains(Permission.OFFICE_ADMIN) || user.getPermissions().contains(Permission.SALE)) {
-            signedStatus = "SIGN_B_OK";
-            waitSignStatus = "WAIT_SIGN_B";
-        }
 
-        String[] statical = contractRepository.getNotificationContractNumber(signedStatus, waitSignStatus, email, ids);
+        String[] statical = contractRepository.getNotificationContractNumber(email, ids);
 
         String[] parts = statical[0].split(",");
         NotificationContractNumberDto notificationContractNumberDto = NotificationContractNumberDto.builder()

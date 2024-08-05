@@ -175,8 +175,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                         SUM(CASE WHEN ls.status = 'APPROVED' THEN 1 ELSE 0 END) AS approved_count, 
                         SUM(CASE WHEN ls.status = 'WAIT_APPROVE' THEN 1 ELSE 0 END) AS wait_approve_count,
                         SUM(CASE WHEN ls.status = 'SUCCESS' THEN 1 ELSE 0 END) AS done_count,
-                        SUM(CASE WHEN ls.status = :signedStatus THEN 1 ELSE 0 END) AS signed_count,
-                        SUM(CASE WHEN ls.status = :waitSignStatus THEN 1 ELSE 0 END) AS wait_sign
+                        SUM(CASE WHEN (ls.status = 'SIGN_A_OK' or ls.status = 'SIGN_B_OK') THEN 1 ELSE 0 END) AS signed_count,
+                        SUM(CASE WHEN (ls.status = 'WAIT_SIGN_A' or ls.status = 'WAIT_SIGN_B') THEN 1 ELSE 0 END) AS wait_sign
                     FROM
                         contract c
                     LEFT JOIN
@@ -185,7 +185,8 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                         c.mark_deleted = 0
                         AND (c.created_by = :email OR c.id IN (:ids))
             """, nativeQuery = true)
-    String[] getNotificationContractNumber(String signedStatus, String waitSignStatus, String email, List<String> ids);
+    String[]
+    getNotificationContractNumber(String email, List<String> ids);
 
 
 
