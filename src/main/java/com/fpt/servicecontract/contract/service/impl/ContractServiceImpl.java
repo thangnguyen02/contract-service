@@ -530,7 +530,7 @@ public class ContractServiceImpl implements ContractService {
             signContractResponse.setCanSend(false);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
-                    .message(email + "đã duyệt hợp đồng")
+                    .message(email + " đã duyệt hợp đồng")
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
@@ -543,7 +543,7 @@ public class ContractServiceImpl implements ContractService {
             signContractResponse.setCanSendForMng(false);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
-                    .message(email + "đã yêu cầu xem lại hợp đồng")
+                    .message(email + " đã yêu cầu xem lại hợp đồng")
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
@@ -558,7 +558,7 @@ public class ContractServiceImpl implements ContractService {
             signContractResponse.setCanSendForMng(false);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
-                    .message(email + "đã từ chối kí hợp đồng")
+                    .message(email + " đã từ chối kí hợp đồng")
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
@@ -577,7 +577,7 @@ public class ContractServiceImpl implements ContractService {
 
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(email + "đã kí hợp đồng thành công")
+                        .message(email + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(email)
@@ -596,7 +596,7 @@ public class ContractServiceImpl implements ContractService {
                 contractRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(email + "đã kí hợp đồng thành công")
+                        .message(email + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(email)

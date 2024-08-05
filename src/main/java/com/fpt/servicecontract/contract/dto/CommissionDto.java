@@ -10,6 +10,6 @@ import lombok.Setter;
 @Setter
 @Builder
 public class CommissionDto {
-    private UserInterface user;
+    private String user;
     private double commission;
 }

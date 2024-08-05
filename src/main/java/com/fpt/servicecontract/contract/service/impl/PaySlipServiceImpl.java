@@ -158,7 +158,7 @@ public class PaySlipServiceImpl implements PaySlipService {
                 commission = commissionPercentage + clientDeploymentPercentage;
             }
             commissionDtoList.add(CommissionDto.builder()
-                    .user(sale)
+                    .user(sale.getEmail())
                     .commission(commission)
                     .build());
         }
@@ -180,7 +180,7 @@ public class PaySlipServiceImpl implements PaySlipService {
 
         var paySlipFormula = paySlipFormulas.stream().
                 filter(e -> averageNumberSale >= e.getFromValueContract()
-                            && averageNumberSale < e.getToValueContract()).findFirst();
+                        && averageNumberSale < e.getToValueContract()).findFirst();
 
         if (paySlipFormula.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission value  contract not valid", true, null);
@@ -212,8 +212,8 @@ public class PaySlipServiceImpl implements PaySlipService {
         if (totalValueContractOneYearAvg.isEmpty() || totalValueContractOneYear.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission value  contract not valid", true, null);
         }
-        var averageNumberSale = totalValueContractOneYearAvg.get()[1] == null ? 0 : (double) totalValueContractOneYearAvg.get()[1]  / ( totalValueContractOneYearAvg.get()[0] == null ? 1 : (Integer) totalValueContractOneYearAvg.get()[0]);
-        var totalNumberSale = totalValueContractOneYear.get()[1] == null ? 0 : (double) totalValueContractOneYear.get()[1]  ;
+        var averageNumberSale = totalValueContractOneYearAvg.get()[1] == null ? 0 : (double) totalValueContractOneYearAvg.get()[1] / (totalValueContractOneYearAvg.get()[0] == null ? 1 : (Integer) totalValueContractOneYearAvg.get()[0]);
+        var totalNumberSale = totalValueContractOneYear.get()[1] == null ? 0 : (double) totalValueContractOneYear.get()[1];
         var paySlipFormula = paySlipFormulas.stream().
                 filter(e -> averageNumberSale >= e.getFromValueContract()
                         && averageNumberSale < e.getToValueContract()).findFirst();
@@ -225,8 +225,8 @@ public class PaySlipServiceImpl implements PaySlipService {
         Double bonusAfter1Year = totalNumberSale / 100 * paySlipFormula.get().getBonusAfter1Year();
 
         paySlipRepository.save(PaySlip.builder()
-                        .email("leaderSale@gmail.com")
-                        .totalSalary(bonusAfter1Year)
+                .email("leaderSale@gmail.com")
+                .totalSalary(bonusAfter1Year)
                 .build());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Calculate successfully", true, bonusAfter1Year);
     }
@@ -244,28 +244,24 @@ public class PaySlipServiceImpl implements PaySlipService {
         List<Object[]> saleAndNumberSalesHaveCommission = userRepository.getSaleAndNumberSales(saleEmails);
         List<Object[]> contractAppendices = contractAppendicesRepository.getSaleAndNumberSales(saleEmails, LocalDate.now().getMonthValue(), LocalDate.now().getYear());
         Map<String, Double> saleAndNumberSalesAll = getStringDoubleMap(contractAppendices, saleAndNumberSalesHaveCommission);
-        List<CommissionDto> commissionDtoList = new ArrayList<>();
 
-//        for (UserInterface sale : saleLst) {
-//            double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(sale.getEmail())) ? 0 : saleAndNumberSalesAll.get(sale.getEmail());
-//            Optional<PaySlipFormula> formulaOptional = paySlipFormulas.stream().filter(e ->
-//                    numberSale >= e.getFromValueContract() && numberSale < e.getToValueContract()
-//            ).findFirst();
-//            double commission = 0;
-//            if (formulaOptional.isPresent()) {
-//                PaySlipFormula formula = formulaOptional.get();
-//                double commissionPercentage = numberSale / 100 * formula.getCommissionPercentage();
-//                double clientDeploymentPercentage = numberSale / 100 * formula.getClientDeploymentPercentage();
-//                commission = commissionPercentage + clientDeploymentPercentage;
-//            }
-//            commissionDtoList.add(CommissionDto.builder()
-//                    .user(sale)
-//                    .commission(commission)
-//                    .build());
-//        }
+        double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(email)) ? 0 : saleAndNumberSalesAll.get(email);
+        Optional<PaySlipFormula> formulaOptional = paySlipFormulas.stream().filter(e ->
+                numberSale >= e.getFromValueContract() && numberSale < e.getToValueContract()
+        ).findFirst();
+        double commission = 0;
+        if (formulaOptional.isPresent()) {
+            PaySlipFormula formula = formulaOptional.get();
+            double commissionPercentage = numberSale / 100 * formula.getCommissionPercentage();
+            double clientDeploymentPercentage = numberSale / 100 * formula.getClientDeploymentPercentage();
+            commission = commissionPercentage + clientDeploymentPercentage;
+        }
+        CommissionDto dto = CommissionDto.builder()
+                .user(email)
+                .commission(commission)
+                .build();
 
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "All paySlips of this month", true, commissionDtoList);
-
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission of people", true, dto);
     }
 
 }
