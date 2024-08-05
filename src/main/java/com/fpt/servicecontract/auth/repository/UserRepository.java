@@ -83,7 +83,7 @@ public interface UserRepository extends JpaRepository<User, String> {
             @Param("permission") String permission);
 
     @Query(value = """
-                    SELECT c.created_by, SUM(c.value) AS numberSales
+                    SELECT c.created_by, SUM(c.value), count(c.id) AS numberSales
                         FROM
                             contract c
                     WHERE

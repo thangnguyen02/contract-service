@@ -1,7 +1,5 @@
 package com.fpt.servicecontract.contract.dto;
 
-import com.fpt.servicecontract.auth.dto.UserDto;
-import com.fpt.servicecontract.auth.dto.UserInterface;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +8,8 @@ import lombok.Setter;
 @Setter
 @Builder
 public class CommissionDto {
-    private UserInterface user;
-    private double commission;
+    private Object user;
+    private Double commission;
+    private long numberContract;
+    private long appendicesNumber;
 }
