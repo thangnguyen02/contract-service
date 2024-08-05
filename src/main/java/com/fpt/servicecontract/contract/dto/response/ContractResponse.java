@@ -32,4 +32,5 @@ public class ContractResponse {
     private boolean canSendForCustomer;
     private Double value;
     private String rejectedBy;
+    private boolean canRejectSign;
 }
