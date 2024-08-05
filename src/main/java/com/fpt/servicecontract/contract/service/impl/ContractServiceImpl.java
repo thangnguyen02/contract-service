@@ -22,6 +22,7 @@ import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.*;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -59,6 +60,7 @@ public class ContractServiceImpl implements ContractService {
 
 
     @Override
+    @Transactional
     public BaseResponse createContract(ContractRequest contractRequest, String email) {
         Party partyA = Party
                 .builder()
