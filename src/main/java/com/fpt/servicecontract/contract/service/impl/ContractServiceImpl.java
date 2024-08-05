@@ -490,18 +490,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
-        List<String> statusList = new ArrayList<>();
-        statusList.add(SignContractStatus.SIGN_A_OK.name());
-        statusList.add(SignContractStatus.SIGN_B_OK.name());
-        statusList.add(SignContractStatus.SIGN_A_FAIL.name());
-        statusList.add(SignContractStatus.SIGN_B_FAIL.name());
-        statusList.add(SignContractStatus.APPROVED.name());
-        statusList.add(SignContractStatus.WAIT_APPROVE.name());
-        statusList.add(SignContractStatus.WAIT_SIGN_B.name());
-        statusList.add(SignContractStatus.WAIT_SIGN_A.name());
-        statusList.add(SignContractStatus.NEW.name());
-        statusList.add(SignContractStatus.MANAGER_CONTRACT.name());
-        statusList.add(SignContractStatus.ALL.name());
+        List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
 
         if (!statusList.contains(status)) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "status not exist", true, null);
@@ -668,6 +657,9 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractId, String status, String description) {
+        if (!SignContractStatus.SIGN_B_OK.equals(status) && !SignContractStatus.SIGN_A_OK.equals(status)) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
+        }
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
             receivers.add(recipient.trim());
@@ -689,13 +681,13 @@ public class ContractServiceImpl implements ContractService {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
-//                notificationService.create(Notification.builder()
-//                        .title(contract.get().getName())
-//                        .message(createdBy + "đã kí hợp đồng thành công")
-//                        .typeNotification("CONTRACT")
-//                        .receivers(receivers)
-//                        .sender(createdBy)
-//                        .build());
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(createdBy + "đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(createdBy)
+                        .build());
             }
 
         }
@@ -706,13 +698,13 @@ public class ContractServiceImpl implements ContractService {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 status = SignContractStatus.SUCCESS.name();
                 contractRepository.save(contract.get());
-//                notificationService.create(Notification.builder()
-//                        .title(contract.get().getName())
-//                        .message(email + "đã kí hợp đồng thành công")
-//                        .typeNotification("CONTRACT")
-//                        .receivers(receivers)
-//                        .sender(email)
-//                        .build());
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(createdBy + "đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(createdBy)
+                        .build());
             }
 
         }
