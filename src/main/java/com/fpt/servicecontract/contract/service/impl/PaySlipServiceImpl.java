@@ -147,19 +147,10 @@ public class PaySlipServiceImpl implements PaySlipService {
 
         for (UserInterface sale : saleLst) {
             double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(sale.getEmail())) ? 0 : saleAndNumberSalesAll.get(sale.getEmail());
-            Optional<PaySlipFormula> formulaOptional = paySlipFormulas.stream().filter(e ->
-                    numberSale >= e.getFromValueContract() && numberSale < e.getToValueContract()
-            ).findFirst();
-            double commission = 0;
-            if (formulaOptional.isPresent()) {
-                PaySlipFormula formula = formulaOptional.get();
-                double commissionPercentage = numberSale / 100 * formula.getCommissionPercentage();
-                double clientDeploymentPercentage = numberSale / 100 * formula.getClientDeploymentPercentage();
-                commission = commissionPercentage + clientDeploymentPercentage;
-            }
+
             commissionDtoList.add(CommissionDto.builder()
-                    .user(sale.getEmail())
-                    .commission(commission)
+                    .user(sale)
+                    .commission(numberSale)
                     .build());
         }
 
