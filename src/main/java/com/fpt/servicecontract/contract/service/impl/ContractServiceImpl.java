@@ -248,6 +248,10 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSign(false);
             }
 
+            if (SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                response.setCanSendForCustomer(false);
+            }
+
             if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
                     || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
