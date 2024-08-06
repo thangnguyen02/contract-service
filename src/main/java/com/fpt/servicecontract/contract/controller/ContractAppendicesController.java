@@ -24,8 +24,6 @@ import java.util.List;
 public class ContractAppendicesController {
     private final ContractAppendicesService service;
     private final JwtService jwtService;
-    private final MailService mailService;
-    private final ContractStatusService contractStatusService;
 
 
     @GetMapping("/{page}/{size}")
@@ -82,7 +80,7 @@ public class ContractAppendicesController {
     }
 
     @PostMapping("/public/send-mail")
-    public SignContractResponse sendMail(
+    public ResponseEntity<BaseResponse> sendMail(
             @RequestParam String[] to,
             @RequestParam(required = false) String[] cc,
             @RequestParam String subject,
@@ -91,20 +89,7 @@ public class ContractAppendicesController {
             @RequestParam String contractId,
             @RequestParam String status,
             @RequestParam String description
-    ) throws MessagingException {
-        SignContractResponse signContractResponse = new SignContractResponse();
-        //Contract status
-        List<String> receivers = new ArrayList<>();
-        for (String recipient : to) {
-            receivers.add(recipient.trim());
-        }
-        if (cc != null) {
-            for (String recipient : cc) {
-                receivers.add(recipient.trim());
-            }
-        }
-        contractStatusService.create(createdBy, receivers, contractId, status, description);
-        mailService.sendNewMail(to, cc, subject, htmlContent, null);
-        return signContractResponse;
+    )  {
+        return ResponseEntity.ok(service.publicSendMail(to, cc, subject, htmlContent, createdBy, contractId, status, description));
     }
 }

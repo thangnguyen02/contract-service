@@ -628,6 +628,16 @@ public class ContractServiceImpl implements ContractService {
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
+        if(DataUtil.isNullObject(ids)) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, NotificationContractNumberDto.builder()
+                    .managerCount(0)
+                    .approvedCount(0)
+                    .signedCount(0)
+                    .waitSignCount(0)
+                    .waitApprovedCount(0)
+                    .successCount(0)
+                    .build());
+        }
         var userEmail = userRepository.findByEmail(email);
 
         if (userEmail.isEmpty()) {
