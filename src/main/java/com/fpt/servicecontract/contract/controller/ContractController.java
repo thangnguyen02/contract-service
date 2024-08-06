@@ -6,10 +6,6 @@ import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.*;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.SearchRequestBody;
-import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
-import com.fpt.servicecontract.contract.enums.SignContractStatus;
-import com.fpt.servicecontract.contract.model.Contract;
-import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
@@ -24,9 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController

@@ -42,7 +42,7 @@ public class ServiceContractApplication {
 			adminUser.setDepartment("IT");
 			adminUser.setPosition("Dev");
 			adminUser.setPhone("0352334588");
-			adminUser.setPermissions(Permission.getAllPermissions());
+			adminUser.setPermissions(Set.of(Permission.MANAGER));
 			adminUser.setPassword(passwordEncoder.encode("admin"));
 			adminUser.setStatus(UserStatus.ACTIVE);
 			adminUser.setRole(Role.ADMIN);
@@ -53,7 +53,7 @@ public class ServiceContractApplication {
 			user.setDepartment("IT");
 			user.setPosition("Dev");
 			user.setPhone("123456789");
-			user.setPermissions(Set.of(Permission.SALE, Permission.OFFICE_STAFF));
+			user.setPermissions(Set.of(Permission.SALE));
 			user.setPassword(passwordEncoder.encode("user"));
 			user.setStatus(UserStatus.ACTIVE);
 			user.setRole(Role.USER);
