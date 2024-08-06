@@ -245,6 +245,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
+                response.setCanSign(false);
             }
 
             if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
