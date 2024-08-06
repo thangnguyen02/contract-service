@@ -3,12 +3,15 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.contract.dto.ContractTemplateDto;
 import com.fpt.servicecontract.contract.dto.request.ContractTemplateRequest;
 import com.fpt.servicecontract.contract.model.ContractTemplate;
+import com.fpt.servicecontract.contract.model.Party;
 import com.fpt.servicecontract.contract.repository.ContractTemplateRepository;
+import com.fpt.servicecontract.contract.repository.PartyRepository;
 import com.fpt.servicecontract.contract.service.ContractTemplateService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import com.fpt.servicecontract.utils.DataUtil;
 import com.fpt.servicecontract.utils.QueryUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,7 +28,7 @@ import java.util.Objects;
 public class ContractTemplateServiceImpl implements ContractTemplateService {
 
     private final ContractTemplateRepository contractTemplateRepository;
-
+    private final PartyRepository partyRepository;
     @Override
     public BaseResponse finAllTemplates(Pageable p, String contractName) {
         Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(p, QueryUtils.appendPercent(contractName));
@@ -57,6 +60,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
     }
 
     @Override
+    @Transactional
     public BaseResponse createContract(ContractTemplateRequest contractRequest) {
         ContractTemplate template = new ContractTemplate();
         template.setNameContract(contractRequest.getNameContract());
@@ -75,6 +79,26 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setEmail(contractRequest.getEmail());
         template.setCreatedDate(LocalDateTime.now());
         template.setMarkDeleted(false);
+
+        try {
+            Party party = Party
+                    .builder()
+                    .address(contractRequest.getAddress())
+                    .name(contractRequest.getName())
+                    .taxNumber(contractRequest.getTaxNumber())
+                    .presenter(contractRequest.getPresenter())
+                    .businessNumber(contractRequest.getBusinessNumber())
+                    .bankId(contractRequest.getBankId())
+                    .bankName(contractRequest.getBankName())
+                    .bankAccOwer(contractRequest.getBankAccOwer())
+                    .email(contractRequest.getEmail())
+                    .position(contractRequest.getPosition())
+                    .build();
+            partyRepository.save(party);
+        }catch (Exception e){
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
+        }
+
         try {
             contractTemplateRepository.save(template);
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Create successfully", true, ContractTemplateDto.builder()
