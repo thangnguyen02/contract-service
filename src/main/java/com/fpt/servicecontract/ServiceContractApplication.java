@@ -38,23 +38,23 @@ public class ServiceContractApplication {
 		if (userRepository.count() == 0) {
 			User adminUser = new User();
 			adminUser.setName("admin");
-			adminUser.setEmail("admin@gmail.com");
+			adminUser.setEmail("tuddahe161500@fpt.edu.vn");
 			adminUser.setDepartment("IT");
 			adminUser.setPosition("Dev");
 			adminUser.setPhone("0352334588");
 			adminUser.setPermissions(Set.of(Permission.MANAGER));
-			adminUser.setPassword(passwordEncoder.encode("admin"));
+			adminUser.setPassword(passwordEncoder.encode("123456"));
 			adminUser.setStatus(UserStatus.ACTIVE);
 			adminUser.setRole(Role.ADMIN);
 			userRepository.save(adminUser);
 			User user = new User();
 			user.setName("user");
-			user.setEmail("user@gmail.com");
+			user.setEmail("tentufancr7@gmail.com");
 			user.setDepartment("IT");
 			user.setPosition("Dev");
 			user.setPhone("123456789");
 			user.setPermissions(Set.of(Permission.SALE));
-			user.setPassword(passwordEncoder.encode("user"));
+			user.setPassword(passwordEncoder.encode("123456"));
 			user.setStatus(UserStatus.ACTIVE);
 			user.setRole(Role.USER);
 			userRepository.save(user);
