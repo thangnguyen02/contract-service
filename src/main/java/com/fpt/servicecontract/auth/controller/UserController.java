@@ -78,4 +78,11 @@ public class UserController {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(service.retriverUser(email));
     }
+
+    @PostMapping("/active-user")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<BaseResponse> activeUser(@RequestParam("mail") String mail) {
+        return ResponseEntity.ok(service.activeUser(mail));
+    }
+
 }

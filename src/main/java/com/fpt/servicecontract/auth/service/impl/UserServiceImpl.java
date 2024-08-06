@@ -186,5 +186,16 @@ public class UserServiceImpl implements UserService {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Retriver Successful", true, user.get());
     }
 
+    @Override
+    public BaseResponse activeUser(String email) {
+        var user = userRepository.findByEmail(email);
+        if(user.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "User not exist", true, null);
+        }
+        user.get().setStatus(UserStatus.ACTIVE);
+        userRepository.save(user.get());
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Active Successful", true, user.get());
+    }
+
 
 }

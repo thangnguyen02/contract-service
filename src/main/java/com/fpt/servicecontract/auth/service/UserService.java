@@ -25,4 +25,6 @@ public interface UserService {
     BaseResponse resetPass(String email);
 
     BaseResponse retriverUser(String email);
+
+    BaseResponse activeUser(String email);
 }
