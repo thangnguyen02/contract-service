@@ -81,4 +81,38 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
                 .email(party.getEmail())
                 .build());
     }
+
+    public BaseResponse GetAuthenMailCodeCOntractAppen(String email, String contractId) {
+        int user = partyRepository.checkMailContractParty(contractId, email);
+        String[] emailList = new String[]{email};
+        if (user == 0) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "user not found", true, null);
+        }
+        int code = new Random().nextInt(999999);
+        var mailCode = mailAuthenCodeRepository.findByEmail(email);
+        if (mailCode.isEmpty()) {
+            LocalDateTime startTime = LocalDateTime.now();
+            AuthenticationCode mailAuthedCode = AuthenticationCode.builder()
+                    .email(email)
+                    .code(code)
+                    .expiryTime(startTime.plusMinutes(5))
+                    .startTime(startTime)
+                    .build();
+            mailAuthenCodeRepository.save(mailAuthedCode);
+        } else {
+            mailCode.get().setCode(code);
+            LocalDateTime startTime = LocalDateTime.now();
+            LocalDateTime expiryTime = startTime.plusMinutes(5);
+            mailCode.get().setStartTime(startTime);
+            mailCode.get().setExpiryTime(expiryTime);
+            mailAuthenCodeRepository.save(mailCode.get());
+        }
+
+        try {
+            mailService.sendNewMail(emailList, null, "OTP CODE", "<h1>" + code + "</h1>", null);
+        } catch (MessagingException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "found user", true, null);
+    }
 }

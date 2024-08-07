@@ -223,7 +223,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanApprove(false);
                 response.setCanSign(false);
                 response.setCanSendForCustomer(false);
-                response.setRejectedBy(Objects.nonNull(obj[12]) ? obj[12].toString() : null);
+                response.setRejectedBy(Objects.nonNull(obj[13]) ? obj[13].toString() : null);
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
             }
@@ -665,9 +665,6 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractId, String status, String description) {
-        if (!SignContractStatus.SIGN_B_OK.name().equals(status) && !SignContractStatus.SIGN_A_OK.name().equals(status)) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
-        }
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
             receivers.add(recipient.trim());
