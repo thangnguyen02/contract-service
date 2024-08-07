@@ -81,22 +81,24 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setMarkDeleted(false);
 
         try {
-            Party party = Party
-                    .builder()
-                    .address(contractRequest.getAddress())
-                    .name(contractRequest.getName())
-                    .taxNumber(contractRequest.getTaxNumber())
-                    .presenter(contractRequest.getPresenter())
-                    .businessNumber(contractRequest.getBusinessNumber())
-                    .bankId(contractRequest.getBankId())
-                    .bankName(contractRequest.getBankName())
-                    .bankAccOwer(contractRequest.getBankAccOwer())
-                    .email(contractRequest.getEmail())
-                    .position(contractRequest.getPosition())
-                    .build();
-            partyRepository.save(party);
-        }catch (Exception e){
-            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
+            if (partyRepository.findByTaxNumber(contractRequest.getTaxNumber()).isEmpty()) {
+                Party party = Party
+                        .builder()
+                        .address(contractRequest.getAddress())
+                        .name(contractRequest.getName())
+                        .taxNumber(contractRequest.getTaxNumber())
+                        .presenter(contractRequest.getPresenter())
+                        .businessNumber(contractRequest.getBusinessNumber())
+                        .bankId(contractRequest.getBankId())
+                        .bankName(contractRequest.getBankName())
+                        .bankAccOwer(contractRequest.getBankAccOwer())
+                        .email(contractRequest.getEmail())
+                        .position(contractRequest.getPosition())
+                        .build();
+                partyRepository.save(party);
+            }
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, e.getMessage(), false, null);
         }
 
         try {
