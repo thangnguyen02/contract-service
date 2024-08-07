@@ -36,7 +36,8 @@ public class ContractAppendicesController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken, @RequestBody ContractAppendices contractAppendices){
+    public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken,
+                                               @RequestBody ContractAppendices contractAppendices){
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(service.save(contractAppendices, email));
     }

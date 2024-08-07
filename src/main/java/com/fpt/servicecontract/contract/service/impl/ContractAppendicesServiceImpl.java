@@ -203,7 +203,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         try {
             file = pdfUtils.generatePdf(html, contractAppendices.getName() + "_" + UUID.randomUUID());
-            contractAppendices.setFile(cloudinaryService.uploadPdf(file));
+            appendices.setFile(cloudinaryService.uploadPdf(file));
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Can not generate pdf file", true, null);
         }
