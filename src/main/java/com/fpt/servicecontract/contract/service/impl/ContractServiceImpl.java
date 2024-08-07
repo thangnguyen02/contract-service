@@ -665,9 +665,6 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractId, String status, String description) {
-        if (!SignContractStatus.SIGN_B_OK.name().equals(status) && !SignContractStatus.SIGN_A_OK.name().equals(status)) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
-        }
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
             receivers.add(recipient.trim());
