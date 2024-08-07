@@ -223,8 +223,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanApprove(false);
                 response.setCanSign(false);
                 response.setCanSendForCustomer(false);
-                ContractStatus contractStatus = contractStatusRepository.findByContractLastStatusObject(response.getId());
-                response.setRejectedBy(contractStatus.getSender());
+                response.setRejectedBy(Objects.nonNull(obj[12]) ? obj[12].toString() : null);
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
             }
@@ -533,10 +532,8 @@ public class ContractServiceImpl implements ContractService {
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
             String approved = jwtService.extractUsername(bearerToken.substring(7));
-            if (contract.isPresent()) {
-                contract.get().setApprovedBy(approved);
-                contractRepository.save(contract.get());
-            }
+            contract.get().setApprovedBy(approved);
+            contractRepository.save(contract.get());
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + " đã duyệt hợp đồng")

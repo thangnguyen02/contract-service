@@ -1,11 +1,10 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
+import com.fpt.servicecontract.contract.dto.response.ContractAppendicesResponse;
 import com.fpt.servicecontract.contract.dto.response.ContractResponse;
-import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
@@ -14,7 +13,6 @@ import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.ContractAppendicesRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
 import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
-import com.fpt.servicecontract.contract.repository.PartyRepository;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
@@ -32,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -53,16 +52,16 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     private final ContractService contractService;
 
 
-    public BaseResponse getAll(Pageable p, String email, String statusSearch) {
+    public BaseResponse getAll(Pageable p, String email, String statusSearch, String contractId) {
         List<String> ids = contractStatusRepository.findAll().stream()
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
-        Page<Object[]> page = contractAppendicesRepository.findAllContractAppendices(p, email, ids, statusListSearch);
-        List<ContractResponse> responses = new ArrayList<>();
+        Page<Object[]> page = contractAppendicesRepository.findAllContractAppendices(p, email, ids, statusListSearch, contractId);
+        List<ContractAppendicesResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
-            ContractResponse response = ContractResponse.builder()
+            ContractAppendicesResponse response = ContractAppendicesResponse.builder()
                     .name(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .createdBy(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
                     .file(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
@@ -76,10 +75,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .canSign(true)
                     .value(Objects.nonNull(obj[9]) ? (Double) obj[9] : null)
                     .canRejectSign(false)
+                    .contractId(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
                     .build();
             String status = response.getStatusCurrent();
 //            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
-            response.setStatusCurrent(status);
             if (SignContractStatus.APPROVED.name().equals(status)) {
                 response.setCanSendForMng(true);
                 response.setCanSend(false);
@@ -120,15 +119,19 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
                 response.setCanSign(false);
             }
 
+            if (SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                response.setCanSendForCustomer(false);
+            }
+
             if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
-                || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+                    || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
                 response.setCanSend(false);
@@ -165,20 +168,17 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
             responses.add(response);
         }
-        Page<ContractResponse> result = new PageImpl<>(responses, p,
+        Page<ContractAppendicesResponse> result = new PageImpl<>(responses, p,
                 page.getTotalElements());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
     }
 
     public BaseResponse getById(String id) {
         Optional<ContractAppendices> contractAppendices = contractAppendicesRepository.findById(id);
-        if (contractAppendices.isPresent()) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Found", true, contractAppendices.get());
-        }
-        return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "Not found", true, null);
+        return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Found", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.NOT_FOUND, "Not found", true, null));
     }
 
-    public BaseResponse save(ContractAppendices contractAppendices, String email) throws Exception {
+    public BaseResponse save(ContractAppendices contractAppendices, String email)  {
         ContractAppendices appendices = ContractAppendices
                 .builder()
                 .id(contractAppendices.getId())
@@ -202,22 +202,44 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         context.setVariable("date", LocalDateTime.now().toLocalDate());
 
         String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
-        File file = pdfUtils.generatePdf(html, contractAppendices.getName() + "_" + UUID.randomUUID());
-        contractAppendices.setFile(cloudinaryService.uploadPdf(file));
+        File file = null;
+
+        try {
+            file = pdfUtils.generatePdf(html, contractAppendices.getName() + "_" + UUID.randomUUID());
+            contractAppendices.setFile(cloudinaryService.uploadPdf(file));
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Can not generate pdf file", true, null);
+        }
         if (file.exists() && file.isFile()) {
             boolean deleted = file.delete();
             if (!deleted) {
                 log.warn("Failed to delete the file: {}", file.getAbsolutePath());
             }
         }
-//        if (contractRequest.getId() == null) {
-//            contract.setStatus(Constants.STATUS.NEW);
-//            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.NEW);
-//        } else {
-//            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
-//        }
-        ContractAppendices result = contractAppendicesRepository.save(contractAppendices);
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, result);
+        if (contractAppendices.getId() == null) {
+            ContractAppendices result;
+            appendices.setStatus(Constants.STATUS.NEW);
+            appendices.setCreatedDate(LocalDateTime.now());
+            try {
+                result = contractAppendicesRepository.save(appendices);
+                appendices.setId(result.getId());
+            } catch (Exception e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+            }
+            contractHistoryService.createContractHistory(result.getId(), result.getName(), result.getCreatedBy(), "", Constants.STATUS.NEW);
+            contractStatusService.create(email, null, result.getId(), Constants.STATUS.NEW, "new appendices contract");
+        } else {
+            appendices.setUpdatedDate(LocalDateTime.now());
+            contractHistoryService.createContractHistory(appendices.getId(), appendices.getName(), appendices.getCreatedBy(), "", Constants.STATUS.UPDATE);
+            contractAppendicesRepository.save(appendices);
+            String[] emails = new String[]{email};
+            try {
+                mailService.sendNewMail(emails, null, "Contract Update", "<h1>The contract have been updated<h1>", null);
+            } catch (MessagingException e) {
+                return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+            }
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Successfully", true, appendices);
     }
 
     public BaseResponse deleteById(String id) {
@@ -242,8 +264,11 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
     @Override
-    public SignContractResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
-        SignContractResponse signContractResponse = new SignContractResponse();
+    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
+        List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
+        if (!statusList.contains(status)) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "status not exist", true, null);
+        }
         String email = jwtService.extractUsername(bearerToken.substring(7));
         //Contract status
         List<String> receivers = new ArrayList<>();
@@ -262,9 +287,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
         if (status.equals(SignContractStatus.WAIT_APPROVE.name())) {
-            signContractResponse.setCanSendForMng(false);
-            signContractResponse.setCanSend(false);
-
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message("Bạn có hợp đồng mới cần kiểm tra")
@@ -275,12 +297,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
             String approved = jwtService.extractUsername(bearerToken.substring(7));
-            if (contract.isPresent()) {
-                contract.get().setApprovedBy(approved);
-                contractAppendicesRepository.save(contract.get());
-            }
-            signContractResponse.setCanSendForMng(true);
-            signContractResponse.setCanSend(false);
+            contract.get().setApprovedBy(approved);
+            contractAppendicesRepository.save(contract.get());
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + "đã duyệt hợp đồng")
@@ -292,8 +310,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         //officer-admin reject
         if (status.equals(SignContractStatus.APPROVE_FAIL.name())) {
-            signContractResponse.setCanSend(true);
-            signContractResponse.setCanSendForMng(false);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + "đã yêu cầu xem lại hợp đồng")
@@ -307,11 +323,9 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         if (status.equals(SignContractStatus.SIGN_B_FAIL.name())
                 || status.equals(SignContractStatus.SIGN_A_FAIL.name())
         ) {
-            signContractResponse.setCanSend(true);
-            signContractResponse.setCanSendForMng(false);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
-                    .message(email + "đã từ chối kí hợp đồng")
+                    .message(email + " đã từ chối kí hợp đồng")
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
@@ -321,8 +335,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         if (status.equals(SignContractStatus.SIGN_A_OK.name())
         ) {
-            signContractResponse.setCanSend(false);
-            signContractResponse.setCanSendForMng(false);
             if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractAppendicesRepository.save(contract.get());
@@ -330,7 +342,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(email + "đã kí hợp đồng thành công")
+                        .message(email + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(email)
@@ -341,15 +353,13 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
-            signContractResponse.setCanSend(false);
-            signContractResponse.setCanSendForMng(false);
             if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(email + "đã kí hợp đồng thành công")
+                        .message(email + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(email)
@@ -360,7 +370,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
 
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            signContractResponse.setCanSend(false);
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + " đang chờ ký")
@@ -374,9 +383,9 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         try {
             mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
         }
-        return signContractResponse;
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, null);
     }
 
     @Override
@@ -425,8 +434,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
     @Override
-    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractId, String status, String description) {
-        if (!SignContractStatus.SIGN_B_OK.equals(status) && !SignContractStatus.SIGN_A_OK.equals(status)) {
+    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractAppendicesId, String status, String description) {
+        if (!SignContractStatus.SIGN_B_OK.name().equals(status) && !SignContractStatus.SIGN_A_OK.name().equals(status)) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
         }
         List<String> receivers = new ArrayList<>();
@@ -438,8 +447,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 receivers.add(recipient.trim());
             }
         }
-        List<String> statusDb = contractStatusService.checkDoneSign(contractId);
-        Optional<Contract> contract = contractRepository.findById(contractId);
+        List<String> statusDb = contractStatusService.checkDoneSign(contractAppendicesId);
+        Optional<Contract> contract = contractRepository.findById(contractAppendicesId);
         if (contract.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
         }
@@ -482,7 +491,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);
         }
-        contractStatusService.create(createdBy, receivers, contractId, status, description);
+        contractStatusService.create(createdBy, receivers, contractAppendicesId, status, description);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, null);
     }
 }

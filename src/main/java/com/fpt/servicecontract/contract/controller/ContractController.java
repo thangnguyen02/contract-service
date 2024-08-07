@@ -27,11 +27,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ContractController {
 
-    private final MailService mailService;
     private final ContractService contractService;
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
-    private final ContractStatusService contractStatusService;
 
 
     @PostMapping("/send-mail")

@@ -1,13 +1,9 @@
 package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.config.JwtService;
-import com.fpt.servicecontract.config.MailService;
-import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.contract.service.ContractAppendicesService;
-import com.fpt.servicecontract.contract.service.ContractStatusService;
 import com.fpt.servicecontract.utils.BaseResponse;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/contract-appendices")
@@ -29,10 +23,11 @@ public class ContractAppendicesController {
     @GetMapping("/{page}/{size}")
     public ResponseEntity<BaseResponse> getAll(@RequestHeader("Authorization") String bearerToken,
                                                @RequestParam(required = false) String status,
+                                               @RequestParam String contractId,
                                                @PathVariable int page, @PathVariable int size) {
         Pageable p = PageRequest.of(page, size);
         String email = jwtService.extractUsername(bearerToken.substring(7));
-        return ResponseEntity.ok(service.getAll(p, email, status));
+        return ResponseEntity.ok(service.getAll(p, email, status, contractId));
     }
 
     @GetMapping("/{id}")
@@ -41,7 +36,7 @@ public class ContractAppendicesController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken, @RequestBody ContractAppendices contractAppendices) throws Exception {
+    public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken, @RequestBody ContractAppendices contractAppendices){
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(service.save(contractAppendices, email));
     }
@@ -66,7 +61,7 @@ public class ContractAppendicesController {
     }
 
     @PostMapping("/send-mail")
-    public ResponseEntity<SignContractResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
+    public ResponseEntity<BaseResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
                                                          @RequestParam String[] to,
                                                          @RequestParam(required = false) String[] cc,
                                                          @RequestParam String subject,
@@ -75,7 +70,7 @@ public class ContractAppendicesController {
                                                          @RequestParam String contractId,
                                                          @RequestParam String status,
                                                          @RequestParam String description
-    ) throws MessagingException {
+    ) {
         return ResponseEntity.ok(service.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractId, status, description));
     }
 
@@ -86,10 +81,10 @@ public class ContractAppendicesController {
             @RequestParam String subject,
             @RequestParam String htmlContent,
             @RequestParam String createdBy,
-            @RequestParam String contractId,
+            @RequestParam String contractAppendicesId,
             @RequestParam String status,
             @RequestParam String description
     )  {
-        return ResponseEntity.ok(service.publicSendMail(to, cc, subject, htmlContent, createdBy, contractId, status, description));
+        return ResponseEntity.ok(service.publicSendMail(to, cc, subject, htmlContent, createdBy, contractAppendicesId, status, description));
     }
 }

@@ -18,6 +18,7 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                        SELECT
                          cs.contract_id,
                          cs.status,
+                         cs.sender,
                          ROW_NUMBER() OVER (PARTITION BY cs.contract_id ORDER BY cs.send_date DESC) AS rn
                      FROM
                          contract_status cs
@@ -32,7 +33,9 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                      c.approved_by,
                      ls.status AS statusCurrent,
                      c.mark_deleted,
-                     c.value
+                     c.value,
+                     ls.sender,
+                     c.contract_id
                  FROM
                      contract_appendices c
                  LEFT JOIN
@@ -41,16 +44,20 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                      c.mark_deleted = 0
                      AND (c.created_by = :email OR c.id IN (:ids))
                      AND (ls.status in (:statusCurrentSearch))
+                     and (c.contract_id = :contractId) 
                  ORDER BY
                      c.created_date DESC;
                     \s""", nativeQuery = true)
-    Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch );
+    Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch, String contractId);
 
     @Query(value = """
         select * from contract_appendices c where mark_deleted = 0 and c.contract_id = :contractId
     """, nativeQuery = true)
     Page<ContractAppendices> findByContractId(String contractId, Pageable pageable);
-
+    @Query(value = """
+        select * from contract_appendices c where mark_deleted = 0 and c.contract_id = :contractId
+    """, nativeQuery = true)
+    List<ContractAppendices> findByContractId(String contractId);
     @Query(value = """
                     SELECT c.created_by, SUM(c.value), count(c.id) AS numberSales
                         FROM
