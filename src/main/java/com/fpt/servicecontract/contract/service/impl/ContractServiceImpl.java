@@ -223,7 +223,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanApprove(false);
                 response.setCanSign(false);
                 response.setCanSendForCustomer(false);
-                response.setRejectedBy(Objects.nonNull(obj[12]) ? obj[12].toString() : null);
+                response.setRejectedBy(Objects.nonNull(obj[13]) ? obj[13].toString() : null);
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
             }
