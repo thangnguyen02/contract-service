@@ -29,6 +29,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
 
     private final ContractTemplateRepository contractTemplateRepository;
     private final PartyRepository partyRepository;
+
     @Override
     public BaseResponse finAllTemplates(Pageable p, String contractName) {
         Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(p, QueryUtils.appendPercent(contractName));
@@ -81,22 +82,24 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setMarkDeleted(false);
 
         try {
-            Party party = Party
-                    .builder()
-                    .address(contractRequest.getAddress())
-                    .name(contractRequest.getName())
-                    .taxNumber(contractRequest.getTaxNumber())
-                    .presenter(contractRequest.getPresenter())
-                    .businessNumber(contractRequest.getBusinessNumber())
-                    .bankId(contractRequest.getBankId())
-                    .bankName(contractRequest.getBankName())
-                    .bankAccOwer(contractRequest.getBankAccOwer())
-                    .email(contractRequest.getEmail())
-                    .position(contractRequest.getPosition())
-                    .build();
-            partyRepository.save(party);
-        }catch (Exception e){
-            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
+            if (partyRepository.findByTaxNumber(contractRequest.getTaxNumber()).isEmpty()) {
+                Party party = Party
+                        .builder()
+                        .address(contractRequest.getAddress())
+                        .name(contractRequest.getName())
+                        .taxNumber(contractRequest.getTaxNumber())
+                        .presenter(contractRequest.getPresenter())
+                        .businessNumber(contractRequest.getBusinessNumber())
+                        .bankId(contractRequest.getBankId())
+                        .bankName(contractRequest.getBankName())
+                        .bankAccOwer(contractRequest.getBankAccOwer())
+                        .email(contractRequest.getEmail())
+                        .position(contractRequest.getPosition())
+                        .build();
+                partyRepository.save(party);
+            }
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, e.getMessage(), false, null);
         }
 
         try {
@@ -132,7 +135,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "the contract template not exist", true, null);
         }
         var template = templateOptional.get();
-        template.setNameContract (DataUtil.isNullObject(contractRequest.getNameContract()) ? null : contractRequest.getNameContract());
+        template.setNameContract(DataUtil.isNullObject(contractRequest.getNameContract()) ? null : contractRequest.getNameContract());
         template.setNumberContract(DataUtil.isNullObject(contractRequest.getNumberContract()) ? null : contractRequest.getNumberContract());
         template.setRuleContract(DataUtil.isNullObject(contractRequest.getRuleContract()) ? null : contractRequest.getRuleContract());
         template.setTermContract(DataUtil.isNullObject(contractRequest.getTermContract()) ? null : contractRequest.getTermContract());
@@ -142,7 +145,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setPresenter(DataUtil.isNullObject(contractRequest.getPresenter()) ? null : contractRequest.getPresenter());
         template.setPosition(DataUtil.isNullObject(contractRequest.getPosition()) ? null : contractRequest.getPosition());
         template.setBusinessNumber(DataUtil.isNullObject(contractRequest.getBusinessNumber()) ? null : contractRequest.getBusinessNumber());
-        template.setBankId(DataUtil.isNullObject(contractRequest.getBankId()) ? null:contractRequest.getBankId());
+        template.setBankId(DataUtil.isNullObject(contractRequest.getBankId()) ? null : contractRequest.getBankId());
         template.setBankName(DataUtil.isNullObject(contractRequest.getBankName()) ? null : contractRequest.getBankName());
         template.setBankAccOwer(DataUtil.isNullObject(contractRequest.getBankAccOwer()) ? null : contractRequest.getBankAccOwer());
         template.setEmail(DataUtil.isNullObject(contractRequest.getEmail()) ? null : contractRequest.getEmail());
