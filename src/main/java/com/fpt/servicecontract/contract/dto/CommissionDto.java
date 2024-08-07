@@ -12,4 +12,6 @@ public class CommissionDto {
     private Double commission;
     private long numberContract;
     private long appendicesNumber;
+    private Double commissionAmount;
+    private Double totalAmount;
 }

@@ -225,26 +225,41 @@ public class PaySlipServiceImpl implements PaySlipService {
 
     @Override
     public BaseResponse GetCommissionByMail(String email) {
+        List<PaySlipFormula> paySlipFormulas = paySlipFormulaRepository.findAll().stream().filter(e -> Constants.POSITION.LEADER_SALE.equals(e.getType())).toList();
+        if (paySlipFormulas.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
+        }
         List<String> saleEmails = new ArrayList<>();
         saleEmails.add(email);
 
         List<Object[]> saleAndNumberSalesHaveCommission = userRepository.getSaleAndNumberSales(saleEmails);
         List<Object[]> contractAppendices = contractAppendicesRepository.getSaleAndNumberSales(saleEmails, LocalDate.now().getMonthValue(), LocalDate.now().getYear());
         Map<String, Double> saleAndNumberSalesAll = getStringDoubleMap(contractAppendices, saleAndNumberSalesHaveCommission);
-        long contractNumber = 0l;
-        long appendNumber = 0l;
+        long contractNumber = 0L;
+        long appendNumber = 0L;
         double numberSale = DataUtil.isNullObject(saleAndNumberSalesAll.get(email)) ? 0 : saleAndNumberSalesAll.get(email);
-        if (saleAndNumberSalesAll.size() > 0) {
+        if (!saleAndNumberSalesAll.isEmpty()) {
             contractNumber = DataUtil.isNullObject(saleAndNumberSalesHaveCommission.get(0)[2]) ? 0 : (Long) saleAndNumberSalesHaveCommission.get(0)[2];
         }
-        if (contractAppendices.size() > 0) {
+        if (!contractAppendices.isEmpty()) {
             appendNumber = DataUtil.isNullObject(contractAppendices.get(0)[2]) ? 0 : (Long) contractAppendices.get(0)[2];
         }
+        var paySlipFormula = paySlipFormulas.stream().
+                filter(e -> numberSale >= e.getFromValueContract()
+                            && numberSale < e.getToValueContract()).findFirst();
+
+        if (paySlipFormula.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any formula to calculate paySlip", true, null);
+        }
+
+        Double commission = numberSale / 100 * (paySlipFormula.get().getCommissionPercentage() + paySlipFormula.get().getClientDeploymentPercentage());
+
         CommissionDto dto = CommissionDto.builder()
                 .user(email)
-                .commission(numberSale)
+                .commission(commission)
                 .numberContract(contractNumber)
                 .appendicesNumber(appendNumber)
+                .totalAmount(numberSale)
                 .build();
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Commission of people", true, dto);
     }
