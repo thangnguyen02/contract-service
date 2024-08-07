@@ -132,7 +132,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "the contract template not exist", true, null);
         }
         var template = templateOptional.get();
-        template.setNameContract (DataUtil.isNullObject(contractRequest.getNameContract()) ? null : contractRequest.getNameContract());
+        template.setNameContract(DataUtil.isNullObject(contractRequest.getNameContract()) ? null : contractRequest.getNameContract());
         template.setNumberContract(DataUtil.isNullObject(contractRequest.getNumberContract()) ? null : contractRequest.getNumberContract());
         template.setRuleContract(DataUtil.isNullObject(contractRequest.getRuleContract()) ? null : contractRequest.getRuleContract());
         template.setTermContract(DataUtil.isNullObject(contractRequest.getTermContract()) ? null : contractRequest.getTermContract());
@@ -142,7 +142,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
         template.setPresenter(DataUtil.isNullObject(contractRequest.getPresenter()) ? null : contractRequest.getPresenter());
         template.setPosition(DataUtil.isNullObject(contractRequest.getPosition()) ? null : contractRequest.getPosition());
         template.setBusinessNumber(DataUtil.isNullObject(contractRequest.getBusinessNumber()) ? null : contractRequest.getBusinessNumber());
-        template.setBankId(DataUtil.isNullObject(contractRequest.getBankId()) ? null:contractRequest.getBankId());
+        template.setBankId(DataUtil.isNullObject(contractRequest.getBankId()) ? null : contractRequest.getBankId());
         template.setBankName(DataUtil.isNullObject(contractRequest.getBankName()) ? null : contractRequest.getBankName());
         template.setBankAccOwer(DataUtil.isNullObject(contractRequest.getBankAccOwer()) ? null : contractRequest.getBankAccOwer());
         template.setEmail(DataUtil.isNullObject(contractRequest.getEmail()) ? null : contractRequest.getEmail());
