@@ -6,17 +6,21 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
+import java.util.concurrent.Future;
 
 @Service
 @RequiredArgsConstructor
 public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
 
-    public void sendNewMail(String[] to, String[] cc, String subject, String htmlContent
+    @Async("emailExecutor")
+    public Future<Void> sendNewMail(String[] to, String[] cc, String subject, String htmlContent
             , MultipartFile[] attachments
     ) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -33,5 +37,6 @@ public class MailServiceImpl implements MailService {
             }
         }
         mailSender.send(message);
+        return new AsyncResult<>(null);
     }
 }
