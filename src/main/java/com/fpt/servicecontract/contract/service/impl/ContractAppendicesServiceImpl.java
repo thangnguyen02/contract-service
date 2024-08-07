@@ -3,6 +3,7 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
+import com.fpt.servicecontract.contract.dto.request.PartyRequest;
 import com.fpt.servicecontract.contract.dto.response.ContractAppendicesResponse;
 import com.fpt.servicecontract.contract.dto.response.ContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
@@ -494,4 +495,11 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         contractStatusService.create(createdBy, receivers, contractAppendicesId, status, description);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, null);
     }
+
+    @Override
+    public BaseResponse getContractSignById(String id) {
+        var contractAppendices = contractAppendicesRepository.findByIdContractAppendices(id);
+        return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Find Contract Appendices", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.FAILURE, "Contract Appendices not exist", false, null));
+    }
+
 }

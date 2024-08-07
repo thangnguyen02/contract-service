@@ -87,4 +87,9 @@ public class ContractAppendicesController {
     )  {
         return ResponseEntity.ok(service.publicSendMail(to, cc, subject, htmlContent, createdBy, contractAppendicesId, status, description));
     }
+
+    @GetMapping("/public/sign-contract-appendices/{id}")
+    public ResponseEntity<BaseResponse> getContractSignById(@PathVariable String id) {
+        return ResponseEntity.ok(service.getContractSignById(id));
+    }
 }

@@ -84,4 +84,14 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                     GROUP BY ca.created_by
             """, nativeQuery = true)
     Double getTotalValue(Integer monthSearch, Integer yearSearch);
+
+
+    @Query(value = """
+            SELECT *
+                 FROM
+                     fpt_company.contract_appendices c
+                 WHERE
+                    c.mark_deleted = 0 and c.id = :id
+            """, nativeQuery = true)
+    Optional<ContractAppendices> findByIdContractAppendices(String id);
 }
