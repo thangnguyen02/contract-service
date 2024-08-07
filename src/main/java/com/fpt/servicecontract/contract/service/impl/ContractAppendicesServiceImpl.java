@@ -54,12 +54,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
 
     public BaseResponse getAll(Pageable p, String email, String statusSearch, String contractId) {
-        List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
-                .map(ContractStatus::getContractId)
-                .toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
-        Page<Object[]> page = contractAppendicesRepository.findAllContractAppendices(p, email, ids, statusListSearch, contractId);
+        Page<Object[]> page = contractAppendicesRepository.findAllContractAppendices(p, statusListSearch, contractId);
         List<ContractAppendicesResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             ContractAppendicesResponse response = ContractAppendicesResponse.builder()
@@ -500,6 +496,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     public BaseResponse getContractSignById(String id) {
         var contractAppendices = contractAppendicesRepository.findByIdContractAppendices(id);
         return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Find Contract Appendices", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.FAILURE, "Contract Appendices not exist", false, null));
+
     }
 
 }
