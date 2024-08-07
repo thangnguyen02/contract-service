@@ -385,6 +385,7 @@ public class ContractServiceImpl implements ContractService {
                     .isUrgent(Objects.nonNull(obj[32]) ? Boolean.parseBoolean(obj[32].toString()) : null)
                     .contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null)
                     .value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null)
+                    .status(Objects.nonNull(obj[35]) ? obj[35].toString() : null)
                     .build();
         }
         return contractRequest;

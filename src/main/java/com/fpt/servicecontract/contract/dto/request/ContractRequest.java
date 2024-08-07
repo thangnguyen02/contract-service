@@ -23,5 +23,6 @@ public class ContractRequest {
     private String approvedBy;
     private String contractTypeId;
     private Double value;
+    private String status;
 }
 

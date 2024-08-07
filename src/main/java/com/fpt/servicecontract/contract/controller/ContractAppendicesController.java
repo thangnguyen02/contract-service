@@ -36,7 +36,8 @@ public class ContractAppendicesController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken, @RequestBody ContractAppendices contractAppendices){
+    public ResponseEntity<BaseResponse> create(@RequestHeader("Authorization") String bearerToken,
+                                               @RequestBody ContractAppendices contractAppendices){
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(service.save(contractAppendices, email));
     }
@@ -86,5 +87,10 @@ public class ContractAppendicesController {
             @RequestParam String description
     )  {
         return ResponseEntity.ok(service.publicSendMail(to, cc, subject, htmlContent, createdBy, contractAppendicesId, status, description));
+    }
+
+    @GetMapping("/public/sign-contract-appendices/{id}")
+    public ResponseEntity<BaseResponse> getContractSignById(@PathVariable String id) {
+        return ResponseEntity.ok(service.getContractSignById(id));
     }
 }

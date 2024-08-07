@@ -42,13 +42,12 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                      latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
                  WHERE
                      c.mark_deleted = 0
-                     AND (c.created_by = :email OR c.id IN (:ids))
                      AND (ls.status in (:statusCurrentSearch))
                      and (c.contract_id = :contractId) 
                  ORDER BY
                      c.created_date DESC;
                     \s""", nativeQuery = true)
-    Page<Object[]> findAllContractAppendices(Pageable p, String email , List<String> ids, List<String> statusCurrentSearch, String contractId);
+    Page<Object[]> findAllContractAppendices(Pageable p, List<String> statusCurrentSearch, String contractId);
 
     @Query(value = """
         select * from contract_appendices c where mark_deleted = 0 and c.contract_id = :contractId
@@ -84,4 +83,14 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                     GROUP BY ca.created_by
             """, nativeQuery = true)
     Double getTotalValue(Integer monthSearch, Integer yearSearch);
+
+
+    @Query(value = """
+            SELECT *
+                 FROM
+                     fpt_company.contract_appendices c
+                 WHERE
+                    c.mark_deleted = 0 and c.id = :id
+            """, nativeQuery = true)
+    Optional<ContractAppendices> findByIdContractAppendices(String id);
 }

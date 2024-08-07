@@ -3,6 +3,7 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
+import com.fpt.servicecontract.contract.dto.request.PartyRequest;
 import com.fpt.servicecontract.contract.dto.response.ContractAppendicesResponse;
 import com.fpt.servicecontract.contract.dto.response.ContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
@@ -53,12 +54,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
 
     public BaseResponse getAll(Pageable p, String email, String statusSearch, String contractId) {
-        List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
-                .map(ContractStatus::getContractId)
-                .toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
-        Page<Object[]> page = contractAppendicesRepository.findAllContractAppendices(p, email, ids, statusListSearch, contractId);
+        Page<Object[]> page = contractAppendicesRepository.findAllContractAppendices(p, statusListSearch, contractId);
         List<ContractAppendicesResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             ContractAppendicesResponse response = ContractAppendicesResponse.builder()
@@ -206,7 +203,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         try {
             file = pdfUtils.generatePdf(html, contractAppendices.getName() + "_" + UUID.randomUUID());
-            contractAppendices.setFile(cloudinaryService.uploadPdf(file));
+            appendices.setFile(cloudinaryService.uploadPdf(file));
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Can not generate pdf file", true, null);
         }
@@ -494,4 +491,12 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         contractStatusService.create(createdBy, receivers, contractAppendicesId, status, description);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, null);
     }
+
+    @Override
+    public BaseResponse getContractSignById(String id) {
+        var contractAppendices = contractAppendicesRepository.findByIdContractAppendices(id);
+        return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Find Contract Appendices", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.FAILURE, "Contract Appendices not exist", false, null));
+
+    }
+
 }
