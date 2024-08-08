@@ -1,9 +1,8 @@
 package com.fpt.servicecontract.contract.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
-import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
+import com.fpt.servicecontract.contract.model.Party;
 import com.fpt.servicecontract.utils.BaseResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,4 +32,8 @@ public interface ContractService {
     BaseResponse getNotificationContractNumber(String email);
 
     BaseResponse publicSendMail(String[] to,String[] cc,String subject,String htmlContent,String createdBy,String contractId,String status,String description);
+
+    Party createDefaultParty(Party party);
+
+    Party getDefaultParty();
 }

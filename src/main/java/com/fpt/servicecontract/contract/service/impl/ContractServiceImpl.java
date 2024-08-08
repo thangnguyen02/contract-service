@@ -62,20 +62,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     @Transactional
     public BaseResponse createContract(ContractRequest contractRequest, String email) {
-        Party partyA = Party
-                .builder()
-                .id(contractRequest.getPartyA().getId())
-                .address(contractRequest.getPartyA().getAddress())
-                .name(contractRequest.getPartyA().getName())
-                .taxNumber(contractRequest.getPartyA().getTaxNumber())
-                .presenter(contractRequest.getPartyA().getPresenter())
-                .businessNumber(contractRequest.getPartyA().getBusinessNumber())
-                .bankId(contractRequest.getPartyA().getBankId())
-                .bankName(contractRequest.getPartyA().getBankName())
-                .bankAccOwer(contractRequest.getPartyA().getBankAccOwer())
-                .email(contractRequest.getPartyA().getEmail())
-                .position(contractRequest.getPartyA().getPosition())
-                .build();
+        Party partyA = getDefaultParty();
         Party partyB = Party
                 .builder()
                 .id(contractRequest.getPartyB().getId())
@@ -89,10 +76,11 @@ public class ContractServiceImpl implements ContractService {
                 .bankAccOwer(contractRequest.getPartyB().getBankAccOwer())
                 .email(contractRequest.getPartyB().getEmail())
                 .position(contractRequest.getPartyB().getPosition())
+                .typeParty(false)
                 .build();
         try {
             partyB = partyRepository.save(partyB);
-            partyA = partyRepository.save(partyA);
+//            partyA = partyRepository.save(partyA);
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Failed", false, e.getMessage());
         }
@@ -720,6 +708,17 @@ public class ContractServiceImpl implements ContractService {
         }
         contractStatusService.create(createdBy, receivers, contractId, status, description);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, null);
+    }
+
+    @Override
+    public Party createDefaultParty(Party party) {
+        party.setTypeParty(true);
+        return partyRepository.save(party);
+    }
+
+    @Override
+    public Party getDefaultParty() {
+        return partyRepository.manualParty();
     }
 
 }

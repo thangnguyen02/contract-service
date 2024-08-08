@@ -94,6 +94,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
                         .bankAccOwer(contractRequest.getBankAccOwer())
                         .email(contractRequest.getEmail())
                         .position(contractRequest.getPosition())
+                        .typeParty(false)
                         .build();
                 partyRepository.save(party);
             }

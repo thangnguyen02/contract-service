@@ -29,4 +29,6 @@ public class Party {
 
     @Column(unique = true)
     private String taxNumber;
+
+    private boolean typeParty;
 }

@@ -21,4 +21,9 @@ public interface PartyRepository extends JpaRepository<Party, String> {
                                and cp.email = :email
             """, nativeQuery = true)
     int checkMailContractParty(String contractId, String email);
+
+    @Query(value = """
+               select * from party p where p.type_party = 1
+            """, nativeQuery = true)
+    Party manualParty();
 }
