@@ -2,10 +2,10 @@ package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
+import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.PartyRequest;
 import com.fpt.servicecontract.contract.dto.response.ContractAppendicesResponse;
-import com.fpt.servicecontract.contract.dto.response.ContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
@@ -21,7 +21,7 @@ import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -175,7 +175,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Found", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.NOT_FOUND, "Not found", true, null));
     }
 
-    public BaseResponse save(ContractAppendices contractAppendices, String email)  {
+    public BaseResponse save(ContractAppendices contractAppendices, String email) {
         ContractAppendices appendices = ContractAppendices
                 .builder()
                 .id(contractAppendices.getId())
@@ -392,7 +392,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
 
-
     private static List<String> getListStatusSearch(String statusSearch) {
         List<String> statusListSearch = new ArrayList<>();
 
@@ -494,6 +493,119 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         var contractAppendices = contractAppendicesRepository.findByIdContractAppendices(id);
         return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Find Contract Appendices", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.FAILURE, "Contract Appendices not exist", false, null));
 
+    }
+    public ContractRequest findById(String id) {
+        List<Object[]> lst = contractRepository.findByIdContract(id);
+        ContractRequest contractRequest = new ContractRequest();
+        for (Object[] obj : lst) {
+            contractRequest = ContractRequest.builder()
+                    .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
+                    .name(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
+                    .number(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
+                    .rule(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
+                    .term(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
+                    .partyA(PartyRequest.builder()
+                            .id(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
+                            .name(Objects.nonNull(obj[6]) ? obj[6].toString() : null)
+                            .address(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
+                            .presenter(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
+                            .position(Objects.nonNull(obj[10]) ? obj[10].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
+                            .bankId(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
+                            .email(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
+                            .bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
+                            .build())
+                    .partyB(PartyRequest.builder()
+                            .id(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
+                            .name(Objects.nonNull(obj[17]) ? obj[17].toString() : null)
+                            .address(Objects.nonNull(obj[18]) ? obj[18].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[19]) ? obj[19].toString() : null)
+                            .presenter(Objects.nonNull(obj[20]) ? obj[20].toString() : null)
+                            .position(Objects.nonNull(obj[21]) ? obj[21].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[22]) ? obj[22].toString() : null)
+                            .bankId(Objects.nonNull(obj[23]) ? obj[23].toString() : null)
+                            .email(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
+                            .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
+                            .build())
+                    .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
+                    .signA(Objects.nonNull(obj[28]) ? obj[28].toString() : null)
+                    .signB(Objects.nonNull(obj[29]) ? obj[29].toString() : null)
+                    .createdBy(Objects.nonNull(obj[30]) ? obj[30].toString() : null)
+                    .approvedBy(Objects.nonNull(obj[31]) ? obj[31].toString() : null)
+                    .isUrgent(Objects.nonNull(obj[32]) ? Boolean.parseBoolean(obj[32].toString()) : null)
+                    .contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null)
+                    .value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null)
+                    .status(Objects.nonNull(obj[35]) ? obj[35].toString() : null)
+                    .build();
+        }
+        return contractRequest;
+    }
+    @Override
+    public BaseResponse signContract(SignContractDTO signContractDTO) {
+        var contractAppendicesOptional = contractAppendicesRepository.findById(signContractDTO.getContractId());
+        if (contractAppendicesOptional.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "ContractAppendices not existed", true, null);
+        }
+        ContractAppendices contract = contractAppendicesOptional.get();
+        ContractRequest contractRequest = findById(contract.getContractId());
+        Context context = new Context();
+        if (contract.getSignB() != null && contract.getSignA() != null) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Contract is successful" + contract.getContractSignDate(), true, null);
+        }
+        if (!signContractDTO.isCustomer()) {
+            contract.setSignA(signContractDTO.getSignImage());
+            context.setVariable("signA", signContractDTO.getSignImage());
+            context.setVariable("signB", contract.getSignB());
+            if (!StringUtils.isBlank(contract.getSignB())) {
+                contract.setStatus(Constants.STATUS.SUCCESS);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+            } else {
+                contract.setStatus(Constants.STATUS.PROCESSING);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_A);
+            }
+        } else {
+            contract.setSignB(signContractDTO.getSignImage());
+            context.setVariable("signB", signContractDTO.getSignImage());
+            context.setVariable("signA", contract.getSignA());
+            if (!StringUtils.isBlank(contract.getSignA())) {
+                contract.setStatus(Constants.STATUS.SUCCESS);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+            } else {
+                contract.setStatus(Constants.STATUS.PROCESSING);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B);
+            }
+        }
+        context.setVariable("partyA", contractRequest.getPartyA());
+        context.setVariable("partyB", contractRequest.getPartyB());
+        context.setVariable("info", contract);
+        context.setVariable("date", contract.getCreatedDate());
+        String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
+        File file = null;
+        try {
+            file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
+        try {
+            contract.setFile(cloudinaryService.uploadPdf(file));
+        } catch (IOException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
+        if (file.exists() && file.isFile()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+            }
+        }
+        try {
+            contractAppendicesRepository.save(contract);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Sign ok", true, null);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
     }
 
 }

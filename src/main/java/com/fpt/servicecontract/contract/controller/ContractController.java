@@ -30,8 +30,6 @@ public class ContractController {
     private final ContractService contractService;
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
-
-
     @PostMapping("/send-mail")
     public ResponseEntity<BaseResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
                                                  @RequestParam String[] to,
@@ -116,7 +114,6 @@ public class ContractController {
         return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
                 "Successfully", true, elasticSearchService.search("contract", searchRequestBody, ContractRequest.class)));
     }
-
 
     @PostMapping("/public/send-mail")
     public ResponseEntity<BaseResponse> sendMail(

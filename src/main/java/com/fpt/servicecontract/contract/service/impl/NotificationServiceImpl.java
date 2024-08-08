@@ -109,7 +109,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Integer countNotRead(String email) {
-        List<Notification> notificationList = notificationRepository.findAll();
+        List<Notification> notificationList = notificationRepository.findAllByMarkedDeletedFalse();
         List<Notification> list = notificationList.stream().filter(f -> f.getReceivers().contains(email) && !f.getMarkRead()).toList();
         return list.size();
     }
