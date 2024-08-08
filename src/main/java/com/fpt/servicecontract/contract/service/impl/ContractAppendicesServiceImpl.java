@@ -2,10 +2,9 @@ package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
+import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
-import com.fpt.servicecontract.contract.dto.request.PartyRequest;
 import com.fpt.servicecontract.contract.dto.response.ContractAppendicesResponse;
-import com.fpt.servicecontract.contract.dto.response.ContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
@@ -21,7 +20,7 @@ import com.fpt.servicecontract.utils.PdfUtils;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -175,7 +174,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Found", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.NOT_FOUND, "Not found", true, null));
     }
 
-    public BaseResponse save(ContractAppendices contractAppendices, String email)  {
+    public BaseResponse save(ContractAppendices contractAppendices, String email) {
         ContractAppendices appendices = ContractAppendices
                 .builder()
                 .id(contractAppendices.getId())
@@ -392,7 +391,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
 
-
     private static List<String> getListStatusSearch(String statusSearch) {
         List<String> statusListSearch = new ArrayList<>();
 
@@ -494,6 +492,68 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         var contractAppendices = contractAppendicesRepository.findByIdContractAppendices(id);
         return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Find Contract Appendices", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.FAILURE, "Contract Appendices not exist", false, null));
 
+    }
+
+    @Override
+    public BaseResponse signContract(SignContractDTO signContractDTO) {
+        var contractAppendicesOptional = contractAppendicesRepository.findById(signContractDTO.getContractId());
+        if (contractAppendicesOptional.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.NOT_FOUND, "ContractAppendices not existed", true, null);
+        }
+        ContractAppendices contract = contractAppendicesOptional.get();
+        Context context = new Context();
+        if (contract.getSignB() != null && contract.getSignA() != null) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Contract is successful" + contract.getContractSignDate(), true, null);
+        }
+        if (!signContractDTO.isCustomer()) {
+            contract.setSignA(signContractDTO.getSignImage());
+            context.setVariable("signA", signContractDTO.getSignImage());
+            context.setVariable("signB", contract.getSignB());
+            if (!StringUtils.isBlank(contract.getSignB())) {
+                contract.setStatus(Constants.STATUS.SUCCESS);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+            } else {
+                contract.setStatus(Constants.STATUS.PROCESSING);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_A);
+            }
+        } else {
+            contract.setSignB(signContractDTO.getSignImage());
+            context.setVariable("signB", signContractDTO.getSignImage());
+            context.setVariable("signA", contract.getSignA());
+            if (!StringUtils.isBlank(contract.getSignA())) {
+                contract.setStatus(Constants.STATUS.SUCCESS);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+            } else {
+                contract.setStatus(Constants.STATUS.PROCESSING);
+                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B);
+            }
+        }
+        context.setVariable("info", contract);
+        context.setVariable("date", contract.getCreatedDate());
+        String html = pdfUtils.templateEngine().process("templates/new_contract.html", context);
+        File file = null;
+        try {
+            file = pdfUtils.generatePdf(html, contract.getName() + "_" + UUID.randomUUID());
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
+        try {
+            contract.setFile(cloudinaryService.uploadPdf(file));
+        } catch (IOException e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
+        if (file.exists() && file.isFile()) {
+            boolean deleted = file.delete();
+            if (!deleted) {
+                log.warn("Failed to delete the file: {}", file.getAbsolutePath());
+            }
+        }
+        try {
+            contractAppendicesRepository.save(contract);
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Sign ok", true, null);
+        } catch (Exception e) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
+        }
     }
 
 }

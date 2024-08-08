@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.service;
 
+import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.utils.BaseResponse;
@@ -25,5 +26,5 @@ public interface ContractAppendicesService {
 
     BaseResponse getContractSignById(String id);
 
-
+    BaseResponse signContract(SignContractDTO signContractDTO);
 }

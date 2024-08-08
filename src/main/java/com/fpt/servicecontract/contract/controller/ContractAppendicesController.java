@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.controller;
 
 import com.fpt.servicecontract.config.JwtService;
+import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.contract.service.ContractAppendicesService;
 import com.fpt.servicecontract.utils.BaseResponse;
@@ -92,5 +93,10 @@ public class ContractAppendicesController {
     @GetMapping("/public/sign-contract-appendices/{id}")
     public ResponseEntity<BaseResponse> getContractSignById(@PathVariable String id) {
         return ResponseEntity.ok(service.getContractSignById(id));
+    }
+
+    @PostMapping("/public/sign-contract-appendices")
+    public ResponseEntity<BaseResponse> signContractAppendices(@RequestBody SignContractDTO signContractDTO) {
+        return ResponseEntity.ok(service.signContract(signContractDTO));
     }
 }
