@@ -68,11 +68,11 @@ public class ContractAppendicesController {
                                                          @RequestParam String subject,
                                                          @RequestParam String htmlContent,
                                                          @RequestParam(required = false) MultipartFile[] attachments,
-                                                         @RequestParam String contractId,
+                                                         @RequestParam String contractAppendicesId,
                                                          @RequestParam String status,
                                                          @RequestParam String description
     ) {
-        return ResponseEntity.ok(service.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractId, status, description));
+        return ResponseEntity.ok(service.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractAppendicesId, status, description));
     }
 
     @PostMapping("/public/send-mail")
