@@ -15,16 +15,19 @@ public class OtpController {
 
     private final MailAuthenCodeService mailAuthenCodeService;
 
-    @GetMapping("/{email}/{contractId}")
+    @GetMapping("/{email}/{type}/{contractId}")
     public BaseResponse getOtpByEmail(
             @PathVariable String email,
-            @PathVariable String contractId
+            @PathVariable String contractId,
+            @PathVariable String type
     ) {
-        return mailAuthenCodeService.GetAuthenMailCode(email, contractId);
+        return mailAuthenCodeService.GetAuthenMailCode(email, contractId, type);
     }
 
     @PostMapping("/get-contract")
     public BaseResponse getContract(@RequestBody VerifyEmailCodeRequest verifyEmailCodeRequest) {
         return mailAuthenCodeService.AuthenticationMailWithCode(verifyEmailCodeRequest.getEmail(), verifyEmailCodeRequest.getCode());
     }
+
+
 }
