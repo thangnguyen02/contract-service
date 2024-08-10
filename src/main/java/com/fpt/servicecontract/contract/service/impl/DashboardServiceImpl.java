@@ -8,7 +8,9 @@ import com.fpt.servicecontract.contract.repository.OldContractRepository;
 import com.fpt.servicecontract.contract.service.DashboardService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
+import com.fpt.servicecontract.utils.DataUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -37,9 +39,12 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public BaseResponse getNumberSale(String email, String status) {
         List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> m.getReceiver().contains(email) || m.getSender().equals(email))
+                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
+        if(DataUtil.isNullObject(ids)) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any contract", false, 0);
+        }
         Integer number = contractRepository.getNumberContractBySale(email, ids, status);
         if (number == null || number == 0) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any contract", false, 0);

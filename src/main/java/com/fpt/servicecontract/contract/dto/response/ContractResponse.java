@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.dto.response;
 
+import com.fpt.servicecontract.auth.dto.UserDto;
 import lombok.*;
 
 import java.util.List;
@@ -33,4 +34,7 @@ public class ContractResponse {
     private Double value;
     private String rejectedBy;
     private boolean canRejectSign;
+    private boolean isDraft;
+    private String numberContract;
+    private UserDto user;
 }

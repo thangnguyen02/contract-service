@@ -35,11 +35,16 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                      c.mark_deleted,
                      c.value,
                      ls.sender,
-                     c.contract_id
+                     c.contract_id,
+                     c.number,
+                     us.phone,
+                     us.name as userName
                  FROM
                      contract_appendices c
                  LEFT JOIN
                      latest_status ls ON c.id = ls.contract_id AND ls.rn = 1
+                 join 
+                     users us on c.created_by = us.email
                  WHERE
                      c.mark_deleted = 0
                      AND (ls.status in (:statusCurrentSearch))

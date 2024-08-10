@@ -1,6 +1,7 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fpt.servicecontract.auth.dto.UserDto;
 import com.fpt.servicecontract.auth.model.Permission;
 import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
@@ -164,6 +165,7 @@ public class ContractServiceImpl implements ContractService {
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
+        var user = userRepository.findByEmail(email);
         List<String> statusListSearch = getListStatusSearch(statusSearch);
         Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusListSearch, QueryUtils.appendPercent(search));
         List<ContractResponse> responses = new ArrayList<>();
@@ -184,95 +186,156 @@ public class ContractServiceImpl implements ContractService {
                     .canSign(true)
                     .canSendForCustomer(true)
                     .value(Objects.nonNull(obj[12]) ? (Double) obj[12] : null)
+                    .numberContract(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
                     .canRejectSign(false)
+                    .isDraft(true)
                     .build();
+            var createdBy = userRepository.findByEmail(Objects.nonNull(obj[1]) ? obj[1].toString() : "null");
+            if (createdBy.isEmpty()) {
+                return new BaseResponse(Constants.ResponseCode.SUCCESS, "User not found", true, null);
+            }
+            response.setUser(UserDto.builder()
+                    .email(response.getCreatedBy())
+                    .phone(createdBy.get().getPhone())
+                    .name(createdBy.get().getName())
+                    .build());
             String status = response.getStatusCurrent();
 //            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
             response.setStatusCurrent(status);
-            if (SignContractStatus.APPROVED.name().equals(status)) {
-                response.setCanSendForMng(true);
-                response.setCanSend(false);
-            }
-
-
-            // man hinh sale send contract cho office-admin
-            if (SignContractStatus.WAIT_APPROVE.name().equals(status)) {
-                response.setCanSend(false);
-                response.setCanApprove(true);
-                response.setCanSign(false);
-                response.setCanSendForCustomer(false);
-                response.setCanUpdate(true);
-                response.setCanDelete(true);
-            }
-
-            //officer-admin reject
-            if (SignContractStatus.APPROVE_FAIL.name().equals(status)) {
-                response.setCanSend(true);
-                response.setCanApprove(false);
-                response.setCanSign(false);
-                response.setCanSendForCustomer(false);
-                response.setRejectedBy(Objects.nonNull(obj[13]) ? obj[13].toString() : null);
-                response.setCanUpdate(true);
-                response.setCanDelete(true);
-            }
-
-            //send office_admin
-            if (SignContractStatus.NEW.name().equals(status)) {
-                response.setCanResend(false);
-                response.setCanUpdate(true);
-                response.setCanDelete(true);
-                response.setCanApprove(true);
-                response.setCanSign(false);
-                response.setCanSendForCustomer(false);
-            }
-
-
-            if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
-                response.setCanUpdate(true);
-                response.setCanDelete(true);
-                response.setCanSend(true);
-                response.setCanSign(false);
-            }
-
-            if (SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
-                response.setCanSendForCustomer(false);
-            }
-
-            if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
-                    || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
-                response.setCanUpdate(false);
-                response.setCanDelete(false);
-                response.setCanSend(false);
-                response.setCanSendForCustomer(false);
-                response.setCanSendForMng(false);
-                response.setCanSign(true);
-                response.setCanRejectSign(true);
-            }
-
-
             List<String> statusDb = contractStatusService.checkDoneSign(response.getId());
 
-            if (status.equals(SignContractStatus.SIGN_A_OK.name())
-            ) {
-                response.setCanSend(false);
-                response.setCanUpdate(false);
-                response.setCanDelete(false);
-                if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+            if ("ADMIN".equals(user.get().getRole())) {
+                if (SignContractStatus.NEW.name().equals(status)) {
+                    response.setCanUpdate(true);
+                    response.setCanDelete(true);
+                    response.setCanSign(true);
                     response.setCanSendForCustomer(true);
-                    response.setCanSendForMng(false);
                 }
-            }
 
-            if (status.equals(SignContractStatus.SIGN_B_OK.name())
-            ) {
-                response.setCanSend(false);
-                response.setCanUpdate(false);
-                response.setCanDelete(false);
-                if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                if (status.equals(SignContractStatus.SIGN_A_OK.name())
+                ) {
+                    response.setCanSend(true);
+                    response.setCanUpdate(true);
+                    response.setCanDelete(true);
+                    if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                        response.setCanSendForCustomer(true);
+                    }
+                }
+
+                if (status.equals(SignContractStatus.SIGN_B_OK.name())) {
+                    response.setCanSend(false);
+                    response.setCanUpdate(false);
+                    response.setCanDelete(false);
+                }
+
+                if (SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+                    response.setCanUpdate(false);
+                    response.setCanDelete(false);
+                    response.setCanSend(false);
+                    response.setCanSendForCustomer(false);
+                    response.setCanRejectSign(true);
+                }
+
+                if (SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
+                    response.setCanSign(false);
+                    response.setCanUpdate(false);
+                    response.setCanDelete(false);
+                    response.setCanSend(false);
+                    response.setCanSendForCustomer(false);
+                    response.setCanRejectSign(true);
+                }
+            } else {
+                if (SignContractStatus.APPROVED.name().equals(status)) {
                     response.setCanSendForMng(true);
+                    response.setCanSend(false);
+                }
+
+
+                // man hinh sale send contract cho office-admin
+                if (SignContractStatus.WAIT_APPROVE.name().equals(status)) {
+                    response.setCanSend(false);
+                    response.setCanApprove(true);
+                    response.setCanSign(false);
+                    response.setCanSendForCustomer(false);
+                    response.setCanUpdate(true);
+                    response.setCanDelete(true);
+                }
+
+                //officer-admin reject
+                if (SignContractStatus.APPROVE_FAIL.name().equals(status)) {
+                    response.setCanSend(true);
+                    response.setCanApprove(false);
+                    response.setCanSign(false);
+                    response.setCanSendForCustomer(false);
+                    response.setRejectedBy(Objects.nonNull(obj[13]) ? obj[13].toString() : null);
+                    response.setCanUpdate(true);
+                    response.setCanDelete(true);
+                }
+
+                //send office_admin
+                if (SignContractStatus.NEW.name().equals(status)) {
+                    response.setCanResend(false);
+                    response.setCanUpdate(true);
+                    response.setCanDelete(true);
+                    response.setCanApprove(true);
+                    response.setCanSign(false);
                     response.setCanSendForCustomer(false);
                 }
+
+
+                if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    response.setCanUpdate(true);
+                    response.setCanDelete(true);
+                    response.setCanSend(true);
+                    response.setCanSign(false);
+                }
+
+                if (SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    response.setCanSendForCustomer(false);
+                }
+
+                if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
+                    || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+                    response.setCanUpdate(false);
+                    response.setCanDelete(false);
+                    response.setCanSend(false);
+                    response.setCanSendForCustomer(false);
+                    response.setCanSendForMng(false);
+                    response.setCanRejectSign(true);
+                }
+
+                if (SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
+                    response.setCanSign(false);
+                }
+
+
+                if (status.equals(SignContractStatus.SIGN_A_OK.name())
+                ) {
+                    response.setCanSend(false);
+                    response.setCanUpdate(false);
+                    response.setCanDelete(false);
+                    if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                        response.setCanSendForCustomer(true);
+                        response.setCanSendForMng(false);
+                    }
+                }
+
+                if (status.equals(SignContractStatus.SIGN_B_OK.name())
+                ) {
+                    response.setCanSend(false);
+                    response.setCanUpdate(false);
+                    response.setCanDelete(false);
+                    if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                        response.setCanSendForMng(true);
+                        response.setCanSendForCustomer(false);
+                    }
+                }
+            }
+            String signA = Objects.nonNull(obj[14]) ? obj[14].toString() : null;
+            String signB = Objects.nonNull(obj[15]) ? obj[15].toString() : null;
+            if (signA != null && signB != null) {
+                response.setDraft(false);
             }
 
             responses.add(response);
@@ -494,6 +557,7 @@ public class ContractServiceImpl implements ContractService {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "status not exist", true, null);
         }
         String email = jwtService.extractUsername(bearerToken.substring(7));
+        var user = userRepository.findByEmail(email);
         //Contract status
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
@@ -505,10 +569,87 @@ public class ContractServiceImpl implements ContractService {
             }
         }
         Optional<Contract> contract = contractRepository.findById(contractId);
+        List<String> statusDb = contractStatusService.checkDoneSign(contractId);
+
         if (contract.isEmpty()) {
             return null;
         }
-//        //màn hình hợp đồng của OFFICE_ADMIN:
+
+        if ("ADMIN".equals(user.get().getRole())) {
+            if (status.equals(SignContractStatus.SIGN_A_OK.name())
+            ) {
+                if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+                    contract.get().setStatus(Constants.STATUS.SUCCESS);
+                    contractRepository.save(contract.get());
+                    status = SignContractStatus.SUCCESS.name();
+
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đã kí hợp đồng thành công")
+                            .typeNotification("CONTRACT")
+                            .receivers(receivers)
+                            .sender(email)
+                            .build());
+                }
+
+            }
+
+            if (status.equals(SignContractStatus.SIGN_B_OK.name())
+            ) {
+                if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(0))) {
+                    status = SignContractStatus.SUCCESS.name();
+                    contract.get().setStatus(Constants.STATUS.SUCCESS);
+                    contractRepository.save(contract.get());
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đã kí hợp đồng thành công")
+                            .typeNotification("CONTRACT")
+                            .receivers(receivers)
+                            .sender(email)
+                            .build());
+                }
+
+            }
+        } else {
+
+
+            if (status.equals(SignContractStatus.SIGN_A_OK.name())
+            ) {
+                if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+                    contract.get().setStatus(Constants.STATUS.SUCCESS);
+                    contractRepository.save(contract.get());
+                    status = SignContractStatus.SUCCESS.name();
+
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đã kí hợp đồng thành công")
+                            .typeNotification("CONTRACT")
+                            .receivers(receivers)
+                            .sender(email)
+                            .build());
+                }
+
+            }
+
+            if (status.equals(SignContractStatus.SIGN_B_OK.name())
+            ) {
+                if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
+                    status = SignContractStatus.SUCCESS.name();
+                    contract.get().setStatus(Constants.STATUS.SUCCESS);
+                    contractRepository.save(contract.get());
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đã kí hợp đồng thành công")
+                            .typeNotification("CONTRACT")
+                            .receivers(receivers)
+                            .sender(email)
+                            .build());
+                }
+
+            }
+
+        }
+        //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
         if (status.equals(SignContractStatus.WAIT_APPROVE.name())) {
             notificationService.create(Notification.builder()
@@ -545,7 +686,7 @@ public class ContractServiceImpl implements ContractService {
 
         // site a or b reject with reseon
         if (status.equals(SignContractStatus.SIGN_B_FAIL.name())
-                || status.equals(SignContractStatus.SIGN_A_FAIL.name())
+            || status.equals(SignContractStatus.SIGN_A_FAIL.name())
         ) {
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
@@ -555,43 +696,6 @@ public class ContractServiceImpl implements ContractService {
                     .sender(email)
                     .build());
         }
-        List<String> statusDb = contractStatusService.checkDoneSign(contractId);
-
-        if (status.equals(SignContractStatus.SIGN_A_OK.name())
-        ) {
-            if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
-                contract.get().setStatus(Constants.STATUS.SUCCESS);
-                contractRepository.save(contract.get());
-                status = SignContractStatus.SUCCESS.name();
-
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(email + " đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(email)
-                        .build());
-            }
-
-        }
-
-        if (status.equals(SignContractStatus.SIGN_B_OK.name())
-        ) {
-            if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
-                status = SignContractStatus.SUCCESS.name();
-                contract.get().setStatus(Constants.STATUS.SUCCESS);
-                contractRepository.save(contract.get());
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(email + " đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(email)
-                        .build());
-            }
-
-        }
-
 
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
             notificationService.create(Notification.builder()
@@ -602,6 +706,8 @@ public class ContractServiceImpl implements ContractService {
                     .sender(email)
                     .build());
         }
+
+
         contractStatusService.create(email, receivers, contractId, status, description);
         contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status);
         try {
@@ -618,7 +724,7 @@ public class ContractServiceImpl implements ContractService {
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
-        if(DataUtil.isNullObject(ids)) {
+        if (DataUtil.isNullObject(ids)) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, NotificationContractNumberDto.builder()
                     .managerCount(0)
                     .approvedCount(0)
@@ -633,7 +739,6 @@ public class ContractServiceImpl implements ContractService {
         if (userEmail.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Email not exist ", true, null);
         }
-
 
 
         String[] statical = contractRepository.getNotificationContractNumber(email, ids);
