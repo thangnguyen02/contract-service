@@ -31,4 +31,6 @@ public class Party {
     private String taxNumber;
 
     private boolean typeParty;
+    @Column(unique = true)
+    private String phone;
 }

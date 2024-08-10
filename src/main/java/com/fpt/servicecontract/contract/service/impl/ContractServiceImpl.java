@@ -64,6 +64,10 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public BaseResponse createContract(ContractRequest contractRequest, String email) {
         Party partyA = getDefaultParty();
+        if (partyA.getTaxNumber().equals(contractRequest.getPartyB().getTaxNumber())) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE,
+                    "Yêu cầu xem lại các bên", false, "Yêu cầu xem lại các bên");
+        }
         Party partyB = Party
                 .builder()
                 .id(contractRequest.getPartyB().getId())
@@ -77,6 +81,7 @@ public class ContractServiceImpl implements ContractService {
                 .bankAccOwer(contractRequest.getPartyB().getBankAccOwer())
                 .email(contractRequest.getPartyB().getEmail())
                 .position(contractRequest.getPartyB().getPosition())
+                .phone(contractRequest.getPartyB().getPhone())
                 .typeParty(false)
                 .build();
         try {
@@ -550,6 +555,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    @Transactional
     public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
         List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
 
