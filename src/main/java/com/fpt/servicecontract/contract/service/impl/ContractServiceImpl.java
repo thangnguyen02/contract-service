@@ -63,6 +63,10 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     public BaseResponse createContract(ContractRequest contractRequest, String email) {
         Party partyA = getDefaultParty();
+        if (partyA.getTaxNumber().equals(contractRequest.getPartyB().getTaxNumber())) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE,
+                    "Yêu cầu xem lại các bên", false, "Yêu cầu xem lại các bên");
+        }
         Party partyB = Party
                 .builder()
                 .id(contractRequest.getPartyB().getId())
@@ -76,6 +80,7 @@ public class ContractServiceImpl implements ContractService {
                 .bankAccOwer(contractRequest.getPartyB().getBankAccOwer())
                 .email(contractRequest.getPartyB().getEmail())
                 .position(contractRequest.getPartyB().getPosition())
+                .phone(contractRequest.getPartyB().getPhone())
                 .typeParty(false)
                 .build();
         try {
@@ -487,6 +492,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    @Transactional
     public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
         List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
 
@@ -618,7 +624,7 @@ public class ContractServiceImpl implements ContractService {
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
-        if(DataUtil.isNullObject(ids)) {
+        if (DataUtil.isNullObject(ids)) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, NotificationContractNumberDto.builder()
                     .managerCount(0)
                     .approvedCount(0)
@@ -633,7 +639,6 @@ public class ContractServiceImpl implements ContractService {
         if (userEmail.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Email not exist ", true, null);
         }
-
 
 
         String[] statical = contractRepository.getNotificationContractNumber(email, ids);

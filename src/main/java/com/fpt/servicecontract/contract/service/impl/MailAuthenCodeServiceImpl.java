@@ -13,9 +13,15 @@ import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -71,6 +77,31 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
     }
 
     @Override
+    public BaseResponse GetSmsCode(String sms) {
+        int code = new Random().nextInt(999999);
+        var mailCode = mailAuthenCodeRepository.findByEmail(sms);
+        if (mailCode.isEmpty()) {
+            LocalDateTime startTime = LocalDateTime.now();
+            AuthenticationCode mailAuthedCode = AuthenticationCode.builder()
+                    .email(sms)
+                    .code(code)
+                    .expiryTime(startTime.plusMinutes(5))
+                    .startTime(startTime)
+                    .build();
+            mailAuthenCodeRepository.save(mailAuthedCode);
+        } else {
+            mailCode.get().setCode(code);
+            LocalDateTime startTime = LocalDateTime.now();
+            LocalDateTime expiryTime = startTime.plusMinutes(5);
+            mailCode.get().setStartTime(startTime);
+            mailCode.get().setExpiryTime(expiryTime);
+            mailAuthenCodeRepository.save(mailCode.get());
+        }
+        sendSms(sms, String.valueOf(code));
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, null);
+    }
+
+    @Override
     public BaseResponse AuthenticationMailWithCode(String email, Integer AuthenCode) {
         var contractPartyObject = partyRepository.findByEmail(email);
         var mailAuthedCode = mailAuthenCodeRepository.findByEmail(email);
@@ -90,5 +121,51 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
                 .id(party.getId())
                 .email(party.getEmail())
                 .build());
+    }
+    @Override
+    public BaseResponse AuthenticationSmsWithCode(String phone, Integer AuthenCode) {
+        var contractPartyObject = partyRepository.findByPhone(phone);
+        var mailAuthedCode = mailAuthenCodeRepository.findByEmail(phone);
+
+        if (mailAuthedCode.isEmpty() || contractPartyObject.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "User not exist", true, null);
+        }
+
+        if (!Objects.equals(mailAuthedCode.get().getCode(), AuthenCode)) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Your code is invalid", true, null);
+        }
+        if ((mailAuthedCode.get().getExpiryTime().isBefore(LocalDateTime.now()))) {
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Your code is expired", true, null);
+        }
+        Party party = contractPartyObject.get();
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "sms is verified", true, UserDto.builder()
+                .id(party.getId())
+                .phone(party.getPhone())
+                .build());
+    }
+    private static final String API_URL = "https://y3n2v9.api.infobip.com/sms/2/text/advanced";
+    private static final String AUTH_TOKEN = "2a75342510d4104086d2f665475327f9-dfe40162-1436-43fa-9218-3c6d9aa56aa0";
+    private final RestTemplate restTemplate;
+
+    public void sendSms(String to, String text) {
+        to = "84" + to.substring(0);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "App " + AUTH_TOKEN);
+        headers.set("Content-Type", "application/json");
+        headers.set("Accept", "application/json");
+
+        Map<String, Object> message = new HashMap<>();
+        message.put("from", "ServiceSMS");
+        message.put("text", "OTP xác thực kí hợp đồng của bạn: " + text);
+        Map<String, Object> destination = new HashMap<>();
+        destination.put("to", to);
+        message.put("destinations", new Map[]{destination});
+        Map<String, Object> body = new HashMap<>();
+        body.put("messages", new Map[]{message});
+
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, String.class);
+
     }
 }

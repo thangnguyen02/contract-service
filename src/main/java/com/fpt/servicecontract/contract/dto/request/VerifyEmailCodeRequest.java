@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class VerifyEmailCodeRequest {
     private String email;
+    private String phone;
     private Integer code;
 }

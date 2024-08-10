@@ -29,4 +29,6 @@ public class PartyRequest {
     private  String bankAccOwer;
 
     private String email;
+
+    private String phone;
 }

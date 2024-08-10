@@ -21,7 +21,6 @@ public class ContractTemplateController {
         Pageable p = PageRequest.of(page, size);
         return contractTemplateService.finAllTemplates(p, contractName);
     }
-
     @PostMapping()
     public BaseResponse create(@RequestBody ContractTemplateRequest contractRequest) {
         return contractTemplateService.createContract(contractRequest);

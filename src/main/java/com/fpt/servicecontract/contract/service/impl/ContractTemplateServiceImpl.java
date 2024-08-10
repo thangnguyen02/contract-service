@@ -19,9 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +27,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
 
     private final ContractTemplateRepository contractTemplateRepository;
     private final PartyRepository partyRepository;
+
     @Override
     public BaseResponse finAllTemplates(Pageable p, String contractName) {
         Page<Object[]> page = contractTemplateRepository.findAllContractTemplate(p, QueryUtils.appendPercent(contractName));
@@ -99,7 +98,7 @@ public class ContractTemplateServiceImpl implements ContractTemplateService {
                 partyRepository.save(party);
             }
         } catch (Exception e) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, e.getMessage(), false, null);
+            return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), false, null);
         }
 
         try {

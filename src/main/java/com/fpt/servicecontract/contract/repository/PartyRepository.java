@@ -3,7 +3,6 @@ package com.fpt.servicecontract.contract.repository;
 import com.fpt.servicecontract.contract.model.Party;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -26,4 +25,6 @@ public interface PartyRepository extends JpaRepository<Party, String> {
                select * from party p where p.type_party = 1
             """, nativeQuery = true)
     Party manualParty();
+
+    Optional<Party> findByPhone(String phone);
 }

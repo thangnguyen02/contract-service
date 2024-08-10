@@ -15,6 +15,16 @@ public class OtpController {
 
     private final MailAuthenCodeService mailAuthenCodeService;
 
+    @GetMapping("/{sms}")
+    public BaseResponse getOtpBySms(@PathVariable String sms) {
+        return mailAuthenCodeService.GetSmsCode(sms);
+    }
+
+    @PostMapping("/verify-for-sign-with-sms")
+    public BaseResponse verifySms(@RequestBody VerifyEmailCodeRequest verifyEmailCodeRequest) {
+        return mailAuthenCodeService.AuthenticationSmsWithCode(verifyEmailCodeRequest.getPhone(), verifyEmailCodeRequest.getCode());
+    }
+
     @GetMapping("/{email}/{type}/{contractId}")
     public BaseResponse getOtpByEmail(
             @PathVariable String email,
@@ -28,6 +38,4 @@ public class OtpController {
     public BaseResponse getContract(@RequestBody VerifyEmailCodeRequest verifyEmailCodeRequest) {
         return mailAuthenCodeService.AuthenticationMailWithCode(verifyEmailCodeRequest.getEmail(), verifyEmailCodeRequest.getCode());
     }
-
-
 }
