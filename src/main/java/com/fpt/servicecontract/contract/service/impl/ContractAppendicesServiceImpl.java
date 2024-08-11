@@ -309,9 +309,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message("Bạn có hợp đồng mới cần kiểm tra")
-                    .typeNotification("CONTRACT")
+                    .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                            .contractId(contractId)
                     .build());
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
@@ -321,9 +322,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + "đã duyệt hợp đồng")
-                    .typeNotification("CONTRACT")
+                    .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
 
@@ -332,9 +334,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + "đã yêu cầu xem lại hợp đồng")
-                    .typeNotification("CONTRACT")
+                    .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
 
@@ -345,28 +348,17 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + " đã từ chối kí hợp đồng")
-                    .typeNotification("CONTRACT")
+                    .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
         List<String> statusDb = contractStatusService.checkDoneSign(contractId);
 
         if (status.equals(SignContractStatus.SIGN_A_OK.name())
         ) {
-            String statusDB1 = null;
-            try {
-                statusDB1 = statusDb.get(1);
-            } catch (Exception e) {
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(email + " đã kí hợp đồng")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(email)
-                        .build());
-            }
-            if (SignContractStatus.SIGN_B_OK.name().equals(statusDB1)) {
+            if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractAppendicesRepository.save(contract.get());
                 status = SignContractStatus.SUCCESS.name();
@@ -374,9 +366,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + " đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
+                        .typeNotification("APPENDICES CONTRACT")
                         .receivers(receivers)
                         .sender(email)
+                        .contractId(contractId)
                         .build());
             }
 
@@ -384,28 +377,17 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
-            String statusDB1 = null;
-            try {
-                statusDB1 = statusDb.get(1);
-            } catch (Exception e) {
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(email + " đã kí hợp đồng")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(email)
-                        .build());
-            }
-            if (SignContractStatus.SIGN_A_OK.name().equals(statusDB1)) {
+            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(email + " đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
+                        .typeNotification("APPENDICES CONTRACT")
                         .receivers(receivers)
                         .sender(email)
+                        .contractId(contractId)
                         .build());
             }
 
@@ -416,13 +398,15 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
                     .message(email + " đang chờ ký")
-                    .typeNotification("CONTRACT")
+                    .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
         contractStatusService.create(email, receivers, contractId, status, description);
-        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status);
+        contractHistoryService.createContractHistory(contract.get().getId(), contract.get().getName(), email, description, status);
+
         try {
             mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         } catch (MessagingException e) {
@@ -487,7 +471,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             }
         }
         List<String> statusDb = contractStatusService.checkDoneSign(contractAppendicesId);
-        Optional<Contract> contract = contractRepository.findById(contractAppendicesId);
+        Optional<ContractAppendices> contract = contractAppendicesRepository.findById(contractAppendicesId);
         if (contract.isEmpty()) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
         }
@@ -497,13 +481,14 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
-                contractRepository.save(contract.get());
+                contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(createdBy + "đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
+                        .contractId(contractAppendicesId)
                         .build());
             }
 
@@ -514,19 +499,19 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             if (statusDb.contains(SignContractStatus.SIGN_B_OK.name())) {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 status = SignContractStatus.SUCCESS.name();
-                contractRepository.save(contract.get());
+                contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
                         .message(createdBy + "đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
+                        .contractId(contractAppendicesId)
                         .build());
             }
 
         }
         contractStatusService.create(createdBy, receivers, contractAppendicesId, status, description);
-
         try {
             mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {

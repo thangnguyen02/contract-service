@@ -29,4 +29,5 @@ public class Notification {
     private LocalDateTime createdDate;
     private Boolean markedDeleted;
     private Boolean markRead;
+    private String contractId;
 }
