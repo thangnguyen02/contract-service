@@ -488,6 +488,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
+                        .contractId(contractAppendicesId)
                         .build());
             }
 
@@ -505,6 +506,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
+                        .contractId(contractAppendicesId)
                         .build());
             }
 

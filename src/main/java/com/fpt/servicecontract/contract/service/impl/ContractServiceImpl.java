@@ -556,6 +556,7 @@ public class ContractServiceImpl implements ContractService {
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(email)
+                        .contractId(contractId)
                         .build());
             }
 
@@ -573,6 +574,7 @@ public class ContractServiceImpl implements ContractService {
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(email)
+                        .contractId(contractId)
                         .build());
             }
 
@@ -587,6 +589,7 @@ public class ContractServiceImpl implements ContractService {
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
@@ -599,6 +602,7 @@ public class ContractServiceImpl implements ContractService {
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
 
@@ -610,6 +614,7 @@ public class ContractServiceImpl implements ContractService {
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
 
@@ -622,6 +627,7 @@ public class ContractServiceImpl implements ContractService {
                     .message(email + " đã từ chối kí hợp đồng")
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
+                    .contractId(contractId)
                     .sender(email)
                     .build());
         }
@@ -633,6 +639,7 @@ public class ContractServiceImpl implements ContractService {
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
+                    .contractId(contractId)
                     .build());
         }
         contractStatusService.create(email, receivers, contractId, status, description);
@@ -717,6 +724,7 @@ public class ContractServiceImpl implements ContractService {
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
+                        .contractId(contractId)
                         .build());
             }
 
@@ -734,6 +742,7 @@ public class ContractServiceImpl implements ContractService {
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
+                        .contractId(contractId)
                         .build());
             }
 
