@@ -17,7 +17,7 @@ import java.util.Optional;
 public class ReasonController {
     private final ReasonService ReasonService;
 
-    @GetMapping
+    @GetMapping("/public")
     public ResponseEntity<Page<Reason>> getAllReasons(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
