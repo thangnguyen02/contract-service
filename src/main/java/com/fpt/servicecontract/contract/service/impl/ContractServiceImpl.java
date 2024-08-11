@@ -238,6 +238,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanDelete(true);
                 response.setCanApprove(true);
                 response.setCanSign(false);
+                response.setCanRejectSign(false);
                 response.setCanSendForCustomer(false);
             }
 
@@ -271,7 +272,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSend(false);
                 response.setCanSendForCustomer(false);
                 response.setCanSendForMng(false);
-                response.setCanRejectSign(true);
+                response.setCanRejectSign(false);
             }
 
 
