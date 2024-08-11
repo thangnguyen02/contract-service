@@ -281,6 +281,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSend(false);
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
+                response.setCanSign(false);
                 if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForCustomer(true);
                     response.setCanSendForMng(false);
