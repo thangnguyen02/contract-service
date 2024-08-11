@@ -38,7 +38,9 @@ public interface ContractAppendicesRepository extends JpaRepository<ContractAppe
                      c.contract_id,
                      c.number,
                      us.phone,
-                     us.name as userName
+                     us.name as userName,
+                     c.signA,
+                     c.signB
                  FROM
                      contract_appendices c
                  LEFT JOIN

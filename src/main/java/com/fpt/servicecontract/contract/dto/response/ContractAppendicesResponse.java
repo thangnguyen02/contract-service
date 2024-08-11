@@ -37,4 +37,5 @@ public class ContractAppendicesResponse {
     private boolean canRejectSign;
     private String contractNumber;
     private UserDto user;
+    private boolean isDraft;
 }
