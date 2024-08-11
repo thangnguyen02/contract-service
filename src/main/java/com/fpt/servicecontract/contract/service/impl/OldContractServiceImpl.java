@@ -135,7 +135,6 @@ public class OldContractServiceImpl implements OldContractService {
         }
 
     }
-
     @Override
     public BaseResponse createWithMobile(String token, CreateUpdateOldContract oldContractDto, String[] images) throws Exception {
         OldContract contract = new OldContract();
