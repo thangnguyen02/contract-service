@@ -552,7 +552,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
+    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) throws IOException {
         List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
 
         if (!statusList.contains(status)) {
