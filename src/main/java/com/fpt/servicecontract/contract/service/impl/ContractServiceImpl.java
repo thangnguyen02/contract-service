@@ -1,9 +1,6 @@
 package com.fpt.servicecontract.contract.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fpt.servicecontract.auth.dto.UserDto;
-import com.fpt.servicecontract.auth.model.Permission;
-import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
@@ -11,7 +8,6 @@ import com.fpt.servicecontract.contract.dto.*;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.PartyRequest;
 import com.fpt.servicecontract.contract.dto.response.ContractResponse;
-import com.fpt.servicecontract.contract.dto.response.SignContractResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.Party;
@@ -170,7 +166,6 @@ public class ContractServiceImpl implements ContractService {
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
-        var user = userRepository.findByEmail(email);
         List<String> statusListSearch = getListStatusSearch(statusSearch);
         Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusListSearch, QueryUtils.appendPercent(search));
         List<ContractResponse> responses = new ArrayList<>();
@@ -383,6 +378,7 @@ public class ContractServiceImpl implements ContractService {
                             .email(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
                             .bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
                             .bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
+                            .phone(Objects.nonNull(obj[36]) ? obj[36].toString() : null)
                             .build())
                     .partyB(PartyRequest.builder()
                             .id(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
@@ -396,6 +392,7 @@ public class ContractServiceImpl implements ContractService {
                             .email(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
                             .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
                             .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
+                            .phone(Objects.nonNull(obj[37]) ? obj[37].toString() : null)
                             .build())
                     .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
                     .signA(Objects.nonNull(obj[28]) ? obj[28].toString() : null)
@@ -520,7 +517,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
+    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) throws IOException {
         List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
 
         if (!statusList.contains(status)) {
@@ -638,10 +635,13 @@ public class ContractServiceImpl implements ContractService {
                     .sender(email)
                     .build());
         }
-
-
         contractStatusService.create(email, receivers, contractId, status, description);
         contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status);
+        ContractRequest contractRequest = findById(contractId);
+        ContractRequest contractSearch = elasticSearchService.getDocumentById("contract", contractId, ContractRequest.class);
+        contractRequest.setReason(contractSearch.getReason() + " " + description);
+        elasticSearchService.deleteDocumentById("contract", contractId);
+        elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         try {
             mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         } catch (MessagingException e) {

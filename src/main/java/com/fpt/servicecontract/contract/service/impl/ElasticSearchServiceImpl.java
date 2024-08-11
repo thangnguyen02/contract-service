@@ -39,7 +39,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         Query multiMatchQuery = Query.of(q -> q
                 .multiMatch(MultiMatchQuery.of(m -> m
                         .query(searchRequestBody.getKey())
-                        .fuzziness("AUTO")
+//                        .fuzziness("AUTO")
                 ))
         );
         SearchRequest searchRequest = SearchRequest.of(s -> s
@@ -68,4 +68,17 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         return response.result().name();
     }
 
+    @Override
+    public <T> T getDocumentById(String indexName, String documentId, Class<T> clazz) throws IOException {
+        GetRequest request = GetRequest.of(g -> g
+                .index(indexName)
+                .id(documentId)
+        );
+        GetResponse<T> response = esClient.get(request, clazz);
+        if (response.found()) {
+            return response.source();
+        } else {
+            throw new RuntimeException("Document not found");
+        }
+    }
 }
