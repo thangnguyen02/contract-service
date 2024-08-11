@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.service.impl;
 
+import com.fpt.servicecontract.auth.dto.UserDto;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
@@ -69,11 +70,17 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .statusCurrent(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
                     .canSend(true)
                     .canApprove(false)
-                    .canSign(true)
+                    .canSign(false)
                     .value(Objects.nonNull(obj[9]) ? (Double) obj[9] : null)
                     .canRejectSign(false)
                     .contractId(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
+                    .contractNumber(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
                     .build();
+            response.setUser(UserDto.builder()
+                    .email(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
+                    .phone(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
+                    .name(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
+                    .build());
             String status = response.getStatusCurrent();
 //            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
             if (SignContractStatus.APPROVED.name().equals(status)) {
@@ -120,7 +127,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
-                response.setCanSign(false);
             }
 
             if (SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
@@ -134,8 +140,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 response.setCanSend(false);
                 response.setCanSendForCustomer(false);
                 response.setCanSendForMng(false);
-                response.setCanSign(true);
                 response.setCanRejectSign(true);
+                response.setCanSign(true);
             }
 
 
@@ -146,6 +152,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 response.setCanSend(false);
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
+                response.setCanSign(false);
                 if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
                     response.setCanSendForCustomer(true);
                     response.setCanSendForMng(false);
@@ -154,6 +161,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
             if (status.equals(SignContractStatus.SIGN_B_OK.name())
             ) {
+                response.setCanSign(false);
                 response.setCanSend(false);
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
@@ -332,7 +340,19 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         if (status.equals(SignContractStatus.SIGN_A_OK.name())
         ) {
-            if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+            String statusDB1 = null;
+            try {
+                statusDB1 = statusDb.get(1);
+            } catch (Exception e) {
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(email + " đã kí hợp đồng")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(email)
+                        .build());
+            }
+            if (SignContractStatus.SIGN_B_OK.name().equals(statusDB1)) {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractAppendicesRepository.save(contract.get());
                 status = SignContractStatus.SUCCESS.name();
@@ -350,7 +370,19 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
-            if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
+            String statusDB1 = null;
+            try {
+                statusDB1 = statusDb.get(1);
+            } catch (Exception e) {
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(email + " đã kí hợp đồng")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(email)
+                        .build());
+            }
+            if (SignContractStatus.SIGN_A_OK.name().equals(statusDB1)) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractAppendicesRepository.save(contract.get());
@@ -448,7 +480,19 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
-            if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
+            String statusDB1 = null;
+            try {
+                statusDB1 = statusDb.get(1);
+            } catch (Exception e) {
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(createdBy + " đã kí hợp đồng")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(createdBy)
+                        .build());
+            }
+            if (SignContractStatus.SIGN_A_OK.name().equals(statusDB1)) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
@@ -465,7 +509,19 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         if (status.equals(SignContractStatus.SIGN_A_OK.name())
         ) {
-            if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
+            String statusDB1 = null;
+            try {
+                statusDB1 = statusDb.get(1);
+            } catch (Exception e) {
+                notificationService.create(Notification.builder()
+                        .title(contract.get().getName())
+                        .message(createdBy + " đã kí hợp đồng")
+                        .typeNotification("CONTRACT")
+                        .receivers(receivers)
+                        .sender(createdBy)
+                        .build());
+            }
+            if (SignContractStatus.SIGN_B_OK.name().equals(statusDB1)) {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 status = SignContractStatus.SUCCESS.name();
                 contractRepository.save(contract.get());
