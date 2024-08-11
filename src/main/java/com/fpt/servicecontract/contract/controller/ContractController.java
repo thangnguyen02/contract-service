@@ -2,14 +2,12 @@ package com.fpt.servicecontract.contract.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fpt.servicecontract.config.JwtService;
-import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.*;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.SearchRequestBody;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +38,7 @@ public class ContractController {
                                                  @RequestParam String contractId,
                                                  @RequestParam String status,
                                                  @RequestParam String description
-    ) {
+    ) throws IOException {
         return ResponseEntity.ok(contractService.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractId, status, description));
     }
 

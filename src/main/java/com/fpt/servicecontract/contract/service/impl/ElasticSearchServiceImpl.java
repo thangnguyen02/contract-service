@@ -39,7 +39,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         Query multiMatchQuery = Query.of(q -> q
                 .multiMatch(MultiMatchQuery.of(m -> m
                         .query(searchRequestBody.getKey())
-                        .fuzziness("AUTO")
+//                        .fuzziness("AUTO")
                 ))
         );
         SearchRequest searchRequest = SearchRequest.of(s -> s

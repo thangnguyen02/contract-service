@@ -64,48 +64,16 @@ public class ContractServiceImpl implements ContractService {
     public BaseResponse createContract(ContractRequest contractRequest, String email) {
         Party partyA = getDefaultParty();
         if (partyA.getTaxNumber().equals(contractRequest.getPartyB().getTaxNumber())) {
-            return new BaseResponse(Constants.ResponseCode.FAILURE,
-                    "Yêu cầu xem lại các bên", false, "Yêu cầu xem lại các bên");
+            return new BaseResponse(Constants.ResponseCode.FAILURE, "Yêu cầu xem lại các bên", false, "Yêu cầu xem lại các bên");
         }
-        Party partyB = Party
-                .builder()
-                .id(contractRequest.getPartyB().getId())
-                .address(contractRequest.getPartyB().getAddress())
-                .name(contractRequest.getPartyB().getName())
-                .taxNumber(contractRequest.getPartyB().getTaxNumber())
-                .presenter(contractRequest.getPartyB().getPresenter())
-                .businessNumber(contractRequest.getPartyB().getBusinessNumber())
-                .bankId(contractRequest.getPartyB().getBankId())
-                .bankName(contractRequest.getPartyB().getBankName())
-                .bankAccOwer(contractRequest.getPartyB().getBankAccOwer())
-                .email(contractRequest.getPartyB().getEmail())
-                .position(contractRequest.getPartyB().getPosition())
-                .phone(contractRequest.getPartyB().getPhone())
-                .typeParty(false)
-                .build();
+        Party partyB = Party.builder().id(contractRequest.getPartyB().getId()).address(contractRequest.getPartyB().getAddress()).name(contractRequest.getPartyB().getName()).taxNumber(contractRequest.getPartyB().getTaxNumber()).presenter(contractRequest.getPartyB().getPresenter()).businessNumber(contractRequest.getPartyB().getBusinessNumber()).bankId(contractRequest.getPartyB().getBankId()).bankName(contractRequest.getPartyB().getBankName()).bankAccOwer(contractRequest.getPartyB().getBankAccOwer()).email(contractRequest.getPartyB().getEmail()).position(contractRequest.getPartyB().getPosition()).phone(contractRequest.getPartyB().getPhone()).typeParty(false).build();
         try {
             partyB = partyRepository.save(partyB);
 //            partyA = partyRepository.save(partyA);
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Failed", false, e.getMessage());
         }
-        Contract contract = Contract
-                .builder()
-                .id(contractRequest.getId())
-                .name(contractRequest.getName())
-                .number(contractRequest.getNumber())
-                .rule(contractRequest.getRule())
-                .createdBy(email)
-                .term(contractRequest.getTerm())
-                .partyAId(partyA.getId())
-                .partyBId(partyB.getId())
-                .status(Constants.STATUS.NEW)
-                .isUrgent(contractRequest.isUrgent())
-                .contractTypeId(contractRequest.getContractTypeId())
-                .value(contractRequest.getValue())
-                .updatedDate(LocalDateTime.now())
-                .createdDate(LocalDateTime.now())
-                .build();
+        Contract contract = Contract.builder().id(contractRequest.getId()).name(contractRequest.getName()).number(contractRequest.getNumber()).rule(contractRequest.getRule()).createdBy(email).term(contractRequest.getTerm()).partyAId(partyA.getId()).partyBId(partyB.getId()).status(Constants.STATUS.NEW).isUrgent(contractRequest.isUrgent()).contractTypeId(contractRequest.getContractTypeId()).value(contractRequest.getValue()).updatedDate(LocalDateTime.now()).createdDate(LocalDateTime.now()).build();
         Context context = new Context();
         context.setVariable("partyA", partyA);
         context.setVariable("partyB", partyB);
@@ -165,32 +133,12 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse findAll(Pageable p, String email, String statusSearch, String search) {
-        List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
-                .map(ContractStatus::getContractId)
-                .toList();
+        List<String> ids = contractStatusRepository.findAll().stream().filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email)).map(ContractStatus::getContractId).toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
         Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusListSearch, QueryUtils.appendPercent(search));
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
-            ContractResponse response = ContractResponse.builder()
-                    .name(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
-                    .createdBy(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
-                    .file(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
-                    .createdDate(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
-                    .id(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
-                    .status(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
-                    .isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString()))
-                    .approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
-                    .statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
-                    .customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
-                    .canSend(true)
-                    .canApprove(false)
-                    .canSign(true)
-                    .canSendForCustomer(true)
-                    .value(Objects.nonNull(obj[12]) ? (Double) obj[12] : null)
-                    .canRejectSign(false)
-                    .build();
+            ContractResponse response = ContractResponse.builder().name(Objects.nonNull(obj[0]) ? obj[0].toString() : null).createdBy(Objects.nonNull(obj[1]) ? obj[1].toString() : null).file(Objects.nonNull(obj[2]) ? obj[2].toString() : null).createdDate(Objects.nonNull(obj[3]) ? obj[3].toString() : null).id(Objects.nonNull(obj[4]) ? obj[4].toString() : null).status(Objects.nonNull(obj[5]) ? obj[5].toString() : null).isUrgent(Objects.nonNull(obj[6]) && Boolean.parseBoolean(obj[6].toString())).approvedBy(Objects.nonNull(obj[7]) ? obj[7].toString() : null).statusCurrent(Objects.nonNull(obj[8]) ? obj[8].toString() : null).customer(Objects.nonNull(obj[9]) ? obj[9].toString() : null).canSend(true).canApprove(false).canSign(true).canSendForCustomer(true).value(Objects.nonNull(obj[12]) ? (Double) obj[12] : null).canRejectSign(false).build();
             String status = response.getStatusCurrent();
 //            List<String> statusList = contractStatusService.checkDoneSign(response.getId());
             response.setStatusCurrent(status);
@@ -232,8 +180,7 @@ public class ContractServiceImpl implements ContractService {
             }
 
 
-            if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+            if (SignContractStatus.SIGN_B_FAIL.name().equals(status) || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
@@ -244,8 +191,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSendForCustomer(false);
             }
 
-            if (SignContractStatus.WAIT_SIGN_B.name().equals(status)
-                    || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+            if (SignContractStatus.WAIT_SIGN_B.name().equals(status) || SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
                 response.setCanSend(false);
@@ -258,8 +204,7 @@ public class ContractServiceImpl implements ContractService {
 
             List<String> statusDb = contractStatusService.checkDoneSign(response.getId());
 
-            if (status.equals(SignContractStatus.SIGN_A_OK.name())
-            ) {
+            if (status.equals(SignContractStatus.SIGN_A_OK.name())) {
                 response.setCanSend(false);
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
@@ -269,8 +214,7 @@ public class ContractServiceImpl implements ContractService {
                 }
             }
 
-            if (status.equals(SignContractStatus.SIGN_B_OK.name())
-            ) {
+            if (status.equals(SignContractStatus.SIGN_B_OK.name())) {
                 response.setCanSend(false);
                 response.setCanUpdate(false);
                 response.setCanDelete(false);
@@ -282,8 +226,7 @@ public class ContractServiceImpl implements ContractService {
 
             responses.add(response);
         }
-        Page<ContractResponse> result = new PageImpl<>(responses, p,
-                page.getTotalElements());
+        Page<ContractResponse> result = new PageImpl<>(responses, p, page.getTotalElements());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
     }
 
@@ -338,48 +281,7 @@ public class ContractServiceImpl implements ContractService {
         List<Object[]> lst = contractRepository.findByIdContract(id);
         ContractRequest contractRequest = new ContractRequest();
         for (Object[] obj : lst) {
-            contractRequest = ContractRequest.builder()
-                    .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
-                    .name(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
-                    .number(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
-                    .rule(Objects.nonNull(obj[3]) ? obj[3].toString() : null)
-                    .term(Objects.nonNull(obj[4]) ? obj[4].toString() : null)
-                    .partyA(PartyRequest.builder()
-                            .id(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
-                            .name(Objects.nonNull(obj[6]) ? obj[6].toString() : null)
-                            .address(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
-                            .taxNumber(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
-                            .presenter(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
-                            .position(Objects.nonNull(obj[10]) ? obj[10].toString() : null)
-                            .businessNumber(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
-                            .bankId(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
-                            .email(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
-                            .bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
-                            .bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
-                            .build())
-                    .partyB(PartyRequest.builder()
-                            .id(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
-                            .name(Objects.nonNull(obj[17]) ? obj[17].toString() : null)
-                            .address(Objects.nonNull(obj[18]) ? obj[18].toString() : null)
-                            .taxNumber(Objects.nonNull(obj[19]) ? obj[19].toString() : null)
-                            .presenter(Objects.nonNull(obj[20]) ? obj[20].toString() : null)
-                            .position(Objects.nonNull(obj[21]) ? obj[21].toString() : null)
-                            .businessNumber(Objects.nonNull(obj[22]) ? obj[22].toString() : null)
-                            .bankId(Objects.nonNull(obj[23]) ? obj[23].toString() : null)
-                            .email(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
-                            .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
-                            .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
-                            .build())
-                    .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
-                    .signA(Objects.nonNull(obj[28]) ? obj[28].toString() : null)
-                    .signB(Objects.nonNull(obj[29]) ? obj[29].toString() : null)
-                    .createdBy(Objects.nonNull(obj[30]) ? obj[30].toString() : null)
-                    .approvedBy(Objects.nonNull(obj[31]) ? obj[31].toString() : null)
-                    .isUrgent(Objects.nonNull(obj[32]) ? Boolean.parseBoolean(obj[32].toString()) : null)
-                    .contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null)
-                    .value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null)
-                    .status(Objects.nonNull(obj[35]) ? obj[35].toString() : null)
-                    .build();
+            contractRequest = ContractRequest.builder().id(Objects.nonNull(obj[0]) ? obj[0].toString() : null).name(Objects.nonNull(obj[1]) ? obj[1].toString() : null).number(Objects.nonNull(obj[2]) ? obj[2].toString() : null).rule(Objects.nonNull(obj[3]) ? obj[3].toString() : null).term(Objects.nonNull(obj[4]) ? obj[4].toString() : null).partyA(PartyRequest.builder().id(Objects.nonNull(obj[5]) ? obj[5].toString() : null).name(Objects.nonNull(obj[6]) ? obj[6].toString() : null).address(Objects.nonNull(obj[7]) ? obj[7].toString() : null).taxNumber(Objects.nonNull(obj[8]) ? obj[8].toString() : null).presenter(Objects.nonNull(obj[9]) ? obj[9].toString() : null).position(Objects.nonNull(obj[10]) ? obj[10].toString() : null).businessNumber(Objects.nonNull(obj[11]) ? obj[11].toString() : null).bankId(Objects.nonNull(obj[12]) ? obj[12].toString() : null).email(Objects.nonNull(obj[13]) ? obj[13].toString() : null).bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null).bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null).build()).partyB(PartyRequest.builder().id(Objects.nonNull(obj[16]) ? obj[16].toString() : null).name(Objects.nonNull(obj[17]) ? obj[17].toString() : null).address(Objects.nonNull(obj[18]) ? obj[18].toString() : null).taxNumber(Objects.nonNull(obj[19]) ? obj[19].toString() : null).presenter(Objects.nonNull(obj[20]) ? obj[20].toString() : null).position(Objects.nonNull(obj[21]) ? obj[21].toString() : null).businessNumber(Objects.nonNull(obj[22]) ? obj[22].toString() : null).bankId(Objects.nonNull(obj[23]) ? obj[23].toString() : null).email(Objects.nonNull(obj[24]) ? obj[24].toString() : null).bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null).bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null).build()).file(Objects.nonNull(obj[27]) ? obj[27].toString() : null).signA(Objects.nonNull(obj[28]) ? obj[28].toString() : null).signB(Objects.nonNull(obj[29]) ? obj[29].toString() : null).createdBy(Objects.nonNull(obj[30]) ? obj[30].toString() : null).approvedBy(Objects.nonNull(obj[31]) ? obj[31].toString() : null).isUrgent(Objects.nonNull(obj[32]) ? Boolean.parseBoolean(obj[32].toString()) : null).contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null).value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null).status(Objects.nonNull(obj[35]) ? obj[35].toString() : null).build();
         }
         return contractRequest;
     }
@@ -493,7 +395,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) {
+    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) throws IOException {
         List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
 
         if (!statusList.contains(status)) {
@@ -517,99 +419,56 @@ public class ContractServiceImpl implements ContractService {
 //        //màn hình hợp đồng của OFFICE_ADMIN:
 //         btn phê duyệt hợp đồng : OFFICE_ADMIN approve thì sale sẽ enable btn gửi cho MANAGER (approve rồi disable)
         if (status.equals(SignContractStatus.WAIT_APPROVE.name())) {
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message("Bạn có hợp đồng mới cần kiểm tra")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .build());
+            notificationService.create(Notification.builder().title(contract.get().getName()).message("Bạn có hợp đồng mới cần kiểm tra").typeNotification("CONTRACT").receivers(receivers).sender(email).build());
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
             String approved = jwtService.extractUsername(bearerToken.substring(7));
             contract.get().setApprovedBy(approved);
             contractRepository.save(contract.get());
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + " đã duyệt hợp đồng")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .build());
+            notificationService.create(Notification.builder().title(contract.get().getName()).message(email + " đã duyệt hợp đồng").typeNotification("CONTRACT").receivers(receivers).sender(email).build());
         }
 
         //officer-admin reject
         if (status.equals(SignContractStatus.APPROVE_FAIL.name())) {
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + " đã yêu cầu xem lại hợp đồng")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .build());
+            notificationService.create(Notification.builder().title(contract.get().getName()).message(email + " đã yêu cầu xem lại hợp đồng").typeNotification("CONTRACT").receivers(receivers).sender(email).build());
         }
 
         // site a or b reject with reseon
-        if (status.equals(SignContractStatus.SIGN_B_FAIL.name())
-                || status.equals(SignContractStatus.SIGN_A_FAIL.name())
-        ) {
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + " đã từ chối kí hợp đồng")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .build());
+        if (status.equals(SignContractStatus.SIGN_B_FAIL.name()) || status.equals(SignContractStatus.SIGN_A_FAIL.name())) {
+            notificationService.create(Notification.builder().title(contract.get().getName()).message(email + " đã từ chối kí hợp đồng").typeNotification("CONTRACT").receivers(receivers).sender(email).build());
         }
         List<String> statusDb = contractStatusService.checkDoneSign(contractId);
 
-        if (status.equals(SignContractStatus.SIGN_A_OK.name())
-        ) {
+        if (status.equals(SignContractStatus.SIGN_A_OK.name())) {
             if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
                 status = SignContractStatus.SUCCESS.name();
 
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(email + " đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(email)
-                        .build());
+                notificationService.create(Notification.builder().title(contract.get().getName()).message(email + " đã kí hợp đồng thành công").typeNotification("CONTRACT").receivers(receivers).sender(email).build());
             }
 
         }
 
-        if (status.equals(SignContractStatus.SIGN_B_OK.name())
-        ) {
+        if (status.equals(SignContractStatus.SIGN_B_OK.name())) {
             if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(email + " đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(email)
-                        .build());
+                notificationService.create(Notification.builder().title(contract.get().getName()).message(email + " đã kí hợp đồng thành công").typeNotification("CONTRACT").receivers(receivers).sender(email).build());
             }
 
         }
 
 
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + " đang chờ ký")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .build());
+            notificationService.create(Notification.builder().title(contract.get().getName()).message(email + " đang chờ ký").typeNotification("CONTRACT").receivers(receivers).sender(email).build());
         }
         contractStatusService.create(email, receivers, contractId, status, description);
         contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status);
+        ContractRequest contractRequest = findById(contractId);
+        contractRequest.setReason(StringUtils.isBlank(contractRequest.getReason()) + " " + description);
+        elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         try {
             mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
         } catch (MessagingException e) {
@@ -620,19 +479,9 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public BaseResponse getNotificationContractNumber(String email) {
-        List<String> ids = contractStatusRepository.findAll().stream()
-                .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
-                .map(ContractStatus::getContractId)
-                .toList();
+        List<String> ids = contractStatusRepository.findAll().stream().filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email)).map(ContractStatus::getContractId).toList();
         if (DataUtil.isNullObject(ids)) {
-            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, NotificationContractNumberDto.builder()
-                    .managerCount(0)
-                    .approvedCount(0)
-                    .signedCount(0)
-                    .waitSignCount(0)
-                    .waitApprovedCount(0)
-                    .successCount(0)
-                    .build());
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, NotificationContractNumberDto.builder().managerCount(0).approvedCount(0).signedCount(0).waitSignCount(0).waitApprovedCount(0).successCount(0).build());
         }
         var userEmail = userRepository.findByEmail(email);
 
@@ -644,14 +493,7 @@ public class ContractServiceImpl implements ContractService {
         String[] statical = contractRepository.getNotificationContractNumber(email, ids);
 
         String[] parts = statical[0].split(",");
-        NotificationContractNumberDto notificationContractNumberDto = NotificationContractNumberDto.builder()
-                .approvedCount(Integer.parseInt(parts[0]))
-                .waitApprovedCount(Integer.parseInt(parts[1]))
-                .successCount(Integer.parseInt(parts[2]))
-                .signedCount(Integer.parseInt(parts[3]))
-                .waitSignCount(Integer.parseInt(parts[4]))
-                .managerCount(Integer.parseInt(parts[5]))
-                .build();
+        NotificationContractNumberDto notificationContractNumberDto = NotificationContractNumberDto.builder().approvedCount(Integer.parseInt(parts[0])).waitApprovedCount(Integer.parseInt(parts[1])).successCount(Integer.parseInt(parts[2])).signedCount(Integer.parseInt(parts[3])).waitSignCount(Integer.parseInt(parts[4])).managerCount(Integer.parseInt(parts[5])).build();
 
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Notification ", true, notificationContractNumberDto);
     }
@@ -673,36 +515,22 @@ public class ContractServiceImpl implements ContractService {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Contract not exist", false, null);
         }
 
-        if (status.equals(SignContractStatus.SIGN_B_OK.name())
-        ) {
+        if (status.equals(SignContractStatus.SIGN_B_OK.name())) {
             if (SignContractStatus.SIGN_A_OK.name().equals(statusDb.get(1))) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(createdBy + "đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(createdBy)
-                        .build());
+                notificationService.create(Notification.builder().title(contract.get().getName()).message(createdBy + "đã kí hợp đồng thành công").typeNotification("CONTRACT").receivers(receivers).sender(createdBy).build());
             }
 
         }
 
-        if (status.equals(SignContractStatus.SIGN_A_OK.name())
-        ) {
+        if (status.equals(SignContractStatus.SIGN_A_OK.name())) {
             if (SignContractStatus.SIGN_B_OK.name().equals(statusDb.get(1))) {
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 status = SignContractStatus.SUCCESS.name();
                 contractRepository.save(contract.get());
-                notificationService.create(Notification.builder()
-                        .title(contract.get().getName())
-                        .message(createdBy + "đã kí hợp đồng thành công")
-                        .typeNotification("CONTRACT")
-                        .receivers(receivers)
-                        .sender(createdBy)
-                        .build());
+                notificationService.create(Notification.builder().title(contract.get().getName()).message(createdBy + "đã kí hợp đồng thành công").typeNotification("CONTRACT").receivers(receivers).sender(createdBy).build());
             }
 
         }
