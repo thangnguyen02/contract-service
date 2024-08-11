@@ -112,7 +112,9 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.is_urgent,
                      c.contract_type_id,
                      c.value,
-                     c.status
+                     c.status,
+                     pa.phone,
+                     pb.phone
                  FROM
                      fpt_company.contract c
                          LEFT JOIN

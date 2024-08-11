@@ -415,6 +415,7 @@ public class ContractServiceImpl implements ContractService {
                             .email(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
                             .bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
                             .bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
+                            .phone(Objects.nonNull(obj[36]) ? obj[36].toString() : null)
                             .build())
                     .partyB(PartyRequest.builder()
                             .id(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
@@ -428,6 +429,7 @@ public class ContractServiceImpl implements ContractService {
                             .email(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
                             .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
                             .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
+                            .phone(Objects.nonNull(obj[37]) ? obj[37].toString() : null)
                             .build())
                     .file(Objects.nonNull(obj[27]) ? obj[27].toString() : null)
                     .signA(Objects.nonNull(obj[28]) ? obj[28].toString() : null)
@@ -711,7 +713,9 @@ public class ContractServiceImpl implements ContractService {
         contractStatusService.create(email, receivers, contractId, status, description);
         contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status);
         ContractRequest contractRequest = findById(contractId);
-        contractRequest.setReason(StringUtils.isBlank(contractRequest.getReason()) + " " + description);
+        ContractRequest contractSearch = elasticSearchService.getDocumentById("contract", contractId, ContractRequest.class);
+        contractRequest.setReason(contractSearch.getReason() + " " + description);
+        elasticSearchService.deleteDocumentById("contract", contractId);
         elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         try {
             mailService.sendNewMail(to, cc, subject, htmlContent, attachments);

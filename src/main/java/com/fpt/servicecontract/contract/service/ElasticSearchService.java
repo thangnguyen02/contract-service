@@ -14,4 +14,5 @@ public interface ElasticSearchService {
 
     String deleteDocumentById(String indexName, String documentId) throws IOException;
 
+    <T> T getDocumentById(String indexName, String documentId, Class<T> clazz) throws IOException;
 }

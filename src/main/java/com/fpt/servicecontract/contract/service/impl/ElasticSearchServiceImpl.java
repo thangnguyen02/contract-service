@@ -68,4 +68,17 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         return response.result().name();
     }
 
+    @Override
+    public <T> T getDocumentById(String indexName, String documentId, Class<T> clazz) throws IOException {
+        GetRequest request = GetRequest.of(g -> g
+                .index(indexName)
+                .id(documentId)
+        );
+        GetResponse<T> response = esClient.get(request, clazz);
+        if (response.found()) {
+            return response.source();
+        } else {
+            throw new RuntimeException("Document not found");
+        }
+    }
 }
