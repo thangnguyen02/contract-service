@@ -135,11 +135,11 @@ public class ContractServiceImpl implements ContractService {
             } catch (Exception e) {
                 return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
             }
-            contractHistoryService.createContractHistory(result.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.NEW);
+            contractHistoryService.createContractHistory(result.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.NEW, null);
             contractStatusService.create(email, null, result.getId(), Constants.STATUS.NEW, "new contract");
         } else {
             contract.setUpdatedDate(LocalDateTime.now());
-            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE);
+            contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), "", Constants.STATUS.UPDATE, null);
             result = contractRepository.save(contract);
             String[] emails = new String[]{email};
             try {
@@ -462,10 +462,10 @@ public class ContractServiceImpl implements ContractService {
                 context.setVariable("signB", contract.getSignB());
                 if (!StringUtils.isBlank(contract.getSignB())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS, signContractDTO.getReasonId());
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_A);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_A, signContractDTO.getReasonId());
                 }
             } else {
                 contract.setSignB(signContractDTO.getSignImage());
@@ -473,10 +473,10 @@ public class ContractServiceImpl implements ContractService {
                 context.setVariable("signA", contract.getSignA());
                 if (!StringUtils.isBlank(contract.getSignA())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS,signContractDTO.getReasonId());
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B);
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B,signContractDTO.getReasonId());
                 }
             }
             context.setVariable("partyA", contractRequest.getPartyA());
@@ -647,7 +647,7 @@ public class ContractServiceImpl implements ContractService {
                     .build());
         }
         contractStatusService.create(email, receivers, contractId, status, description);
-        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status);
+        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status, contractId);
         ContractRequest contractRequest = findById(contractId);
         ContractRequest contractSearch = elasticSearchService.getDocumentById("contract", contractId, ContractRequest.class);
         contractRequest.setReason(contractSearch.getReason() + " " + description);

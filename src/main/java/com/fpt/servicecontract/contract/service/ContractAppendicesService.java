@@ -18,7 +18,7 @@ public interface ContractAppendicesService {
 
     BaseResponse update(String id, ContractAppendices contractAppendices);
 
-    BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description);
+    BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description, String reasonId);
 
     BaseResponse getByContractId(String contractId, int page, int size);
 

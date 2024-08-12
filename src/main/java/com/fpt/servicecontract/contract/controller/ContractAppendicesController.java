@@ -71,9 +71,10 @@ public class ContractAppendicesController {
                                                          @RequestParam(required = false) MultipartFile[] attachments,
                                                          @RequestParam String contractAppendicesId,
                                                          @RequestParam String status,
-                                                         @RequestParam String description
+                                                         @RequestParam String description,
+                                                 @RequestParam String reasonId
     ) {
-        return ResponseEntity.ok(service.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractAppendicesId, status, description));
+        return ResponseEntity.ok(service.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractAppendicesId, status, description,reasonId));
     }
 
     @PostMapping("/public/send-mail")

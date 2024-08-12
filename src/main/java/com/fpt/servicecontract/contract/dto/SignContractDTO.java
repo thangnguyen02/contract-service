@@ -13,4 +13,5 @@ public class SignContractDTO {
     String createdBy;
     String comment;
     boolean isCustomer;
+    String reasonId;
 }
