@@ -22,35 +22,30 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final JwtAuthenticationFilter jwtAuthFilter;
-  private final AuthenticationProvider authenticationProvider;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-    httpSecurity
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(req -> req
-                    .requestMatchers("/public/**").permitAll()
-                    .requestMatchers("/ws/**").permitAll()
-                    .requestMatchers("/contract/public/**").permitAll()
-                    .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
-                    .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
-                    .requestMatchers("/contract-history/**").permitAll()
-                    .requestMatchers("api/contract-appendices/**").permitAll()
-                    .requestMatchers("/swagger-ui/**").permitAll()
-                    .requestMatchers("/api-docs/**").permitAll()
-                    .requestMatchers("/api/**").permitAll()
-                    .requestMatchers("/api/contract-appendices/public/**").permitAll()
-                    .anyRequest().authenticated())
-            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(exception -> exception
-                    .authenticationEntryPoint((request, response, authException) -> {
-                      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                    })
-            );
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/contract/public/**").permitAll()
+                        .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
+                        .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
+                        .requestMatchers("/contract-history/**").permitAll()
+                        .requestMatchers("api/contract-appendices/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/contract-appendices/public/**").permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return httpSecurity.build();
-  }
+        return httpSecurity.build();
+    }
 }
