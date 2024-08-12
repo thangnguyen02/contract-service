@@ -244,7 +244,7 @@ public class ContractServiceImpl implements ContractService {
 
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
@@ -519,7 +519,9 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject, String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) throws IOException {
+    public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject,
+                                 String htmlContent, MultipartFile[] attachments, String contractId,
+                                 String status, String description, String reasonId) throws IOException {
         List<String> statusList = getListStatusSearch(SignContractStatus.ALL.name());
 
         if (!statusList.contains(status)) {
@@ -622,7 +624,7 @@ public class ContractServiceImpl implements ContractService {
 
         // site a or b reject with reseon
         if (status.equals(SignContractStatus.SIGN_B_FAIL.name())
-            || status.equals(SignContractStatus.SIGN_A_FAIL.name())
+                || status.equals(SignContractStatus.SIGN_A_FAIL.name())
         ) {
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())

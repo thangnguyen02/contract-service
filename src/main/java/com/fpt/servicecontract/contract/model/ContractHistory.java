@@ -25,4 +25,5 @@ public class ContractHistory {
     private LocalDateTime createdDate;
     private String status;
     private String comment;
+    private String reasonId;
 }

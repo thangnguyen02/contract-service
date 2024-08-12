@@ -28,6 +28,7 @@ public class ContractController {
     private final ContractService contractService;
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
+
     @PostMapping("/send-mail")
     public ResponseEntity<BaseResponse> sendMail(@RequestHeader("Authorization") String bearerToken,
                                                  @RequestParam String[] to,
@@ -37,9 +38,11 @@ public class ContractController {
                                                  @RequestParam(required = false) MultipartFile[] attachments,
                                                  @RequestParam String contractId,
                                                  @RequestParam String status,
-                                                 @RequestParam String description
+                                                 @RequestParam String description,
+                                                 @RequestParam String reasonId
+
     ) throws IOException {
-        return ResponseEntity.ok(contractService.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractId, status, description));
+        return ResponseEntity.ok(contractService.sendMail(bearerToken, to, cc, subject, htmlContent, attachments, contractId, status, description, reasonId));
     }
 
     @GetMapping("/test-role")

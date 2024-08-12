@@ -27,7 +27,7 @@ public interface ContractService {
 
     BaseResponse getContractSignById(String id);
 
-    BaseResponse sendMail(String bearerToken,String[] to,String[] cc,String subject,String htmlContent, MultipartFile[] attachments, String contractId, String status, String description) throws IOException;
+    BaseResponse sendMail(String bearerToken,String[] to,String[] cc,String subject,String htmlContent, MultipartFile[] attachments, String contractId, String status, String description, String reasonId) throws IOException;
 
     BaseResponse getNotificationContractNumber(String email);
 

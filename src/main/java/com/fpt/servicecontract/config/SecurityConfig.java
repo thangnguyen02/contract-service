@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/contract/public/**").permitAll()
+                        .requestMatchers("/reason/public/**").permitAll()
                         .requestMatchers("/admin/**").hasAnyRole(ADMIN.name())
                         .requestMatchers("/api/contract-appendices/public/send-mail/**").permitAll()
                         .requestMatchers("/contract-history/**").permitAll()
