@@ -136,4 +136,9 @@ public class ContractController {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(contractService.getNotificationContractNumber(email));
     }
+
+    @GetMapping("/check-duplicate")
+    public boolean getNotificationContractNumber(@RequestParam String tableName, @RequestParam String columnName, @RequestParam String value) {
+        return contractService.checkDuplicate(tableName, columnName, value);
+    }
 }

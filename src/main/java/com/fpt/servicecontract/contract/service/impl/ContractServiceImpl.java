@@ -19,6 +19,8 @@ import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.*;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -769,6 +771,16 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Party getDefaultParty() {
         return partyRepository.manualParty();
+    }
+
+    private final EntityManager entityManager;
+    @Override
+    public boolean checkDuplicate(String tableName, String columnName, String value) {
+        String sql = "SELECT count(*) FROM " + tableName + " WHERE " + columnName + " = :value";
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("value", value);
+        Long count = (Long) query.getSingleResult();
+        return count >= 1;
     }
 
 }

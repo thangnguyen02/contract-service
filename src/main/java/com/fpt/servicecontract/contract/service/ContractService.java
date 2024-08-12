@@ -36,4 +36,6 @@ public interface ContractService {
     Party createDefaultParty(Party party);
 
     Party getDefaultParty();
+
+    boolean checkDuplicate(String tableName, String columnName, String value);
 }
