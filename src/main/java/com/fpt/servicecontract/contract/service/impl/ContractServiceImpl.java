@@ -702,7 +702,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractId, String status, String description) {
+    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractId, String status, String description, String reasonId) {
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
             receivers.add(recipient.trim());
@@ -754,6 +754,7 @@ public class ContractServiceImpl implements ContractService {
 
         }
         try {
+            contractHistoryService.createContractHistory(contractId, contract.get().getName(), contract.get().getCreatedBy(), description,status, reasonId);
             mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);

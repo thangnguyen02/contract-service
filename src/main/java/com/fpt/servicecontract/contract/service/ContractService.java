@@ -31,7 +31,7 @@ public interface ContractService {
 
     BaseResponse getNotificationContractNumber(String email);
 
-    BaseResponse publicSendMail(String[] to,String[] cc,String subject,String htmlContent,String createdBy,String contractId,String status,String description);
+    BaseResponse publicSendMail(String[] to,String[] cc,String subject,String htmlContent,String createdBy,String contractId,String status,String description, String reasonId);
 
     Party createDefaultParty(Party party);
 
