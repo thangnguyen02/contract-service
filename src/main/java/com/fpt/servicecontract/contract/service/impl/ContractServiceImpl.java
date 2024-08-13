@@ -88,13 +88,23 @@ public class ContractServiceImpl implements ContractService {
         } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Failed", false, e.getMessage());
         }
+        String createBy = "";
+        LocalDateTime localDateTime = null;
+        if (contractRequest.getId() != null) {
+            Optional<Contract> contractRequestDb = contractRepository.findById(contractRequest.getId());
+
+            if (contractRequestDb.isPresent()) {
+                createBy = contractRequestDb.get().getCreatedBy();
+                localDateTime = contractRequestDb.get().getCreatedDate();
+            }
+        }
         Contract contract = Contract
                 .builder()
                 .id(contractRequest.getId())
                 .name(contractRequest.getName())
                 .number(contractRequest.getNumber())
                 .rule(contractRequest.getRule())
-                .createdBy(email)
+                .createdBy(contractRequest.getId() == null ? email : createBy)
                 .term(contractRequest.getTerm())
                 .partyAId(partyA.getId())
                 .partyBId(partyB.getId())
@@ -102,8 +112,7 @@ public class ContractServiceImpl implements ContractService {
                 .isUrgent(contractRequest.isUrgent())
                 .contractTypeId(contractRequest.getContractTypeId())
                 .value(contractRequest.getValue())
-                .updatedDate(LocalDateTime.now())
-                .createdDate(LocalDateTime.now())
+                .createdDate(contractRequest.getId() == null ? LocalDateTime.now() : localDateTime)
                 .build();
         Context context = new Context();
         context.setVariable("partyA", partyA);
@@ -131,7 +140,6 @@ public class ContractServiceImpl implements ContractService {
         Contract result;
         if (contractRequest.getId() == null) {
             contract.setStatus(Constants.STATUS.NEW);
-            contract.setCreatedDate(LocalDateTime.now());
             try {
                 result = contractRepository.save(contract);
             } catch (Exception e) {
@@ -475,10 +483,10 @@ public class ContractServiceImpl implements ContractService {
                 context.setVariable("signA", contract.getSignA());
                 if (!StringUtils.isBlank(contract.getSignA())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS,signContractDTO.getReasonId());
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS, signContractDTO.getReasonId());
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B,signContractDTO.getReasonId());
+                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B, signContractDTO.getReasonId());
                 }
             }
             context.setVariable("partyA", contractRequest.getPartyA());
@@ -504,7 +512,16 @@ public class ContractServiceImpl implements ContractService {
                 }
             }
             try {
+
                 contractRepository.save(contract);
+                notificationService.create(Notification.builder()
+                        .title(contract.getName())
+                        .message(signContractDTO.getCreatedBy() + " đã kí hợp đồng thành công")
+                        .typeNotification("CONTRACT")
+                        .receivers(List.of(signContractDTO.getCreatedBy()))
+                        .sender(signContractDTO.getCreatedBy())
+                        .contractId(signContractDTO.getContractId())
+                        .build());
                 return new BaseResponse(Constants.ResponseCode.SUCCESS, "Sign ok", true, null);
             } catch (Exception e) {
                 return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
@@ -641,7 +658,7 @@ public class ContractServiceImpl implements ContractService {
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
             notificationService.create(Notification.builder()
                     .title(contract.get().getName())
-                    .message(email + " đang chờ ký")
+                    .message(email + " đang chờ bạn ký")
                     .typeNotification("CONTRACT")
                     .receivers(receivers)
                     .sender(email)
@@ -726,7 +743,7 @@ public class ContractServiceImpl implements ContractService {
                 contractRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(createdBy + "đã kí hợp đồng thành công")
+                        .message(createdBy + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
@@ -744,7 +761,7 @@ public class ContractServiceImpl implements ContractService {
                 contractRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(createdBy + "đã kí hợp đồng thành công")
+                        .message(createdBy + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
@@ -754,7 +771,7 @@ public class ContractServiceImpl implements ContractService {
 
         }
         try {
-            contractHistoryService.createContractHistory(contractId, contract.get().getName(), createdBy, description,status, reasonId);
+            contractHistoryService.createContractHistory(contractId, contract.get().getName(), createdBy, description, status, reasonId);
             mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);
@@ -775,6 +792,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private final EntityManager entityManager;
+
     @Override
     public boolean checkDuplicate(String tableName, String columnName, String value) {
         String sql = "SELECT count(*) FROM " + tableName + " WHERE " + columnName + " = :value";

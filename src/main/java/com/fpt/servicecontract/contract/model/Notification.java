@@ -30,4 +30,19 @@ public class Notification {
     private Boolean markedDeleted;
     private Boolean markRead;
     private String contractId;
+    private String receiver;
+
+    public Notification(Notification notification) {
+        this.id = notification.id;
+        this.title = notification.title;
+        this.message = notification.message;
+        this.sender = notification.sender;
+        this.typeNotification = notification.typeNotification;
+        this.idType = notification.idType;
+        this.createdDate = notification.createdDate;
+        this.markedDeleted = notification.markedDeleted;
+        this.markRead = notification.markRead;
+        this.contractId = notification.contractId;
+    }
+
 }

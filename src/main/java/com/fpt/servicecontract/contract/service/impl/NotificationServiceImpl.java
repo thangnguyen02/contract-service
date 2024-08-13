@@ -49,7 +49,7 @@ public class NotificationServiceImpl implements NotificationService {
     public Page<Notification> findAllNotifications(Pageable pageable, String email) {
         List<Notification> notifications = notificationRepository.findAllByMarkedDeletedFalse();
         List<Notification> filteredNotifications = notifications.stream()
-                .filter(notification -> notification.getReceivers().contains(email))
+                .filter(notification -> email.trim().equalsIgnoreCase(notification.getReceiver()))
                 .sorted(Comparator.comparing(Notification::getCreatedDate).reversed())
                 .toList();
         int pageSize = pageable.getPageSize();
@@ -65,8 +65,14 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setCreatedDate(LocalDateTime.now());
         notification.setMarkedDeleted(false);
         notification.setMarkRead(false);
+        notification.getReceivers().forEach(receiver -> {
+            Notification noti = new Notification(notification);
+            noti.setReceiver(receiver); // Giả sử bạn có một phương thức để đặt receiver cho thông báo
+            notificationRepository.save(noti);
+        });
+
         notification.getReceivers().forEach(f -> {
-            messagingTemplate.convertAndSend("/topic/notifications/" + f, notificationRepository.save(notification));
+            messagingTemplate.convertAndSend("/topic/notifications/" + f, notification);
             Optional<User> user = userRepository.findByEmail(f);
             user.ifPresent(value -> sendPushNotification(value.getTokenDevice(), notification.getTitle(), notification.getMessage()));
         });
@@ -110,7 +116,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public Integer countNotRead(String email) {
         List<Notification> notificationList = notificationRepository.findAllByMarkedDeletedFalse();
-        List<Notification> list = notificationList.stream().filter(f -> f.getReceivers().contains(email) && !f.getMarkRead()).toList();
+        List<Notification> list = notificationList.stream().filter(f -> email.trim().equalsIgnoreCase(f.getReceiver()) && !f.getMarkRead()).toList();
         return list.size();
     }
 }
