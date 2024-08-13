@@ -754,7 +754,7 @@ public class ContractServiceImpl implements ContractService {
 
         }
         try {
-            contractHistoryService.createContractHistory(contractId, contract.get().getName(), contract.get().getCreatedBy(), description,status, reasonId);
+            contractHistoryService.createContractHistory(contractId, contract.get().getName(), createdBy, description,status, reasonId);
             mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);
