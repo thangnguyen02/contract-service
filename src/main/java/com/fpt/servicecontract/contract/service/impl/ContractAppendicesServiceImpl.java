@@ -3,6 +3,7 @@ package com.fpt.servicecontract.contract.service.impl;
 import com.fpt.servicecontract.auth.dto.UserDto;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
+import com.fpt.servicecontract.contract.dto.ContractAppendicesDto;
 import com.fpt.servicecontract.contract.dto.SignContractDTO;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.PartyRequest;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -177,6 +179,10 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     response.setCanSendForCustomer(false);
                 }
             }
+            if (status.equals(SignContractStatus.SUCCESS.name())) {
+                response.setCanSendForCustomer(false);
+                response.setCanSendForMng(false);
+            }
             String signA = Objects.nonNull(obj[15]) ? obj[15].toString() : null;
             String signB = Objects.nonNull(obj[16]) ? obj[16].toString() : null;
             if (signA != null && signB != null) {
@@ -192,7 +198,55 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
     public BaseResponse getById(String id) {
         Optional<ContractAppendices> contractAppendices = contractAppendicesRepository.findById(id);
-        return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Found", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.NOT_FOUND, "Not found", true, null));
+        if (contractAppendices.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not Found", true, null);
+        }
+        ContractRequest contractRequest = findByContractId(contractAppendices.get().getContractId());
+        String currentStatus = contractStatusService.getContractStatusByLastStatus(contractAppendices.get().getId());
+        ContractAppendicesDto contractAppendicesDto = new ContractAppendicesDto();
+        BeanUtils.copyProperties(contractAppendices.get(), contractAppendicesDto);
+        contractAppendicesDto.setPartyA(contractRequest.getPartyA());
+        contractAppendicesDto.setPartyB(contractRequest.getPartyB());
+        contractAppendicesDto.setCurrentStatus(currentStatus);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractAppendicesDto);
+    }
+
+    private ContractRequest findByContractId(String id) {
+        List<Object[]> lst = contractRepository.findByIdContract(id);
+        ContractRequest contractRequest = new ContractRequest();
+        for (Object[] obj : lst) {
+            contractRequest = ContractRequest.builder()
+                    .partyA(PartyRequest.builder()
+                            .id(Objects.nonNull(obj[5]) ? obj[5].toString() : null)
+                            .name(Objects.nonNull(obj[6]) ? obj[6].toString() : null)
+                            .address(Objects.nonNull(obj[7]) ? obj[7].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[8]) ? obj[8].toString() : null)
+                            .presenter(Objects.nonNull(obj[9]) ? obj[9].toString() : null)
+                            .position(Objects.nonNull(obj[10]) ? obj[10].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[11]) ? obj[11].toString() : null)
+                            .bankId(Objects.nonNull(obj[12]) ? obj[12].toString() : null)
+                            .email(Objects.nonNull(obj[13]) ? obj[13].toString() : null)
+                            .bankName(Objects.nonNull(obj[14]) ? obj[14].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[15]) ? obj[15].toString() : null)
+                            .phone(Objects.nonNull(obj[36]) ? obj[36].toString() : null)
+                            .build())
+                    .partyB(PartyRequest.builder()
+                            .id(Objects.nonNull(obj[16]) ? obj[16].toString() : null)
+                            .name(Objects.nonNull(obj[17]) ? obj[17].toString() : null)
+                            .address(Objects.nonNull(obj[18]) ? obj[18].toString() : null)
+                            .taxNumber(Objects.nonNull(obj[19]) ? obj[19].toString() : null)
+                            .presenter(Objects.nonNull(obj[20]) ? obj[20].toString() : null)
+                            .position(Objects.nonNull(obj[21]) ? obj[21].toString() : null)
+                            .businessNumber(Objects.nonNull(obj[22]) ? obj[22].toString() : null)
+                            .bankId(Objects.nonNull(obj[23]) ? obj[23].toString() : null)
+                            .email(Objects.nonNull(obj[24]) ? obj[24].toString() : null)
+                            .bankName(Objects.nonNull(obj[25]) ? obj[25].toString() : null)
+                            .bankAccOwer(Objects.nonNull(obj[26]) ? obj[26].toString() : null)
+                            .phone(Objects.nonNull(obj[37]) ? obj[37].toString() : null)
+                            .build())
+                    .build();
+        }
+        return contractRequest;
     }
 
     public BaseResponse save(ContractAppendices contractAppendices, String email) {
@@ -208,6 +262,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 .createdDate(LocalDateTime.now())
                 .updatedDate(LocalDateTime.now())
                 .status(Constants.STATUS.NEW)
+                .value(contractAppendices.getValue())
                 .build();
 
 //        get contract to get party

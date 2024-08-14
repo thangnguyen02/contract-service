@@ -300,6 +300,10 @@ public class ContractServiceImpl implements ContractService {
                     response.setCanSendForCustomer(false);
                 }
             }
+            if (status.equals(SignContractStatus.SUCCESS.name())) {
+                response.setCanSendForCustomer(false);
+                response.setCanSendForMng(false);
+            }
             String signA = Objects.nonNull(obj[14]) ? obj[14].toString() : null;
             String signB = Objects.nonNull(obj[15]) ? obj[15].toString() : null;
             if (signA != null && signB != null) {
