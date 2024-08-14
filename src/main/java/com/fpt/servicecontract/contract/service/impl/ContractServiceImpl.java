@@ -371,6 +371,7 @@ public class ContractServiceImpl implements ContractService {
     public ContractRequest findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
         ContractRequest contractRequest = new ContractRequest();
+        String statusCurrent = contractStatusRepository.findByContractLastStatus(id);
         for (Object[] obj : lst) {
             contractRequest = ContractRequest.builder()
                     .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
@@ -415,6 +416,7 @@ public class ContractServiceImpl implements ContractService {
                     .contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null)
                     .value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null)
                     .status(Objects.nonNull(obj[35]) ? obj[35].toString() : null)
+                    .statusCurrent(statusCurrent)
                     .build();
         }
         return contractRequest;

@@ -25,5 +25,6 @@ public class ContractRequest {
     private Double value;
     private String status;
     private String reason;
+    private String statusCurrent;
 }
 
