@@ -537,7 +537,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(createdBy + "đã kí hợp đồng thành công")
+                        .message(createdBy + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
@@ -555,7 +555,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 contractAppendicesRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(createdBy + "đã kí hợp đồng thành công")
+                        .message(createdBy + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
