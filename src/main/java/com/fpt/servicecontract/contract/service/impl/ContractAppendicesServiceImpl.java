@@ -575,9 +575,18 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
     @Override
     public BaseResponse getContractSignById(String id) {
-        var contractAppendices = contractAppendicesRepository.findByIdContractAppendices(id);
-        return contractAppendices.map(appendices -> new BaseResponse(Constants.ResponseCode.SUCCESS, "Find Contract Appendices", true, appendices)).orElseGet(() -> new BaseResponse(Constants.ResponseCode.FAILURE, "Contract Appendices not exist", false, null));
-
+        Optional<ContractAppendices> contractAppendices = contractAppendicesRepository.findById(id);
+        if (contractAppendices.isEmpty()) {
+            return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not Found", true, null);
+        }
+        ContractRequest contractRequest = findByContractId(contractAppendices.get().getContractId());
+        String currentStatus = contractStatusService.getContractStatusByLastStatus(contractAppendices.get().getId());
+        ContractAppendicesDto contractAppendicesDto = new ContractAppendicesDto();
+        BeanUtils.copyProperties(contractAppendices.get(), contractAppendicesDto);
+        contractAppendicesDto.setPartyA(contractRequest.getPartyA());
+        contractAppendicesDto.setPartyB(contractRequest.getPartyB());
+        contractAppendicesDto.setCurrentStatus(currentStatus);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractAppendicesDto);
     }
     public ContractRequest findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
