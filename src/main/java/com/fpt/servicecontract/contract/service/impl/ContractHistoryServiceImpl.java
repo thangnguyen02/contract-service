@@ -42,13 +42,13 @@ public class ContractHistoryServiceImpl implements ContractHistoryService {
         List<ContractHistoryDto> response = new ArrayList<>();
         for (Object[] row : result) {
             response.add(ContractHistoryDto.builder()
-                    .id(row[0].toString())
-                    .contractId(row[1].toString())
-                    .createdBy(row[2].toString())
-                    .time(row[3].toString())
-                    .status(row[4].toString())
-                    .contractName(row[5].toString())
-                    .comment(row[6].toString())
+                    .id(String.valueOf(row[0]))
+                    .contractId(String.valueOf(row[1]))
+                    .createdBy(String.valueOf(row[2]))
+                    .time(String.valueOf(row[3]))
+                    .status(String.valueOf(row[4]))
+                    .contractName(String.valueOf(row[5]))
+                    .comment(String.valueOf(row[6]))
                     .build());
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, response);

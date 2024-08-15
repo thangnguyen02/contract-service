@@ -308,6 +308,10 @@ public class ContractServiceImpl implements ContractService {
                     response.setCanSendForCustomer(false);
                 }
             }
+            if (status.equals(SignContractStatus.SUCCESS.name())) {
+                response.setCanSendForCustomer(false);
+                response.setCanSendForMng(false);
+            }
             String signA = Objects.nonNull(obj[14]) ? obj[14].toString() : null;
             String signB = Objects.nonNull(obj[15]) ? obj[15].toString() : null;
             if (signA != null && signB != null) {
@@ -474,10 +478,8 @@ public class ContractServiceImpl implements ContractService {
                 context.setVariable("signB", contract.getSignB());
                 if (!StringUtils.isBlank(contract.getSignB())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS, signContractDTO.getReasonId());
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_A, signContractDTO.getReasonId());
                 }
             } else {
                 contract.setSignB(signContractDTO.getSignImage());
@@ -485,10 +487,8 @@ public class ContractServiceImpl implements ContractService {
                 context.setVariable("signA", contract.getSignA());
                 if (!StringUtils.isBlank(contract.getSignA())) {
                     contract.setStatus(Constants.STATUS.SUCCESS);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS, signContractDTO.getReasonId());
                 } else {
                     contract.setStatus(Constants.STATUS.PROCESSING);
-                    contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B, signContractDTO.getReasonId());
                 }
             }
             context.setVariable("partyA", contractRequest.getPartyA());
