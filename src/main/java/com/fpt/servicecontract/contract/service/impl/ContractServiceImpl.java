@@ -1,6 +1,8 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.auth.dto.UserDto;
+import com.fpt.servicecontract.auth.dto.UserInterface;
+import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
@@ -537,7 +539,6 @@ public class ContractServiceImpl implements ContractService {
     public BaseResponse getContractSignById(String id) {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, findById(id));
     }
-
     @Override
     @Transactional
     public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject,
@@ -658,17 +659,31 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + " đang chờ bạn ký")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .contractId(contractId)
-                    .build());
+            receivers.forEach(f -> {
+                Optional<User> us = userRepository.findByEmail(f);
+                if (String.valueOf(us.get().getRole()).equalsIgnoreCase("ADMIN")) {
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đang chờ bạn ký")
+                            .typeNotification("CONTRACT")
+                            .receivers(List.of(f))
+                            .sender(email)
+                            .contractId(contractId)
+                            .build());
+                }else{
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đã trình ký hợp đồng")
+                            .typeNotification("CONTRACT")
+                            .receivers(List.of(f))
+                            .sender(email)
+                            .contractId(contractId)
+                            .build());
+                }
+            });
         }
         contractStatusService.create(email, receivers, contractId, status, description);
-        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status, contractId);
+        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status, reasonId);
         ContractRequest contractRequest = findById(contractId);
         ContractRequest contractSearch = elasticSearchService.getDocumentById("contract", contractId, ContractRequest.class);
         contractRequest.setReason(contractSearch.getReason() + " " + description);

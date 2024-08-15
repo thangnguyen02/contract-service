@@ -13,8 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .filter(m -> !ObjectUtils.isEmpty(m.getReceiver()) && m.getReceiver().contains(email) || !ObjectUtils.isEmpty(m.getSender()) && m.getSender().equals(email))
                 .map(ContractStatus::getContractId)
                 .toList();
-        if(DataUtil.isNullObject(ids)) {
+        if (DataUtil.isNullObject(ids)) {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any contract", false, 0);
         }
         Integer number = contractRepository.getNumberContractBySale(email, ids, status);
@@ -50,6 +49,18 @@ public class DashboardServiceImpl implements DashboardService {
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not have any contract", false, 0);
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "Number contract exist", false, number);
+    }
+
+    @Override
+    public BaseResponse countReason(String email, int sale, int number) {
+        List<Object[]> list = contractRepository.countReason(email, number);
+        List<Map<String, String>> mapArrayList = new ArrayList<>();
+        for (Object[] obj : list) {
+            Map<String, String> map = new HashMap<>();
+            map.put(String.valueOf(obj[0]), String.valueOf(obj[1]));
+            mapArrayList.add(map);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Number contract exist", false, mapArrayList);
     }
 
 

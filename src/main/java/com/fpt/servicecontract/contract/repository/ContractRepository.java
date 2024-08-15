@@ -195,7 +195,24 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
     String[]
     getNotificationContractNumber(String email, List<String> ids);
 
-
-
-
+    @Query(value = """
+            WITH reasons AS (
+                SELECT\s
+                    (SELECT\s
+                        created_by
+                     FROM
+                        fpt_company.contract
+                     WHERE
+                        id = contract_id) AS created_by,
+                    reason_id
+                FROM
+                    fpt_company.contract_history
+                WHERE
+                    reason_id IS NOT NULL\s
+                    AND reason_id != ''
+            )
+            SELECT count(*) as reason_count, (select title from fpt_company.reason where id = reason_id) as title
+            FROM reasons where created_by = :email GROUP BY reason_id limit :number
+            """, nativeQuery = true)
+    List<Object[]>  countReason(String email, int number);
 }

@@ -126,7 +126,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
@@ -365,7 +365,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
-                            .contractId(contractId)
+                    .contractId(contractId)
                     .build());
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
@@ -513,7 +513,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
     @Override
-    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractAppendicesId, String status, String description) {
+    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractAppendicesId, String status, String description, String reasonId) {
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
             receivers.add(recipient.trim());
@@ -566,6 +566,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         }
         contractStatusService.create(createdBy, receivers, contractAppendicesId, status, description);
         try {
+            contractHistoryService.createContractHistory(contract.get().getContractId(), contract.get().getName(), createdBy, description, status, reasonId);
             mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);
@@ -588,6 +589,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         contractAppendicesDto.setCurrentStatus(currentStatus);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractAppendicesDto);
     }
+
     public ContractRequest findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
         ContractRequest contractRequest = new ContractRequest();
@@ -637,6 +639,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         }
         return contractRequest;
     }
+
     @Override
     public BaseResponse signContract(SignContractDTO signContractDTO) {
         var contractAppendicesOptional = contractAppendicesRepository.findById(signContractDTO.getContractId());

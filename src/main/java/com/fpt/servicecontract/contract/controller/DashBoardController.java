@@ -1,5 +1,6 @@
 package com.fpt.servicecontract.contract.controller;
 
+import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.contract.service.DashboardService;
 import com.fpt.servicecontract.utils.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,15 @@ public class DashBoardController {
     public ResponseEntity<BaseResponse> getNumberSale(
             @RequestParam String userEmail,
             @RequestParam String status
-    ){
+    ) {
         return ResponseEntity.ok(dashboardService.getNumberSale(userEmail, status));
     }
 
+    private final JwtService jwtService;
+
+    @GetMapping("/count-reason/{sale}/{number}")
+    public ResponseEntity<BaseResponse> reason(@RequestHeader("Authorization") String bearerToken, @PathVariable int sale, @PathVariable int number) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(dashboardService.countReason(email, sale, number));
+    }
 }

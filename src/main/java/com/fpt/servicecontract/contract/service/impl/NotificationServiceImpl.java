@@ -67,7 +67,7 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setMarkRead(false);
         notification.getReceivers().forEach(receiver -> {
             Notification noti = new Notification(notification);
-            noti.setReceiver(receiver); // Giả sử bạn có một phương thức để đặt receiver cho thông báo
+            noti.setReceiver(receiver);
             notificationRepository.save(noti);
         });
 
