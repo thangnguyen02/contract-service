@@ -9,6 +9,7 @@ import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.PartyRequest;
 import com.fpt.servicecontract.contract.dto.response.ContractAppendicesResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
+import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.ContractAppendicesRepository;
@@ -250,6 +251,16 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
     public BaseResponse save(ContractAppendices contractAppendices, String email) {
+        String createBy = "";
+        LocalDateTime localDateTime = null;
+        if (contractAppendices.getId() != null) {
+            Optional<ContractAppendices> contractRequestDb = contractAppendicesRepository.findById(contractAppendices.getId());
+
+            if (contractRequestDb.isPresent()) {
+                createBy = contractRequestDb.get().getCreatedBy();
+                localDateTime = contractRequestDb.get().getCreatedDate();
+            }
+        }
         ContractAppendices appendices = ContractAppendices
                 .builder()
                 .id(contractAppendices.getId())
@@ -258,10 +269,9 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                 .number(contractAppendices.getNumber())
                 .rule(contractAppendices.getRule())
                 .term(contractAppendices.getTerm())
-                .createdBy(email)
-                .createdDate(LocalDateTime.now())
+                .createdBy(contractAppendices.getId() == null ? email : createBy)
+                .createdDate(contractAppendices.getId() == null ? LocalDateTime.now() : localDateTime)
                 .updatedDate(LocalDateTime.now())
-                .status(Constants.STATUS.NEW)
                 .value(contractAppendices.getValue())
                 .build();
 
@@ -291,7 +301,6 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         if (contractAppendices.getId() == null) {
             ContractAppendices result;
             appendices.setStatus(Constants.STATUS.NEW);
-            appendices.setCreatedDate(LocalDateTime.now());
             try {
                 result = contractAppendicesRepository.save(appendices);
                 appendices.setId(result.getId());
@@ -302,6 +311,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             contractStatusService.create(email, null, result.getId(), Constants.STATUS.NEW, "new appendices contract");
         } else {
             appendices.setUpdatedDate(LocalDateTime.now());
+            appendices.setStatus(Constants.STATUS.UPDATE);
             contractHistoryService.createContractHistory(appendices.getId(), appendices.getName(), appendices.getCreatedBy(), "", Constants.STATUS.UPDATE, null);
             contractAppendicesRepository.save(appendices);
             String[] emails = new String[]{email};
