@@ -539,6 +539,7 @@ public class ContractServiceImpl implements ContractService {
     public BaseResponse getContractSignById(String id) {
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, findById(id));
     }
+
     @Override
     @Transactional
     public BaseResponse sendMail(String bearerToken, String[] to, String[] cc, String subject,
@@ -661,16 +662,18 @@ public class ContractServiceImpl implements ContractService {
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
             receivers.forEach(f -> {
                 Optional<User> us = userRepository.findByEmail(f);
-                if (String.valueOf(us.get().getRole()).equalsIgnoreCase("ADMIN")) {
-                    notificationService.create(Notification.builder()
-                            .title(contract.get().getName())
-                            .message(email + " đang chờ bạn ký")
-                            .typeNotification("CONTRACT")
-                            .receivers(List.of(f))
-                            .sender(email)
-                            .contractId(contractId)
-                            .build());
-                }else{
+                if (us.isPresent()) {
+                    if (String.valueOf(us.get().getRole()).equalsIgnoreCase("ADMIN")) {
+                        notificationService.create(Notification.builder()
+                                .title(contract.get().getName())
+                                .message(email + " đang chờ bạn ký")
+                                .typeNotification("CONTRACT")
+                                .receivers(List.of(f))
+                                .sender(email)
+                                .contractId(contractId)
+                                .build());
+                    }
+                } else {
                     notificationService.create(Notification.builder()
                             .title(contract.get().getName())
                             .message(email + " đã trình ký hợp đồng")

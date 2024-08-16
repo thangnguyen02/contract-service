@@ -57,11 +57,23 @@ public class DashboardServiceImpl implements DashboardService {
         List<Map<String, String>> mapArrayList = new ArrayList<>();
         for (Object[] obj : list) {
             Map<String, String> map = new HashMap<>();
-            map.put(String.valueOf(obj[0]), String.valueOf(obj[1]));
+            map.put("numberOfRejected", String.valueOf(obj[0]));
+            map.put("reasonTitle", String.valueOf(obj[1]));
             mapArrayList.add(map);
         }
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Number contract exist", false, mapArrayList);
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, mapArrayList);
     }
-
+    @Override
+    public BaseResponse countTopSale() {
+        List<Object[]> list = contractRepository.countTopSale();
+        List<Map<String, String>> mapArrayList = new ArrayList<>();
+        for (Object[] obj : list) {
+            Map<String, String> map = new HashMap<>();
+            map.put("numberOfRejected", String.valueOf(obj[0]));
+            map.put("reasonTitle", String.valueOf(obj[1]));
+            mapArrayList.add(map);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, mapArrayList);
+    }
 
 }

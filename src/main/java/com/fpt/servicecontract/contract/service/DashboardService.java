@@ -11,4 +11,6 @@ public interface DashboardService {
     BaseResponse getNumberSale(String email, String status);
 
     BaseResponse countReason(String email, int sale, int number);
+
+    BaseResponse countTopSale();
 }
