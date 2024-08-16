@@ -7,7 +7,7 @@ import com.fpt.servicecontract.auth.dto.ChangePasswordRequest;
 import com.fpt.servicecontract.utils.BaseResponse;
 
 public interface AuthenticationService {
-    AuthenticationResponse authenticate(AuthenticationRequest request);
+    BaseResponse authenticate(AuthenticationRequest request);
 
     BaseResponse logout(String email);
 

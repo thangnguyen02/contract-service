@@ -20,12 +20,11 @@ public class AuthenticationController {
 
 
   @PostMapping("/login")
-  public ResponseEntity<AuthenticationResponse> login(
-      @RequestBody AuthenticationRequest request
+  public ResponseEntity<BaseResponse> login(
+          @RequestBody AuthenticationRequest request
   ) {
     return ResponseEntity.ok(service.authenticate(request));
   }
-
   @GetMapping("/logout")
   public ResponseEntity<BaseResponse> logout(@RequestParam String email) {
     return ResponseEntity.ok(service.logout(email));
