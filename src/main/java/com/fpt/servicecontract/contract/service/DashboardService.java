@@ -13,4 +13,8 @@ public interface DashboardService {
     BaseResponse countReason(String email, int sale, int number);
 
     BaseResponse countTopSale();
+
+    BaseResponse contractSuccess();
+
+    BaseResponse totalContractCejected();
 }

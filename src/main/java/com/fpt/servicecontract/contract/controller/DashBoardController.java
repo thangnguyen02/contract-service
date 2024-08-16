@@ -41,4 +41,14 @@ public class DashBoardController {
         String email = jwtService.extractUsername(bearerToken.substring(7));
         return ResponseEntity.ok(dashboardService.countReason(email, sale, number));
     }
+    @GetMapping("/contract-success")
+    public ResponseEntity<BaseResponse> contractSuccess(@RequestHeader("Authorization") String bearerToken) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(dashboardService.contractSuccess());
+    }
+    @GetMapping("/total-contract-rejected-and-user")
+    public ResponseEntity<BaseResponse> totalContractCejected(@RequestHeader("Authorization") String bearerToken) {
+        String email = jwtService.extractUsername(bearerToken.substring(7));
+        return ResponseEntity.ok(dashboardService.totalContractCejected());
+    }
 }

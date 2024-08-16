@@ -214,7 +214,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
             SELECT count(*) as reason_count, (select title from fpt_company.reason where id = reason_id) as title
             FROM reasons where created_by = :email GROUP BY reason_id limit :number
             """, nativeQuery = true)
-    List<Object[]>  countReason(String email, int number);
+    List<Object[]> countReason(String email, int number);
 
     @Query(value = """
             WITH reasons AS (
@@ -236,4 +236,62 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
             FROM reasons where created_by = :email GROUP BY reason_id limit :number
             """, nativeQuery = true)
     List<Object[]> countTopSale();
+
+    @Query(value = """
+            SELECT\s
+                COUNT(*) AS number,
+                created_by,
+                (SELECT\s
+                        name
+                    FROM
+                        fpt_company.users
+                    WHERE
+                        email = created_by) AS name
+            FROM
+                fpt_company.contract c
+            WHERE
+                c.status = 'SUCCESS'
+            GROUP BY c.created_by
+            ORDER BY number DESC
+            """, nativeQuery = true)
+    List<Object[]> contractSuccess();
+
+    @Query(value = """
+            WITH TopUsers AS (
+                SELECT\s
+                    ch.reason_id,
+                    c.created_by,
+                    COUNT(*) AS user_count
+                FROM
+                    fpt_company.contract_history ch
+                    JOIN contract c ON ch.contract_id = c.id
+                WHERE
+                    ch.status IN ('APPROVE_FAIL', 'SIGN_A_FAIL', 'SIGN_B_FAIL')
+                GROUP BY ch.reason_id, c.created_by
+            ),
+            TopUserDetails AS (
+                SELECT\s
+                    reason_id,
+                    created_by AS topUser,
+                    ROW_NUMBER() OVER (PARTITION BY reason_id ORDER BY user_count DESC) AS rn
+                FROM\s
+                    TopUsers
+            )
+            SELECT\s
+                COUNT(ch.reason_id) AS totalNumberOfRejected,
+                r.title AS reason,
+                tud.topUser as userIsRejectedThemost,
+                u.name AS NameUserIsRejectedThemost
+            FROM
+                fpt_company.contract_history ch
+                JOIN reason r ON r.id = ch.reason_id
+                JOIN TopUserDetails tud ON ch.reason_id = tud.reason_id AND tud.rn = 1
+                JOIN fpt_company.users u ON u.email = tud.topUser
+            WHERE
+                ch.status IN ('APPROVE_FAIL', 'SIGN_A_FAIL', 'SIGN_B_FAIL')
+            GROUP BY ch.reason_id, r.title, tud.topUser, u.name
+            ORDER BY totalNumberOfRejected DESC
+                      
+            """, nativeQuery = true)
+    List<Object[]> totalContractCejected();
 }

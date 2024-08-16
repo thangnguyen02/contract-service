@@ -63,6 +63,7 @@ public class DashboardServiceImpl implements DashboardService {
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, mapArrayList);
     }
+
     @Override
     public BaseResponse countTopSale() {
         List<Object[]> list = contractRepository.countTopSale();
@@ -71,6 +72,35 @@ public class DashboardServiceImpl implements DashboardService {
             Map<String, String> map = new HashMap<>();
             map.put("numberOfRejected", String.valueOf(obj[0]));
             map.put("reasonTitle", String.valueOf(obj[1]));
+            mapArrayList.add(map);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, mapArrayList);
+    }
+
+    @Override
+    public BaseResponse contractSuccess() {
+        List<Object[]> list = contractRepository.contractSuccess();
+        List<Map<String, String>> mapArrayList = new ArrayList<>();
+        for (Object[] obj : list) {
+            Map<String, String> map = new HashMap<>();
+            map.put("numberOfSuccess", String.valueOf(obj[0]));
+            map.put("createBy", String.valueOf(obj[1]));
+            map.put("name", String.valueOf(obj[2]));
+            mapArrayList.add(map);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, mapArrayList);
+    }
+
+    @Override
+    public BaseResponse totalContractCejected() {
+        List<Object[]> list = contractRepository.totalContractCejected();
+        List<Map<String, String>> mapArrayList = new ArrayList<>();
+        for (Object[] obj : list) {
+            Map<String, String> map = new HashMap<>();
+            map.put("totalNumberOfRejected", String.valueOf(obj[0]));
+            map.put("reasonTitle", String.valueOf(obj[1]));
+            map.put("userIsRejectedThemost", String.valueOf(obj[2]));
+            map.put("nameUserIsRejectedThemost", String.valueOf(obj[3]));
             mapArrayList.add(map);
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, mapArrayList);
