@@ -5,7 +5,6 @@ import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.contract.dto.*;
 import com.fpt.servicecontract.contract.dto.request.ContractRequest;
 import com.fpt.servicecontract.contract.dto.request.SearchRequestBody;
-import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.BaseResponse;
 import com.fpt.servicecontract.utils.Constants;
