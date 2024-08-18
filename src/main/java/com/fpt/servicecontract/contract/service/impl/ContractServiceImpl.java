@@ -523,7 +523,7 @@ public class ContractServiceImpl implements ContractService {
                         .title(contract.getName())
                         .message(signContractDTO.getCreatedBy() + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
-                        .receivers(List.of(signContractDTO.getCreatedBy()))
+                        .receivers(List.of(contract.getCreatedBy()))
                         .sender(signContractDTO.getCreatedBy())
                         .contractId(signContractDTO.getContractId())
                         .build());
