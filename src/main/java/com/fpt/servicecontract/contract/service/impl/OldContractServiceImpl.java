@@ -41,6 +41,7 @@ public class OldContractServiceImpl implements OldContractService {
     private final JwtService jwtService;
     private final ElasticSearchService elasticSearchService;
     private final ContractTypeService contractTypeService;
+
     @Override
     public BaseResponse getContracts(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
@@ -135,6 +136,7 @@ public class OldContractServiceImpl implements OldContractService {
         }
 
     }
+
     @Override
     public BaseResponse createWithMobile(String token, CreateUpdateOldContract oldContractDto, String[] images) throws Exception {
         OldContract contract = new OldContract();
