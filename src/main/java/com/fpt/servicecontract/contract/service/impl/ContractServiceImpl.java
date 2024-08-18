@@ -21,6 +21,7 @@ import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.*;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Part;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -822,4 +823,8 @@ public class ContractServiceImpl implements ContractService {
         return count >= 1;
     }
 
+    @Override
+    public List<Party> getAll() {
+        return partyRepository.findAll().stream().filter(f -> !f.isTypeParty()).toList();
+    }
 }
