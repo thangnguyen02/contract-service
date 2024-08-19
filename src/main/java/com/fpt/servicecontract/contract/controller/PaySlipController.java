@@ -58,4 +58,14 @@ public class PaySlipController {
         return ResponseEntity.ok(paySlipService.GetCommissionByMail(email));
     }
 
+    @GetMapping("/findByMail2")
+    public ResponseEntity<BaseResponse> paySlipByEmail2(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) String email) {
+        return ResponseEntity.ok(paySlipService.GetAllPaySlip(Pageable.ofSize(size).withPage(page), month, year, null, email));
+    }
+
 }
