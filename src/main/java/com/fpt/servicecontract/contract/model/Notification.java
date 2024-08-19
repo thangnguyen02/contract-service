@@ -31,6 +31,7 @@ public class Notification {
     private Boolean markRead;
     private String contractId;
     private String receiver;
+    private String contractAppendicesId;
 
     public Notification(Notification notification) {
         this.id = notification.id;

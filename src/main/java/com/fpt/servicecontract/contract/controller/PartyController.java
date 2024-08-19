@@ -25,6 +25,11 @@ public class PartyController {
         return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
                 "Successfully", true, contractService.getDefaultParty()));
     }
+    @GetMapping("/find-all")
+    public ResponseEntity<BaseResponse> getAllParty() throws IOException {
+        return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,
+                "Successfully", true, contractService.getAll()));
+    }
     @PostMapping()
     public ResponseEntity<BaseResponse> createParty(@RequestBody Party party) throws IOException {
         return ResponseEntity.ok(new BaseResponse(Constants.ResponseCode.SUCCESS,

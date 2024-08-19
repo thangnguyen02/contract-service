@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface ContractService {
 
@@ -38,4 +39,6 @@ public interface ContractService {
     Party getDefaultParty();
 
     boolean checkDuplicate(String tableName, String columnName, String value);
+
+    List<Party> getAll();
 }
