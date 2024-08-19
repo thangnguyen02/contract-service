@@ -377,7 +377,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
-                    .contractId(contractId)
+                    .contractId(contract.get().getContractId())
+                    .contractAppendicesId(contractId)
                     .build());
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
@@ -390,7 +391,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
-                    .contractId(contractId)
+                    .contractId(contract.get().getContractId())
+                    .contractAppendicesId(contractId)
                     .build());
         }
 
@@ -402,7 +404,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
-                    .contractId(contractId)
+                    .contractId(contract.get().getContractId())
+                    .contractAppendicesId(contractId)
                     .build());
         }
 
@@ -416,7 +419,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
-                    .contractId(contractId)
+                    .contractId(contract.get().getContractId())
+                    .contractAppendicesId(contractId)
                     .build());
         }
         List<String> statusDb = contractStatusService.checkDoneSign(contractId);
@@ -434,7 +438,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                         .typeNotification("APPENDICES CONTRACT")
                         .receivers(receivers)
                         .sender(email)
-                        .contractId(contractId)
+                        .contractId(contract.get().getContractId())
+                        .contractAppendicesId(contractId)
                         .build());
             }
 
@@ -452,7 +457,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                         .typeNotification("APPENDICES CONTRACT")
                         .receivers(receivers)
                         .sender(email)
-                        .contractId(contractId)
+                        .contractId(contract.get().getContractId())
+                        .contractAppendicesId(contractId)
                         .build());
             }
 
@@ -470,7 +476,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                                 .typeNotification("APPENDICES CONTRACT")
                                 .receivers(List.of(f))
                                 .sender(email)
-                                .contractId(contractId)
+                                .contractId(contract.get().getContractId())
+                                .contractAppendicesId(contractId)
                                 .build());
                     }
                 } else {
@@ -480,7 +487,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                             .typeNotification("APPENDICES CONTRACT")
                             .receivers(List.of(f))
                             .sender(email)
-                            .contractId(contractId)
+                            .contractId(contract.get().getContractId())
+                            .contractAppendicesId(contractId)
                             .build());
                 }
             });
@@ -569,7 +577,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
-                        .contractId(contractAppendicesId)
+                        .contractAppendicesId(contractAppendicesId)
+                        .contractId(contract.get().getContractId())
                         .build());
             }
 
@@ -587,7 +596,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
-                        .contractId(contractAppendicesId)
+                        .contractAppendicesId(contractAppendicesId)
+                        .contractId(contract.get().getContractId())
                         .build());
             }
 
