@@ -374,10 +374,10 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractRequest findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
-        ContractRequest contractRequest = new ContractRequest();
-        String statusCurrent = contractStatusRepository.findByContractLastStatus(id);
+        ContractRequest response = new ContractRequest();
+        String status = contractStatusRepository.findByContractLastStatus(id);
         for (Object[] obj : lst) {
-            contractRequest = ContractRequest.builder()
+            response = ContractRequest.builder()
                     .id(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .name(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
                     .number(Objects.nonNull(obj[2]) ? obj[2].toString() : null)
@@ -420,10 +420,115 @@ public class ContractServiceImpl implements ContractService {
                     .contractTypeId(Objects.nonNull(obj[33]) ? obj[33].toString() : null)
                     .value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null)
                     .status(Objects.nonNull(obj[35]) ? obj[35].toString() : null)
-                    .statusCurrent(statusCurrent)
+                    .statusCurrent(status)
                     .build();
         }
-        return contractRequest;
+
+        List<String> statusDb = contractStatusService.checkDoneSign(response.getId());
+        ContractStatus contractStatus = contractStatusRepository.findByContractLastStatusObject(response.getId());
+
+        if (SignContractStatus.APPROVED.name().equals(status)) {
+            response.setCanSendForMng(true);
+            response.setCanSend(false);
+        }
+
+
+        // man hinh sale send contract cho office-admin
+        if (SignContractStatus.WAIT_APPROVE.name().equals(status)) {
+            response.setCanSend(false);
+            response.setCanApprove(true);
+            response.setCanSign(false);
+            response.setCanSendForCustomer(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+        }
+
+        //officer-admin reject
+        if (SignContractStatus.APPROVE_FAIL.name().equals(status)) {
+            response.setCanSend(true);
+            response.setCanApprove(false);
+            response.setCanSign(false);
+            response.setCanSendForCustomer(false);
+            response.setRejectedBy(contractStatus.getSender() );
+            response.setCanUpdate(true);
+            response.setCanDelete(true);
+        }
+
+        //send office_admin
+        if (SignContractStatus.NEW.name().equals(status)) {
+            response.setCanResend(false);
+            response.setCanUpdate(true);
+            response.setCanDelete(true);
+            response.setCanApprove(true);
+            response.setCanSign(false);
+            response.setCanRejectSign(false);
+            response.setCanSendForCustomer(false);
+        }
+
+
+        if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
+                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+            response.setCanUpdate(true);
+            response.setCanDelete(true);
+            response.setCanSend(true);
+            response.setCanSign(false);
+        }
+
+        if (SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+            response.setCanSendForCustomer(false);
+        }
+
+        if (SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            response.setCanSend(false);
+            response.setCanSendForCustomer(false);
+            response.setCanSendForMng(false);
+            response.setCanRejectSign(true);
+            response.setCanSign(true);
+        }
+
+        if (SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
+            response.setCanSign(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            response.setCanSend(false);
+            response.setCanSendForCustomer(false);
+            response.setCanSendForMng(false);
+            response.setCanRejectSign(false);
+        }
+
+
+        if (SignContractStatus.SIGN_A_OK.name().equals(status)
+        ) {
+            response.setCanSend(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            response.setCanSign(false);
+            if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                response.setCanSendForCustomer(true);
+                response.setCanSendForMng(false);
+            }
+        }
+
+        if (SignContractStatus.SIGN_B_OK.name().equals(status)
+        ) {
+            response.setCanSend(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                response.setCanSendForMng(true);
+                response.setCanSendForCustomer(false);
+            }
+        }
+        if (status.equals(SignContractStatus.SUCCESS.name())) {
+            response.setCanSendForCustomer(false);
+            response.setCanSendForMng(false);
+        }
+        if (response.getSignA() != null && response.getSignB() != null) {
+            response.setDraft(false);
+        }
+        return response;
     }
 
     @Override

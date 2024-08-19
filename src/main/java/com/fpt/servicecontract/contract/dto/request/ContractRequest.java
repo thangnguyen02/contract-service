@@ -2,6 +2,8 @@ package com.fpt.servicecontract.contract.dto.request;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -26,5 +28,18 @@ public class ContractRequest {
     private String status;
     private String reason;
     private String statusCurrent;
+    private boolean canSend;
+    private boolean canSendForMng ;
+    private boolean canResend ;
+    private boolean canSign ;
+    private boolean isApproved ;
+    private boolean canUpdate ;
+    private boolean canDelete ;
+    private boolean canApprove;
+    private String customer;
+    private boolean canSendForCustomer;
+    private String rejectedBy;
+    private boolean canRejectSign;
+    private boolean isDraft;
 }
 
