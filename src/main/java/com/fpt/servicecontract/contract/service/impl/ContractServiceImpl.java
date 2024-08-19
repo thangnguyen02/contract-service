@@ -1,6 +1,8 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.auth.dto.UserDto;
+import com.fpt.servicecontract.auth.dto.UserInterface;
+import com.fpt.servicecontract.auth.model.User;
 import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
@@ -19,6 +21,7 @@ import com.fpt.servicecontract.contract.repository.ContractStatusRepository;
 import com.fpt.servicecontract.contract.service.*;
 import com.fpt.servicecontract.utils.*;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Part;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -625,7 +628,7 @@ public class ContractServiceImpl implements ContractService {
                         .title(contract.getName())
                         .message(signContractDTO.getCreatedBy() + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
-                        .receivers(List.of(signContractDTO.getCreatedBy()))
+                        .receivers(List.of(contract.getCreatedBy()))
                         .sender(signContractDTO.getCreatedBy())
                         .contractId(signContractDTO.getContractId())
                         .build());
@@ -763,17 +766,33 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + " đang chờ bạn ký")
-                    .typeNotification("CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .contractId(contractId)
-                    .build());
+            receivers.forEach(f -> {
+                Optional<User> us = userRepository.findByEmail(f);
+                if (us.isPresent()) {
+                    if (String.valueOf(us.get().getRole()).equalsIgnoreCase("ADMIN")) {
+                        notificationService.create(Notification.builder()
+                                .title(contract.get().getName())
+                                .message(email + " đang chờ bạn ký")
+                                .typeNotification("CONTRACT")
+                                .receivers(List.of(f))
+                                .sender(email)
+                                .contractId(contractId)
+                                .build());
+                    }
+                } else {
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đã trình ký hợp đồng")
+                            .typeNotification("CONTRACT")
+                            .receivers(List.of(f))
+                            .sender(email)
+                            .contractId(contractId)
+                            .build());
+                }
+            });
         }
         contractStatusService.create(email, receivers, contractId, status, description);
-        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status, contractId);
+        contractHistoryService.createContractHistory(contractId, contract.get().getName(), email, description, status, reasonId);
         ContractRequest contractRequest = findById(contractId);
         ContractRequest contractSearch = elasticSearchService.getDocumentById("contract", contractId, ContractRequest.class);
         contractRequest.setReason(contractSearch.getReason() + " " + description);
@@ -909,4 +928,8 @@ public class ContractServiceImpl implements ContractService {
         return count >= 1;
     }
 
+    @Override
+    public List<Party> getAll() {
+        return partyRepository.findAll().stream().filter(f -> !f.isTypeParty()).toList();
+    }
 }

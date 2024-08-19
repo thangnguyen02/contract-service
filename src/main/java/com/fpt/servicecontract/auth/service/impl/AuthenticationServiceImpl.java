@@ -25,7 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public BaseResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -50,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationResponse.setAccessToken(jwtToken);
 //    authenticationResponse.setRefreshToken(refreshToken);
         authenticationResponse.setUser(user);
-        return authenticationResponse;
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "Login successfully", true, authenticationResponse);
     }
 
     public BaseResponse logout(String email) {

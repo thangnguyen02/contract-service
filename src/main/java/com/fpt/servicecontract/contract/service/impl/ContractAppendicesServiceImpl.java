@@ -1,6 +1,8 @@
 package com.fpt.servicecontract.contract.service.impl;
 
 import com.fpt.servicecontract.auth.dto.UserDto;
+import com.fpt.servicecontract.auth.model.User;
+import com.fpt.servicecontract.auth.repository.UserRepository;
 import com.fpt.servicecontract.config.JwtService;
 import com.fpt.servicecontract.config.MailService;
 import com.fpt.servicecontract.contract.dto.ContractAppendicesDto;
@@ -24,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     private final PdfUtils pdfUtils;
     private final CloudinaryService cloudinaryService;
     private final ContractService contractService;
+    private final UserRepository userRepository;
 
 
     public BaseResponse getAll(Pageable p, String email, String statusSearch, String contractId) {
@@ -127,7 +129,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
 
             if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
-                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+                    || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
                 response.setCanUpdate(true);
                 response.setCanDelete(true);
                 response.setCanSend(true);
@@ -375,7 +377,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
                     .typeNotification("APPENDICES CONTRACT")
                     .receivers(receivers)
                     .sender(email)
-                            .contractId(contractId)
+                    .contractId(contractId)
                     .build());
         }
         if (status.equals(SignContractStatus.APPROVED.name())) {
@@ -458,14 +460,30 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
 
         if (status.equals(SignContractStatus.WAIT_SIGN_B.name()) || status.equals(SignContractStatus.WAIT_SIGN_A.name())) {
-            notificationService.create(Notification.builder()
-                    .title(contract.get().getName())
-                    .message(email + " đang chờ ký")
-                    .typeNotification("APPENDICES CONTRACT")
-                    .receivers(receivers)
-                    .sender(email)
-                    .contractId(contractId)
-                    .build());
+            receivers.forEach(f -> {
+                Optional<User> us = userRepository.findByEmail(f);
+                if (us.isPresent()) {
+                    if (String.valueOf(us.get().getRole()).equalsIgnoreCase("ADMIN")) {
+                        notificationService.create(Notification.builder()
+                                .title(contract.get().getName())
+                                .message(email + " đang chờ bạn ký")
+                                .typeNotification("APPENDICES CONTRACT")
+                                .receivers(List.of(f))
+                                .sender(email)
+                                .contractId(contractId)
+                                .build());
+                    }
+                } else {
+                    notificationService.create(Notification.builder()
+                            .title(contract.get().getName())
+                            .message(email + " đã trình ký hợp đồng")
+                            .typeNotification("APPENDICES CONTRACT")
+                            .receivers(List.of(f))
+                            .sender(email)
+                            .contractId(contractId)
+                            .build());
+                }
+            });
         }
         contractStatusService.create(email, receivers, contractId, status, description);
         contractHistoryService.createContractHistory(contract.get().getId(), contract.get().getName(), email, description, status, reasonId);
@@ -523,7 +541,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
     }
 
     @Override
-    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractAppendicesId, String status, String description) {
+    public BaseResponse publicSendMail(String[] to, String[] cc, String subject, String htmlContent, String createdBy, String contractAppendicesId, String status, String description, String reasonId) {
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
             receivers.add(recipient.trim());
@@ -576,6 +594,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         }
         contractStatusService.create(createdBy, receivers, contractAppendicesId, status, description);
         try {
+            contractHistoryService.createContractHistory(contract.get().getContractId(), contract.get().getName(), createdBy, description, status, reasonId);
             mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);
@@ -598,6 +617,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         contractAppendicesDto.setCurrentStatus(currentStatus);
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractAppendicesDto);
     }
+
     public ContractRequest findById(String id) {
         List<Object[]> lst = contractRepository.findByIdContract(id);
         ContractRequest contractRequest = new ContractRequest();
@@ -647,6 +667,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         }
         return contractRequest;
     }
+
     @Override
     public BaseResponse signContract(SignContractDTO signContractDTO) {
         var contractAppendicesOptional = contractAppendicesRepository.findById(signContractDTO.getContractId());
@@ -665,10 +686,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             context.setVariable("signB", contract.getSignB());
             if (!StringUtils.isBlank(contract.getSignB())) {
                 contract.setStatus(Constants.STATUS.SUCCESS);
-                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS, signContractDTO.getReasonId());
             } else {
                 contract.setStatus(Constants.STATUS.PROCESSING);
-                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_A, signContractDTO.getReasonId());
             }
         } else {
             contract.setSignB(signContractDTO.getSignImage());
@@ -676,10 +695,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             context.setVariable("signA", contract.getSignA());
             if (!StringUtils.isBlank(contract.getSignA())) {
                 contract.setStatus(Constants.STATUS.SUCCESS);
-                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SUCCESS, signContractDTO.getReasonId());
             } else {
                 contract.setStatus(Constants.STATUS.PROCESSING);
-                contractHistoryService.createContractHistory(contract.getId(), contract.getName(), contract.getCreatedBy(), signContractDTO.getComment(), Constants.STATUS.SIGN_B, signContractDTO.getReasonId());
             }
         }
         context.setVariable("partyA", contractRequest.getPartyA());

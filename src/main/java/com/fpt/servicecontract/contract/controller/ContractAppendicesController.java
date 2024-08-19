@@ -86,9 +86,10 @@ public class ContractAppendicesController {
             @RequestParam String createdBy,
             @RequestParam String contractAppendicesId,
             @RequestParam String status,
-            @RequestParam String description
+            @RequestParam String description,
+            @RequestParam String reasonId
     )  {
-        return ResponseEntity.ok(service.publicSendMail(to, cc, subject, htmlContent, createdBy, contractAppendicesId, status, description));
+        return ResponseEntity.ok(service.publicSendMail(to, cc, subject, htmlContent, createdBy, contractAppendicesId, status, description, reasonId));
     }
 
     @GetMapping("/public/sign-contract-appendices/{id}")

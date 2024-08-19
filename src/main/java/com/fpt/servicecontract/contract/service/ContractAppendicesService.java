@@ -22,7 +22,7 @@ public interface ContractAppendicesService {
 
     BaseResponse getByContractId(String contractId, int page, int size);
 
-    BaseResponse publicSendMail(String[] to,String[] cc,String subject,String htmlContent,String createdBy,String contractAppendicesId,String status,String description);
+    BaseResponse publicSendMail(String[] to,String[] cc,String subject,String htmlContent,String createdBy,String contractAppendicesId,String status,String description, String reasonId);
 
     BaseResponse getContractSignById(String id);
 
