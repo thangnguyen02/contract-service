@@ -13,6 +13,7 @@ import com.fpt.servicecontract.contract.dto.response.ContractAppendicesResponse;
 import com.fpt.servicecontract.contract.enums.SignContractStatus;
 import com.fpt.servicecontract.contract.model.Contract;
 import com.fpt.servicecontract.contract.model.ContractAppendices;
+import com.fpt.servicecontract.contract.model.ContractStatus;
 import com.fpt.servicecontract.contract.model.Notification;
 import com.fpt.servicecontract.contract.repository.ContractAppendicesRepository;
 import com.fpt.servicecontract.contract.repository.ContractRepository;
@@ -205,13 +206,117 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             return new BaseResponse(Constants.ResponseCode.SUCCESS, "Not Found", true, null);
         }
         ContractRequest contractRequest = findByContractId(contractAppendices.get().getContractId());
-        String currentStatus = contractStatusService.getContractStatusByLastStatus(contractAppendices.get().getId());
-        ContractAppendicesDto contractAppendicesDto = new ContractAppendicesDto();
-        BeanUtils.copyProperties(contractAppendices.get(), contractAppendicesDto);
-        contractAppendicesDto.setPartyA(contractRequest.getPartyA());
-        contractAppendicesDto.setPartyB(contractRequest.getPartyB());
-        contractAppendicesDto.setCurrentStatus(currentStatus);
-        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, contractAppendicesDto);
+//        String status = contractStatusService.getContractStatusByLastStatus(contractAppendices.get().getId());
+        ContractStatus contractStatus = contractStatusRepository.findByContractLastStatusObject(contractAppendices.get().getId());
+        String status = contractStatus.getStatus();
+        ContractAppendicesDto response = new ContractAppendicesDto();
+        BeanUtils.copyProperties(contractAppendices.get(), response);
+        response.setPartyA(contractRequest.getPartyA());
+        response.setPartyB(contractRequest.getPartyB());
+        response.setCurrentStatus(status);
+        List<String> statusDb = contractStatusService.checkDoneSign(response.getId());
+
+        if (SignContractStatus.APPROVED.name().equals(status)) {
+            response.setCanSendForMng(true);
+            response.setCanSend(false);
+            response.setCanSendForCustomer(true);
+        }
+
+
+        // man hinh sale send contract cho office-admin
+        if (SignContractStatus.WAIT_APPROVE.name().equals(status)) {
+            response.setCanSend(false);
+            response.setCanApprove(true);
+            response.setCanSign(false);
+            response.setCanSendForCustomer(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+        }
+
+        //officer-admin reject
+        if (SignContractStatus.APPROVE_FAIL.name().equals(status)) {
+            response.setCanSend(true);
+            response.setCanApprove(false);
+            response.setCanSign(false);
+            response.setCanSendForCustomer(false);
+            response.setRejectedBy(contractStatus.getSender());
+            response.setCanUpdate(true);
+            response.setCanDelete(true);
+        }
+
+        //send office_admin
+        if (SignContractStatus.NEW.name().equals(status)) {
+            response.setCanResend(false);
+            response.setCanUpdate(true);
+            response.setCanDelete(true);
+            response.setCanApprove(true);
+            response.setCanSign(false);
+            response.setCanSendForCustomer(false);
+        }
+
+
+        if (SignContractStatus.SIGN_B_FAIL.name().equals(status)
+                || SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+            response.setCanUpdate(true);
+            response.setCanDelete(true);
+            response.setCanSend(true);
+            response.setCanSign(false);
+        }
+
+        if (SignContractStatus.SIGN_A_FAIL.name().equals(status)) {
+            response.setCanSendForCustomer(false);
+        }
+
+        if (SignContractStatus.WAIT_SIGN_A.name().equals(status)) {
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            response.setCanSend(false);
+            response.setCanSendForCustomer(false);
+            response.setCanSendForMng(false);
+            response.setCanRejectSign(true);
+            response.setCanSign(true);
+        }
+
+        if (SignContractStatus.WAIT_SIGN_B.name().equals(status)) {
+            response.setCanSign(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            response.setCanSend(false);
+            response.setCanSendForCustomer(false);
+            response.setCanSendForMng(false);
+            response.setCanRejectSign(true);
+        }
+
+
+        if (status.equals(SignContractStatus.SIGN_A_OK.name())
+        ) {
+            response.setCanSend(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                response.setCanSendForCustomer(true);
+                response.setCanSendForMng(false);
+            }
+        }
+
+        if (status.equals(SignContractStatus.SIGN_B_OK.name())
+        ) {
+            response.setCanSend(false);
+            response.setCanUpdate(false);
+            response.setCanDelete(false);
+            if (!statusDb.contains(SignContractStatus.SUCCESS.name())) {
+                response.setCanSendForMng(true);
+                response.setCanSendForCustomer(false);
+            }
+        }
+        if (status.equals(SignContractStatus.SUCCESS.name())) {
+            response.setCanSendForCustomer(false);
+            response.setCanSendForMng(false);
+        }
+        if (response.getSignA() != null && response.getSignB() != null) {
+            response.setDraft(false);
+        }
+        return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, response);
     }
 
     private ContractRequest findByContractId(String id) {
