@@ -317,7 +317,7 @@ public class ContractServiceImpl implements ContractService {
             }
             String signA = Objects.nonNull(obj[14]) ? obj[14].toString() : null;
             String signB = Objects.nonNull(obj[15]) ? obj[15].toString() : null;
-            if (signA != null && signB != null) {
+            if (signA != null || signB != null) {
                 response.setDraft(false);
             }
 
