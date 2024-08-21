@@ -37,29 +37,27 @@ public class ServiceContractApplication {
 	public void onApplicationReady(ApplicationReadyEvent event) {
 		if (userRepository.count() == 0) {
 			User adminUser = new User();
-			adminUser.setName("admin");
+			adminUser.setName("Dương Tú");
 			adminUser.setEmail("tuddahe161500@fpt.edu.vn");
 			adminUser.setDepartment("IT");
 			adminUser.setPosition("Dev");
 			adminUser.setPhone("0352334588");
 			adminUser.setPermissions(Set.of(Permission.MANAGER));
-			adminUser.setPassword(passwordEncoder.encode("123456"));
+			adminUser.setPassword(passwordEncoder.encode("tdocman"));
 			adminUser.setStatus(UserStatus.ACTIVE);
 			adminUser.setRole(Role.ADMIN);
 			userRepository.save(adminUser);
 			User user = new User();
-			user.setName("user");
-			user.setEmail("tentufancr7@gmail.com");
+			user.setName("Dương Đoàn Anh Tú");
+			user.setEmail("tuddaallt@gmail.com");
 			user.setDepartment("IT");
 			user.setPosition("Dev");
-			user.setPhone("123456789");
+			user.setPhone("0979724500");
 			user.setPermissions(Set.of(Permission.SALE));
-			user.setPassword(passwordEncoder.encode("123456"));
+			user.setPassword(passwordEncoder.encode("tdocman"));
 			user.setStatus(UserStatus.ACTIVE);
 			user.setRole(Role.USER);
 			userRepository.save(user);
 		}
 	}
-
-
 }
