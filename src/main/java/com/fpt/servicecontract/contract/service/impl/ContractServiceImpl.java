@@ -115,6 +115,7 @@ public class ContractServiceImpl implements ContractService {
                 .isUrgent(contractRequest.isUrgent())
                 .contractTypeId(contractRequest.getContractTypeId())
                 .value(contractRequest.getValue())
+                .updatedDate(LocalDateTime.now())
                 .createdDate(contractRequest.getId() == null ? LocalDateTime.now() : localDateTime)
                 .build();
         Context context = new Context();
@@ -669,6 +670,8 @@ public class ContractServiceImpl implements ContractService {
             }
         }
         Optional<Contract> contract = contractRepository.findById(contractId);
+        contract.get().setUpdatedDate(LocalDateTime.now());
+        contractRepository.save(contract.get());
         List<String> statusDb = contractStatusService.checkDoneSign(contractId);
 
         if (contract.isEmpty()) {
@@ -863,19 +866,19 @@ public class ContractServiceImpl implements ContractService {
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
-            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
+//            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(createdBy + " đã kí hợp đồng thành công")
+                        .message(createdBy + "Khách đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
                         .contractId(contractId)
                         .build());
-            }
+//            }
 
         }
 
