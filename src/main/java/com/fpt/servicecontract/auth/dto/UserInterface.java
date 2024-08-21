@@ -16,4 +16,5 @@ public interface UserInterface {
     String getAvatar();
     String getDob();
     String getRole();
+    boolean getGender();
 }
