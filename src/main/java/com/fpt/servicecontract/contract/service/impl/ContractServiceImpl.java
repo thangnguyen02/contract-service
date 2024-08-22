@@ -425,6 +425,12 @@ public class ContractServiceImpl implements ContractService {
                     .value(Objects.nonNull(obj[34]) ? (Double) obj[34] : null)
                     .status(Objects.nonNull(obj[35]) ? obj[35].toString() : null)
                     .statusCurrent(status)
+                    .canSend(true)
+                    .canApprove(false)
+                    .canSign(false)
+                    .canSendForCustomer(true)
+                    .canRejectSign(false)
+                    .isDraft(true)
                     .build();
         }
 
