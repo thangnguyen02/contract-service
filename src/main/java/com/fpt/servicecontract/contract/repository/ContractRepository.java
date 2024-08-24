@@ -1,19 +1,13 @@
 package com.fpt.servicecontract.contract.repository;
 
-import com.fpt.servicecontract.auth.dto.UserInterface;
 import com.fpt.servicecontract.contract.model.Contract;
-import com.fpt.servicecontract.utils.BaseResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings("ALL")
 @Repository
@@ -73,7 +67,7 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.is_urgent DESC,
                      c.updated_date DESC;
                     \s""", nativeQuery = true)
-    Page<Object[]> findAllContract(Pageable p, String email, List<String> ids, List<String> statusCurrentSearch, String search);
+    List<Object[]> findAllContract(String email, List<String> ids, List<String> statusCurrentSearch, String search);
 
     @Query(value = """
             SELECT\s

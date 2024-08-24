@@ -181,7 +181,7 @@ public class ContractServiceImpl implements ContractService {
                 .map(ContractStatus::getContractId)
                 .toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
-        Page<Object[]> page = contractRepository.findAllContract(p, email, ids, statusListSearch, QueryUtils.appendPercent(search));
+        List<Object[]> page = contractRepository.findAllContract( email, ids, statusListSearch, QueryUtils.appendPercent(search));
         List<ContractResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             ContractResponse response = ContractResponse.builder()
@@ -325,7 +325,7 @@ public class ContractServiceImpl implements ContractService {
             responses.add(response);
         }
         Page<ContractResponse> result = new PageImpl<>(responses, p,
-                page.getTotalElements());
+                page.size());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
     }
 
