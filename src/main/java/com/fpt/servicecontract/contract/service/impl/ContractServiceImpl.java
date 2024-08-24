@@ -181,9 +181,13 @@ public class ContractServiceImpl implements ContractService {
                 .map(ContractStatus::getContractId)
                 .toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
-        List<Object[]> page = contractRepository.findAllContract( email, ids, statusListSearch, QueryUtils.appendPercent(search));
         List<ContractResponse> responses = new ArrayList<>();
-        for (Object[] obj : page) {
+        List<Object[]> allContracts = contractRepository.findAllContract(email, ids, statusListSearch, QueryUtils.appendPercent(search));
+        int start = (int) p.getOffset();
+        int end = Math.min((start + p.getPageSize()), allContracts.size());
+        List<Object[]> pageContent = allContracts.subList(start, end);
+
+        for (Object[] obj : pageContent) {
             ContractResponse response = ContractResponse.builder()
                     .name(Objects.nonNull(obj[0]) ? obj[0].toString() : null)
                     .createdBy(Objects.nonNull(obj[1]) ? obj[1].toString() : null)
@@ -324,8 +328,7 @@ public class ContractServiceImpl implements ContractService {
 
             responses.add(response);
         }
-        Page<ContractResponse> result = new PageImpl<>(responses, p,
-                page.size());
+        Page<ContractResponse> result = new PageImpl<>(responses, p, allContracts.size());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
     }
 
@@ -459,7 +462,7 @@ public class ContractServiceImpl implements ContractService {
             response.setCanApprove(false);
             response.setCanSign(false);
             response.setCanSendForCustomer(false);
-            response.setRejectedBy(contractStatus.getSender() );
+            response.setRejectedBy(contractStatus.getSender());
             response.setCanUpdate(true);
             response.setCanDelete(true);
         }
