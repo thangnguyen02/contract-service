@@ -182,7 +182,7 @@ public class ContractServiceImpl implements ContractService {
                 .toList();
         List<String> statusListSearch = getListStatusSearch(statusSearch);
         List<ContractResponse> responses = new ArrayList<>();
-        List<Object[]> allContracts = contractRepository.findAllContract(email, ids, statusListSearch, QueryUtils.appendPercent(search));
+        List<Object[]> allContracts = contractRepository.findAllContract(email, ids, statusListSearch);
         int start = (int) p.getOffset();
         int end = Math.min((start + p.getPageSize()), allContracts.size());
         List<Object[]> pageContent = allContracts.subList(start, end);

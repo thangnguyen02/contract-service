@@ -60,7 +60,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
     public BaseResponse getAll(Pageable p, String email, String statusSearch, String contractId) {
         List<String> statusListSearch = getListStatusSearch(statusSearch);
-        Page<Object[]> page = contractAppendicesRepository.findAllContractAppendices(p, statusListSearch, contractId);
+        List<Object[]> page = contractAppendicesRepository.findAllContractAppendices(statusListSearch, contractId);
         List<ContractAppendicesResponse> responses = new ArrayList<>();
         for (Object[] obj : page) {
             ContractAppendicesResponse response = ContractAppendicesResponse.builder()
@@ -196,7 +196,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
             responses.add(response);
         }
         Page<ContractAppendicesResponse> result = new PageImpl<>(responses, p,
-                page.getTotalElements());
+                page.size());
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "", true, result);
     }
 

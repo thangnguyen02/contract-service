@@ -55,19 +55,12 @@ public interface ContractRepository extends JpaRepository<Contract, String> {
                      c.mark_deleted = 0
                      AND (c.created_by = :email OR c.id IN (:ids))
                      AND (ls.status in (:statusCurrentSearch))
-                     AND (
-                     lower(c.name) like lower(:search)
-                     OR lower(c.created_by) like lower(:search)
-                     OR c.id like lower(:search)
-                     OR c.approved_by like lower(:search) 
-                     OR :search is null
-                     )
                      
                  ORDER BY
                      c.is_urgent DESC,
                      c.updated_date DESC;
                     \s""", nativeQuery = true)
-    List<Object[]> findAllContract(String email, List<String> ids, List<String> statusCurrentSearch, String search);
+    List<Object[]> findAllContract(String email, List<String> ids, List<String> statusCurrentSearch);
 
     @Query(value = """
             SELECT\s
