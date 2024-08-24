@@ -74,12 +74,12 @@ public class NotificationServiceImpl implements NotificationService {
         notification.getReceivers().forEach(f -> {
             messagingTemplate.convertAndSend("/topic/notifications/" + f, notification);
             Optional<User> user = userRepository.findByEmail(f);
-            user.ifPresent(value -> sendPushNotification(value.getTokenDevice(), notification.getTitle(), notification.getMessage()));
+            user.ifPresent(value -> sendPushNotification(value.getTokenDevice(), notification.getTitle(), notification.getMessage(), notification.getContractId()));
         });
         return "Notification ok! ";
     }
 
-    public void sendPushNotification(String tokenDevice, String title, String content) {
+    public void sendPushNotification(String tokenDevice, String title, String content, String contractId) {
         if (!StringUtils.isBlank(tokenDevice)) {
             String url = "https://exp.host/--/api/v2/push/send";
 
@@ -92,7 +92,7 @@ public class NotificationServiceImpl implements NotificationService {
             body.put("title", title);
             body.put("body", content);
             Map<String, String> data = new HashMap<>();
-            data.put("screen", "/(tabs)/explore");
+            data.put("screen", "(drawer)/(tabs)/new-contract/details/" + contractId);
             body.put("data", data);
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);

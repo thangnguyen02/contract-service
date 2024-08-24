@@ -21,14 +21,16 @@ public class CloudinaryServiceImpl implements CloudinaryService {
   public String uploadImage(MultipartFile file) throws IOException {
     Map options = ObjectUtils.asMap("public_id", "IMAGE_" + UUID.randomUUID());
     Map result = cloudinary.uploader().upload(file.getBytes(), options);
-    return (String) result.get("url");
+    String re = (String) result.get("url");
+    return re.replace("http","https");
   }
 
   @Override
   public String uploadPdf(File file) throws IOException {
     Map options = ObjectUtils.asMap("public_id", "PDF_" + UUID.randomUUID());
     Map result = cloudinary.uploader().upload(file, options);
-    return (String) result.get("url");
+    String re = (String) result.get("url");
+    return re.replace("http","https");
   }
 
 }
