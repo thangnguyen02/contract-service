@@ -872,7 +872,7 @@ public class ContractServiceImpl implements ContractService {
 
         if (status.equals(SignContractStatus.SIGN_B_OK.name())
         ) {
-//            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
+            if (statusDb.contains(SignContractStatus.SIGN_A_OK.name())) {
                 status = SignContractStatus.SUCCESS.name();
                 contract.get().setStatus(Constants.STATUS.SUCCESS);
                 contractRepository.save(contract.get());
@@ -884,7 +884,7 @@ public class ContractServiceImpl implements ContractService {
                         .sender(createdBy)
                         .contractId(contractId)
                         .build());
-//            }
+            }
 
         }
 
