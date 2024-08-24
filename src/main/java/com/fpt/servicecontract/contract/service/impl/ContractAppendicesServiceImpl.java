@@ -708,8 +708,8 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
 
         }
         contractStatusService.create(createdBy, receivers, contractAppendicesId, status, description);
+        contractHistoryService.createContractHistory(contractAppendicesId, contract.get().getName(), createdBy, description, status, reasonId);
         try {
-            contractHistoryService.createContractHistory(contract.get().getContractId(), contract.get().getName(), createdBy, description, status, reasonId);
             mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "Mail error", false, null);
