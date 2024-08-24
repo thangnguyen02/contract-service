@@ -878,7 +878,7 @@ public class ContractServiceImpl implements ContractService {
                 contractRepository.save(contract.get());
                 notificationService.create(Notification.builder()
                         .title(contract.get().getName())
-                        .message(createdBy + "Khách đã kí hợp đồng thành công")
+                        .message(createdBy + " đã kí hợp đồng thành công")
                         .typeNotification("CONTRACT")
                         .receivers(receivers)
                         .sender(createdBy)
