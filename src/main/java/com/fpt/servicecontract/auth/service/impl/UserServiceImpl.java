@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         user.setRole(request.getRole());
         user.setPermissions(request.getPermissions());
         user.setIdentificationNumber(request.getIdentificationNumber());
-        user.setDob(DateUltil.stringToDate(request.getDob(), "yyyy-MM-dd"));
+        user.setDob(DateUltil.stringToDate(request.getDob(), DateUltil.DATE_FORMAT_dd_MM_yyyy));
         user.setCreatedDate(new Date());
 
         try {
