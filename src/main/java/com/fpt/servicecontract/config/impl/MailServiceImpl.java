@@ -31,11 +31,11 @@ public class MailServiceImpl implements MailService {
         }
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
-        if (attachments != null) {
-            for (MultipartFile file : attachments) {
-                helper.addAttachment(Objects.requireNonNull(file.getOriginalFilename()), file);
-            }
-        }
+//        if (attachments != null) {
+//            for (MultipartFile file : attachments) {
+//                helper.addAttachment(Objects.requireNonNull(file.getOriginalFilename()), file);
+//            }
+//        }
         mailSender.send(message);
         return new AsyncResult<>(null);
     }
