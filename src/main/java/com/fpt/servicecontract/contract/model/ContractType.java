@@ -22,7 +22,7 @@ public class ContractType {
     private String id;
 
     private String title;
-
+    @Column(columnDefinition="LONGTEXT")
     private String description;
 
     private Boolean markDeleted;
