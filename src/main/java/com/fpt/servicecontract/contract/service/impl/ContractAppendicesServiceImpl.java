@@ -214,6 +214,12 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         response.setPartyA(contractRequest.getPartyA());
         response.setPartyB(contractRequest.getPartyB());
         response.setCurrentStatus(status);
+        response.setCanSend(true);
+        response.setCanApprove(false);
+        response.setCanSign(false);
+        response.setCanSendForCustomer(true);
+        response.setCanRejectSign(false);
+        response.setDraft(true);
         List<String> statusDb = contractStatusService.checkDoneSign(response.getId());
 
         if (SignContractStatus.APPROVED.name().equals(status)) {
@@ -602,7 +608,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         contractHistoryService.createContractHistory(contract.get().getId(), contract.get().getName(), email, description, status, reasonId);
 
         try {
-            mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
+            mailService.sendNewMail(to, cc, subject, htmlContent, null);
         } catch (MessagingException e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
         }

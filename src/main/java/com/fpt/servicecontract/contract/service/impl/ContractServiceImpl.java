@@ -667,7 +667,6 @@ public class ContractServiceImpl implements ContractService {
             return new BaseResponse(Constants.ResponseCode.FAILURE, "status not exist", true, null);
         }
         String email = jwtService.extractUsername(bearerToken.substring(7));
-        var user = userRepository.findByEmail(email);
         //Contract status
         List<String> receivers = new ArrayList<>();
         for (String recipient : to) {
@@ -811,8 +810,8 @@ public class ContractServiceImpl implements ContractService {
         elasticSearchService.deleteDocumentById("contract", contractId);
         elasticSearchService.indexDocument("contract", contractRequest, ContractRequest::getId);
         try {
-            mailService.sendNewMail(to, cc, subject, htmlContent, attachments);
-        } catch (MessagingException e) {
+            mailService.sendNewMail(to, cc, subject, htmlContent, null);
+        } catch (Exception e) {
             return new BaseResponse(Constants.ResponseCode.FAILURE, e.getMessage(), true, null);
         }
         return new BaseResponse(Constants.ResponseCode.SUCCESS, "ok", true, null);
