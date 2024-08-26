@@ -62,7 +62,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public String create(Notification notification) {
-        notification.setCreatedDate(LocalDateTime.now());
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        notification.setCreatedDate(currentDateTime.plusHours(7));
         notification.setMarkedDeleted(false);
         notification.setMarkRead(false);
         notification.getReceivers().forEach(receiver -> {
