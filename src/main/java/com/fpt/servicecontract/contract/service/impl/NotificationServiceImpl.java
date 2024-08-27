@@ -66,14 +66,11 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setCreatedDate(currentDateTime.plusHours(7));
         notification.setMarkedDeleted(false);
         notification.setMarkRead(false);
-        notification.getReceivers().forEach(receiver -> {
-            Notification noti = new Notification(notification);
-            noti.setReceiver(receiver);
-            notificationRepository.save(noti);
-        });
-
         notification.getReceivers().forEach(f -> {
-            messagingTemplate.convertAndSend("/topic/notifications/" + f, notification);
+            Notification noti = new Notification(notification);
+            noti.setReceiver(f);
+            Notification x = notificationRepository.save(noti);
+            messagingTemplate.convertAndSend("/topic/notifications/" + f, x);
             Optional<User> user = userRepository.findByEmail(f);
             user.ifPresent(value -> sendPushNotification(value.getTokenDevice(), notification.getTitle(), notification.getMessage(), notification.getContractId()));
         });
