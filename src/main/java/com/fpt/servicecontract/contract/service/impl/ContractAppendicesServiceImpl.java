@@ -425,7 +425,7 @@ public class ContractAppendicesServiceImpl implements ContractAppendicesService 
         } else {
             appendices.setUpdatedDate(LocalDateTime.now());
             appendices.setStatus(Constants.STATUS.UPDATE);
-            contractHistoryService.createContractHistory(appendices.getId(), appendices.getName(), appendices.getCreatedBy(), "", Constants.STATUS.UPDATE, null);
+            contractHistoryService.createContractHistory(appendices.getId(), appendices.getName(), email, "", Constants.STATUS.UPDATE, null);
             contractAppendicesRepository.save(appendices);
             String[] emails = new String[]{email};
             try {

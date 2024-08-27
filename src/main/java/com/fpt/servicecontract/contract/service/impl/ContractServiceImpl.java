@@ -534,7 +534,7 @@ public class ContractServiceImpl implements ContractService {
                 response.setCanSendForCustomer(false);
             }
         }
-        if (status.equals(SignContractStatus.SUCCESS.name())) {
+        if (SignContractStatus.SUCCESS.name().equals(status)) {
             response.setCanSendForCustomer(false);
             response.setCanSendForMng(false);
         }

@@ -44,6 +44,7 @@ public class Notification {
         this.markedDeleted = notification.markedDeleted;
         this.markRead = notification.markRead;
         this.contractId = notification.contractId;
+        this.contractAppendicesId = notification.contractAppendicesId;
     }
 
 }
