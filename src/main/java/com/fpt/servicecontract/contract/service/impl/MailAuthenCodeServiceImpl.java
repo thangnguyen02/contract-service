@@ -143,8 +143,8 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
                 .phone(party.getPhone())
                 .build());
     }
-    private static final String API_URL = "https://y3n2v9.api.infobip.com/sms/2/text/advanced";
-    private static final String AUTH_TOKEN = "2a75342510d4104086d2f665475327f9-dfe40162-1436-43fa-9218-3c6d9aa56aa0";
+    private static final String API_URL = "https://n8ne9y.api.infobip.com/sms/2/text/advanced";
+    private static final String AUTH_TOKEN = "f2bbbc00f61e3321cc002619c0a39745-2d42b647-c8d0-499f-9da0-a3a5eb411670";
     private final RestTemplate restTemplate;
 
     public void sendSms(String to, String text) {
@@ -156,7 +156,7 @@ public class MailAuthenCodeServiceImpl implements MailAuthenCodeService {
 
         Map<String, Object> message = new HashMap<>();
         message.put("from", "ServiceSMS");
-        message.put("text", "OTP xác thực kí hợp đồng của bạn: " + text);
+        message.put("text", text + " là mã xác minh TdocMan của bạn");
         Map<String, Object> destination = new HashMap<>();
         destination.put("to", to);
         message.put("destinations", new Map[]{destination});
